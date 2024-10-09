@@ -1,6 +1,8 @@
-# Proyek Tengah Semester PBP Ganjil 2024/2025 - BekasBerkelas
+# BekasBerkelas
 
-## Kelompok D12
+**BekasBerkelas** merupakan proyek tengah semester Django untuk tugas mata kuliah Pemrograman Berbasis Platform Ganjil 2024/2025 oleh kelompok D12.
+
+## Anggota Kelompok
 - Deanita Sekar Kinasih (2306229405) - `deanitasekar`
 - Muhammad Naufal Ramadhan (2306241700) - `naufal-ramadhan`
 - Ramy Ardya Ramadhan (2306210393) - `UltraRamy`
@@ -8,26 +10,36 @@
 - Wida Putri Kinasih (2306229840) - `widaputri`
 
 ### Deskripsi Aplikasi
-BekasBerkelas lahir dari kisah inspiratif para pejuang yang datang ke ibukota untuk mengadu nasib. Sebagai pendatang baru di ibukota, banyak dari mereka yang menyadari bahwa mobilitas menjadi kunci utama untuk bisa bertahan dan berkembang di kota besar. Tak sedikit para pendatang yang membutuhkan kendaraan untuk pergi ke tempat kerja, wawancara, atau hanya sekedar menjelajahi kota. Namun, harga mobil yang diluar jangkauan menjadi kendala yang sangat besar bagi mereka. Membeli mobil bekas menjadi solusi alternatif bagi para pendatang, tetapi opsi ini kerap kali terhambat karena banyak tantangan yang menghadang. Masalah yang sering dihadapi mereka antara lain tidak memahami pasar lokal, tidak memiliki pengalaman untuk menilai kondisi mobil, memiliki kekhawatiran akan penipuan karena berada di lokasi yang baru, dan adanya kendala bahasa dalam melakukan proses negosiasi. 
+BekasBerkelas lahir dari kisah inspiratif para pejuang yang datang ke ibukota untuk mengadu nasib. Sebagai pendatang baru di kota besar, mereka menyadari bahwa mobilitas adallah kunci utama untuk bisa bertahan dan berkembang. Banyak dari mereka yang membutuhkan kendaraan untuk pergi ke tempat kerja, menghadiri wawancara, atau hanya sekedar menjelajahi kota. Namun, harga mobil yang kurang terjangkau kerap kali menjadi kendala bagi mereka. Dengan demikian, membeli mobil bekas dapat menjadi solusi alternatif bagi para pendatang. Sayangnya, opsi ini sering kali terhambat karena banyaknya tantangan yang menghadang, seperti kurangnya pemahaman tentang pasar lokal, tingginya kekhawatiran akan tindak penipuan, dan adanya kendala bahasa dalam proses negoisasi.
 
-Di sisi lain, ibukota sebagai pusat ekonomi Indonesia memiliki dinamika tersendiri dalam penjualan mobil. Kultur konsumtif yang dimiliki oleh sebagian besar masyarakat berimbas pada pandangan kepemilikan mobil sebagai simbol status sosial. Akibatnya, banyak pemilik mobil yang cenderung mengganti kendaraan mereka dengan model terbaru untuk mengikuti tren sosial. Kebanyakan dari para pemilik mobil memilih untuk menjual mobil bekas yang mereka miliki dalam kondisi yang masih baik, sehingga tercipta ekosistem unik dimana pasokan mobil bekas di ibukota cukup melimpah. Hal ini tentunya membuka peluang besar bagi para pencari mobil bekas yang berkualitas, termasuk para pendatang baru.
+Di sisi lain, Jakarta sebagai pusat ekonomi Indonesia memiliki dinamika tersendiri dalam penjualan mobil. Kultur konsumtif di kalangan masyarakat mengakibatkan munculnya pandangan kepemilikan mobil sebagai simbol status sosial. Hal ini menyebabkan banyaknya pemilik mobil yang cenderung mengganti kendaraan mereka dengan model terbaru hanya untuk mengikuti tren sosial yang ada. Akibatnya, sebagian besar dari mereka memilih untuk menjual mobil bekas yang masih dalam kondisi baik dan menciptakan ekosistem unik dengan pasokan mobil bekas yang berlimpah. Hal ini tentunya membuka peluang besar bagi para pencari mobil bekas berkualitas, termasuk para pendatang baru.
 
 Melihat tantangan yang dihadapi para pendatang baru serta fenomena unik di kalangan pemilik mobil di ibukota, BekasBerkelas tercipta sebagai solusi komprehensif. Platform ini hadir sebagai jembatan penghubung antara pendatang baru yang mencari kendaraan terjangkau dengan pemilik mobil yang kerap berganti kendaraan untuk mengikuti tren terbaru. Dengan kombinasi fitur-fitur yang menarik, BekasBerkelas akan menjadi teman setia bagi pendatang dalam perjalanan membangun kehidupan di kota baru, sambil memfasilitasi gaya hidup dinamis pemilik mobil di ibukota. 
 
 ### Daftar Modul
-- **Authentication**
-- **Dashboard Admin**
-- **Dashboard Pengguna**
-- **Dashboard Penjual**
-- **Katalog Produk**
-- **Forum**
-- **Wishlist**
+Berikut adalah daftar modul yang akan kami implementasikan.
+| Modul | Penjelasan | Pengembang |
+| -- | -- | -- |
+| **Authentication** | Modul ini berfungsi agar pengguna dapat melakukan tindakan registrasi, login, dan logout | Steven |
+| **User Dashboard** | Modul ini berfungsi untuk menampilkan data pribadi pengguna. Pengguna dapat mengubah data pribadi mereka serta melakukan tindakan sesuai peran yang mereka miliki | Naufal | 
+| **Product Catalog**  | Modul ini berfungsi untuk membuat serta menampilkan produk mobil bekas | Ramy |
+| **Forum** | Modul ini berfungsi sebagai tempat berdiskusi para pengguna. Setiap pengguna dapat membuat atau bergabung dalam satu forum atau lebih | Steven |
+| **Wishlist** | Modul ini berfungsi untuk membuat sistem wishlist bagi para pembeli | Deanita |
+| **Review & Rating** | Modul ini berfungsi agar pengguna dapat memberikan review dan rating terhadap mobil bekas yang mereka beli. Nantinya, review ini akan disimpan sesuai dengan tipe dan model mobil yang ada | Wida |
 
 ### Sumber Inisial Dataset
-[Dataset](https://www.kaggle.com/datasets/indraputra21/used-car-listings-in-indonesia)
+[Dataset](https://www.kaggle.com/datasets/indraputra21/used-car-listings-in-indonesia?select=used_car.csv)
 
 ### Role pengguna
-
+Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
+| Modul | Pembeli | Penjual | Admin |
+| -- | -- | -- | -- |
+| **Authentication** | Pengguna dapat melakukan tindakan registrasi, login, dan logout | | |
+| **User Dashboard** | Pembeli dan penjual dapat mengubah data dirinya masing-masing | | Admin dapat mengubah data diri serta melakukan tindakan seperti verifikasi penjual baru |
+| **Product Catalog** | Pembeli dapat melihat katalog mobil bekas yang ada | Penjual dapat menambahkan mobil bekas yang ingin dijualnya atau menghapus mobil bekas yang sudah terjual | Admin dapat menghapus produk mobil bekas yang ada pada katalog |
+| **Forum** | Pengguna dapat melakukan diskusi dalam forum | | | 
+| **Wishlist** | Pembeli dapat menambahkan mobil bekas yang mereka inginkan ke dalam _wishlist_ | - | - |
+| **Review & Rating** | Pembeli dapat menambahkan review dan rating pada tipe dan model mobil yang telah mereka beli | - | Admin dapat menghapus review dan rating yang ada |
 
 ### Tautan deployment aplikasi
 [BekasBerkelas](http://steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id/)
