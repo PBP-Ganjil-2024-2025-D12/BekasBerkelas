@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, reverse
+import datetime
 from .forms import UserForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
@@ -25,6 +26,7 @@ def login(request) :
             user = form.get_user()
             login(request, user)
             response = HttpResponseRedirect(reverse('main:main'))
+            response.set_cookie('last_login', str(datetime.datetime.now())) # Tuker ke JWT kalo sempat
             return response
         else :
             messages.error(request, "Invalid username or password. Please try again!")
@@ -37,5 +39,5 @@ def login(request) :
 def logout(request) :
     logout(request)
     response = HttpResponseRedirect(reverse('authentication:login'))
-    
+    response.delete_cookie('last_login') # Implement JWT
     return response
