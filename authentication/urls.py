@@ -4,8 +4,8 @@ from authentication.views import register, login, logout
 app_name = 'authentication'
 
 urlpatterns = [
-    path('register', register, name='register'),
-    path('login', login, name='login'),
-    path('logout', logout, name='logout'),
+    path('register/', register, name='register'),
+    path('login/', login, name='login'),
+    path('logout/', logout, name='logout'),
     # Implement JWT kalo sempat
 ]

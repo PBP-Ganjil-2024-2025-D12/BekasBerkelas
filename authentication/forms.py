@@ -1,20 +1,32 @@
-from django.forms import ModelForm
-from django.utils.html import strip_tags
-from main.models import UserProfile
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
+from django.contrib.auth.models import User
+from .models import UserProfile, UserRole
 
-class UserForm(ModelForm) :
+class RegisterForm(UserCreationForm) :
+    name = forms.CharField(max_length = 300, required = True)
+    email = forms.EmailField(required = True)
+    role = forms.ChoiceField(
+        choices = UserRole.choices,
+        initial = UserRole.BUYER,
+        required = True
+    ) # TODO : Implement if role admin, they must input admin hash password to create account!
+    profile_picture = forms.ImageField(required = False)
+    
     class Meta :
-        model = UserProfile
-        fields = ["name", "email", "profile_picture"]
+        model = User
+        fields = ('username', 'name', 'email', 'role', 'profile_picture', 'password1', 'password2')
     
-    def clean_name(self) :
-        name = self.cleaned_data["name"]
-        return strip_tags(name)
-    
-    def clean_price(self) :
-        email = self.cleaned_data["email"]
-        return strip_tags(email)
-    
-    def clean_profile_picture(self) :
-        profile_picture = self.cleaned_data["profile_picture"]
-        return strip_tags(profile_picture)
+    def save(self, commit=True) :
+        user = super().save(commit = False)
+        
+        if commit :
+            user.save()
+            UserProfile.objects.create(
+                user = user,
+                name = self.cleaned_data['name'],
+                email = self.cleaned_data['email'],
+                role = self.cleaned_data['role'],
+                profile_picture = self.cleaned_data['profile_picture']
+            ) 
+        return user
