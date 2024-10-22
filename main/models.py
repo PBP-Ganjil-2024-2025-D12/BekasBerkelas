@@ -13,3 +13,4 @@ class UserProfile(models.Model) :
     email = models.EmailField()
     role = models.CharField(default=UserRole.BUYER, choices=UserRole.choices, max_length=3)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    # daerah? Cuma Jakut, Jakbar, Jaksel, Jatim, Jakpus
