@@ -32,8 +32,11 @@ def login(request) :
         
         if user is not None :
             login(request, user)
-            # TODO : Implement next page if user click a menu while not login
-            response = HttpResponseRedirect(reverse("main:main"))
+            next = request.GET.get('next')
+            if next is not None :
+                response = redirect(next)
+            else :
+                response = redirect('main:main')
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
         else :

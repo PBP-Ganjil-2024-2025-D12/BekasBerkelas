@@ -10,7 +10,7 @@ class RegisterForm(UserCreationForm) :
         choices = UserRole.choices,
         initial = UserRole.BUYER,
         required = True
-    )
+    ) # TODO : Implement if role admin, they must input admin hash password to create account!
     profile_picture = forms.ImageField(required = False)
     
     class Meta :
