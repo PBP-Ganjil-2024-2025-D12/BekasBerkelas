@@ -1,15 +1,16 @@
 import datetime
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
 from django.contrib import messages
-from django.shortcuts import render, redirect, reverse
-from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
 from .forms import RegisterForm
+from jwt_auth.utils import set_jwt_cookies, clear_jwt_cookies
 
 # Create your views here.
-def register(request) :
+def register_user(request) :
     form = RegisterForm()
+    access_token = request.COOKIES.get('access_token')
     
-    if request.user.is_authenticated :
+    if access_token :
         return redirect('main:main')
     
     if request.method == "POST" :
@@ -21,8 +22,9 @@ def register(request) :
     context = {'form':form}
     return render(request, 'register.html', context)
 
-def login(request) :
-    if request.user.is_authenticated :
+def login_user(request) :
+    access_token = request.COOKIES.get('access_token')
+    if access_token :
         return redirect('main:main')
     
     if request.method == 'POST' :
@@ -31,21 +33,17 @@ def login(request) :
         user = authenticate(request, username = username, password = password)
         
         if user is not None :
-            login(request, user)
             next = request.GET.get('next')
             if next is not None :
                 response = redirect(next)
             else :
                 response = redirect('main:main')
-            response.set_cookie('last_login', str(datetime.datetime.now()))
-            return response
+            return set_jwt_cookies(response, user)
         else :
             messages.error(request, 'Invalid username or password')
 
     return render(request, 'login.html')
 
-def logout(request) :
-    logout(request)
-    response = HttpResponseRedirect(reverse('authentication:login'))
-    response.delete_cookie('last_login') # Implement JWT
-    return response
+def logout_user(request) :
+    response = redirect('authentication:login')
+    return clear_jwt_cookies(response)
