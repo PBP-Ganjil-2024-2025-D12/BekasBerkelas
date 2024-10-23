@@ -17,4 +17,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    const dropdownButton = document.getElementById('dropdown-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const downArrow = document.querySelector(".down-arrow");
+    const upArrow = document.querySelector(".up-arrow");
+    
+    // Check Implementation
+    if (dropdownButton && dropdownMenu) {
+        dropdownButton.addEventListener('click', () => {
+            dropdownMenu.classList.toggle("hidden");
+
+            if (menu.classList.contains("hidden")) {
+                downArrow.classList.remove("hidden");
+                upArrow.classList.add("hidden");
+            } else {
+                downArrow.classList.add("hidden");
+                upArrow.classList.remove("hidden");
+            }
+        });        
+    }
 });

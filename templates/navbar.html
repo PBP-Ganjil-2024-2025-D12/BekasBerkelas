@@ -11,20 +11,40 @@
                     Beranda
                 </a>
 
+                {% if request.user.is_authenticated %}
+                    <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
+                        Katalog
+                    </a>
+                {% endif %}
+
                 <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-4">
                     Forum
                 </a>
 
-                {% if request.COOKIES.access_token %}
-                    <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-3">
-                        Mobil Saya
-                    </a>
-                    <span class="text-[#1f1c61] text-xl albert-sans-semibold mr-4">
-                        Welcome, {{ request.user.userprofile.name }}
-                    </span>
-                    <a href="{% url 'authentication:logout' %}" class="INSERT LATER">
-                        Logout
-                    </a>
+                {% if request.user.is_authenticated %}
+                <div class="relative inline-block text-left">
+                    <button id="dropdown-button" class="inline-flex items-center text-[#1f1c61] hover:text-blue-800">
+                        <span class="text-[#1f1c61] text-xl albert-sans-semibold mr-4">
+                            Welcome, {{ request.user.userprofile.name }}
+                        </span>
+                        <svg class="w-4 h-4 down-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
+                        <svg class="w-4 h-4 up-arrow hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 15l6-6 6 6" />
+                        </svg>
+                    </button>
+                    <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div class="py-1">
+                            <a href="#placeholder" class="block text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 hover:bg-gray-100">
+                                Wishlist
+                            </a>
+                            <a href="{% url 'authentication:logout' %}" class="block text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 hover:bg-gray-100">
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 {% else %}
                     <a href="{% url 'authentication:login' %}" class="flex items-center justify-center gap-2 bg-[#4475F2] hover:bg-[#3461d6] text-white font-medium py-2 px-4 rounded-xl transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -36,7 +56,7 @@
                 {% endif %}
             </div>
             <div class="md:hidden flex items-center">
-                {% if not request.COOKIES.access_token %}
+                {% if not request.user.is_authenticated %}
                 <a href="{% url 'authentication:login' %}" class="inline-flex mx-3 items-center justify-center gap-2 bg-[#4475F2] hover:bg-[#3461d6] text-white font-medium py-2 px-4 rounded-xl transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -62,14 +82,18 @@
             <a href="#homepage" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
                 Beranda
             </a>
+
+            {% if request.user.is_authenticated %}
+                <a href="#placeholder" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] px-3 py-2 mb-2">
+                    Katalog
+                </a>
+            {% endif %}
+            
             <a href="#placeholder" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
                 Forum
             </a>
 
-            {% if request.COOKIES.access_token %}
-                <a href="#placeholder" class="block text-[#1f1c61] text-xl albert-sans-semibold px-3 py-2 mb-2">
-                    Mobil Saya
-                </a>
+            {% if request.user.is_authenticated %}
                 <span class="block text-[#1f1c61] text-xl albert-sans-semibold px-3 py-2">
                     Halo, {{ request.user.userprofile.name }}!
                 </span>
