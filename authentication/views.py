@@ -47,6 +47,6 @@ def login_user(request) :
 
 def logout_user(request) :
     logout(request)
-    response = redirect('authentication:login')
+    response = redirect('main:main')
     response.delete_cookie('user_login')
     return response
