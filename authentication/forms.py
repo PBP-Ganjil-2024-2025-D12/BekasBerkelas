@@ -15,7 +15,7 @@ class RegisterForm(UserCreationForm) :
     
     class Meta :
         model = User
-        fields = ('username', 'name', 'email', 'role', 'profile_picture', 'password1', 'password2')
+        fields = ('username', 'name', 'email', 'role', 'password1', 'password2')
     
     def save(self, commit=True) :
         user = super().save(commit = False)
@@ -27,6 +27,5 @@ class RegisterForm(UserCreationForm) :
                 name = self.cleaned_data['name'],
                 email = self.cleaned_data['email'],
                 role = self.cleaned_data['role'],
-                profile_picture = self.cleaned_data['profile_picture']
             ) 
         return user

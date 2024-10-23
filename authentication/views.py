@@ -1,6 +1,7 @@
 import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.conf import settings
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
 
@@ -14,9 +15,16 @@ def register_user(request) :
     if request.method == "POST" :
         form = RegisterForm(request.POST)
         if form.is_valid() :
+            if form.cleaned_data['role'] == 'ADM' and form.cleaned_data['password1'] != settings.ADMIN_ACCOUNT_SECRET_TOKEN:
+                messages.error(request, 'Invalid Admin Credentials')
+                return redirect('authentication:register')
+            
             form.save()
             messages.success(request, 'Your account has been successfully created!')
             return redirect('authentication:login')
+        else :
+            messages.error(request, 'Failed to create account')
+            return redirect('authentication:register')
         
     context = {'form':form}
     return render(request, 'register.html', context)
