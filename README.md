@@ -39,7 +39,7 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 | **Product Catalog** | Pembeli dapat melihat katalog mobil bekas yang ada | Penjual dapat menambahkan mobil bekas yang ingin dijualnya atau menghapus mobil bekas yang sudah terjual | Admin dapat menghapus produk mobil bekas yang ada pada katalog |
 | **Forum** | Pembeli dapat memulai dan melakukan diskusi dalam forum | Penjual dapat memulai dan melakukan diskusi dalam forum | Admin dapat memulai dan melakukan diskusi dalam forum serta menghapus forum yang ada | 
 | **Wishlist** | Pembeli dapat menambahkan mobil bekas yang mereka inginkan ke dalam _wishlist_ | - | - |
-| **Review & Rating** | Pembeli dapat menambahkan review dan rating pada tipe dan model mobil yang telah mereka beli | - | Admin dapat menghapus review dan rating yang ada |
+| **Review & Rating** | Pembeli dapat menambahkan review dan rating pada penjual mobil yang telah mereka beli | - | Admin dapat menghapus review dan rating yang ada |
 
 ### Tautan deployment aplikasi
 [BekasBerkelas](http://steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id/)
