@@ -41,6 +41,7 @@ def login_user(request) :
             return set_jwt_cookies(response, user)
         else :
             messages.error(request, 'Invalid username or password')
+            return redirect('authentication:login')
 
     return render(request, 'login.html')
 
