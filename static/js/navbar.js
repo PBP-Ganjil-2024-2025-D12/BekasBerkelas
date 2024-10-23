@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdownButton.addEventListener('click', () => {
             dropdownMenu.classList.toggle("hidden");
 
-            if (menu.classList.contains("hidden")) {
+            if (dropdownMenu.classList.contains("hidden")) {
                 downArrow.classList.remove("hidden");
                 upArrow.classList.add("hidden");
             } else {
