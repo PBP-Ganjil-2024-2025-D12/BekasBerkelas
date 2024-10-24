@@ -11,16 +11,18 @@
                     Beranda
                 </a>
 
-                {% if request.user.is_authenticated and request.user.userprofile.role == 'BUY' or request.user.userprofile.role == 'ADM' %}
+                {% if request.user.is_authenticated %}
+                {% if request.user.userprofile.role == 'BUY' or request.user.userprofile.role == 'ADM' %}
                 <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Katalog
                 </a>
                 {% endif %}
 
-                {% if request.user.is_authenticated and request.user.userprofile.role == 'SEL' %}
+                {% if request.user.userprofile.role == 'SEL' %}
                 <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Mobil Saya
                 </a>
+                {% endif %}
                 {% endif %}
 
                 <a href="{% url 'forum:show_forum' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-4">
@@ -91,15 +93,18 @@
                 Beranda
             </a>
 
-            {% if request.user.is_authenticated and request.user.userprofile.role == 'BUY' or request.user.userprofile.role == 'ADM' %}
+            {% if request.user.is_authenticated %}
+            {% if request.user.userprofile.role == 'BUY' or request.user.userprofile.role == 'ADM' %}
             <a href="#placeholder" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] px-3 py-2 mb-2">
                 Katalog
             </a>
             {% endif %}
-            {% if request.user.is_authenticated and request.user.userprofile.role == 'SEL' %}
+
+            {% if request.user.userprofile.role == 'SEL' %}
             <a href="#placeholder" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] px-3 py-2 mb-2">
                 Mobil Saya
             </a>
+            {% endif %}
             {% endif %}
             
             <a href="{% url 'forum:show_forum' %}" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">

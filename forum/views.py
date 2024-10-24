@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -7,11 +8,34 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from forum.models import Question, Reply
 from product_catalog.models import Car
+from django.core.paginator import Paginator
 
 # Create your views here.
 def show_forum(request) :
-    context = {}
-    return render(request, 'show_forum.html', context)
+    sort_by = request.GET.get('sort', 'terbaru')
+    category = request.GET.get('category', '')
+    search_query = request.GET.get('search', '')
+    
+    questions = Question.objects.all().order_by('-created_at')
+    
+    if search_query :
+        questions = questions.filter(
+            Q(title__icontains=search_query) | Q(content__icontains=search_query)
+        )        
+    
+    if category :
+        questions = questions.filter(category=category)
+    
+    if sort_by == 'terbaru' :
+        pass
+    elif sort_by == 'populer' :
+        questions = questions.annotate(reply_count=Count('reply')).order_by('-reply_count', '-created-at')
+        
+    paginator = Paginator(questions, 10)
+    page = request.GET.get('page')
+    questions = paginator.get_page(page)
+    
+    return render(request, 'show_forum.html', {'questions': questions})
 
 @csrf_exempt
 @require_POST

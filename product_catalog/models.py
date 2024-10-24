@@ -35,3 +35,4 @@ class Car(models.Model):
     instalment = models.DecimalField(max_digits=15, decimal_places=2)  # Adjust as needed
     image_url = models.URLField(max_length=200, blank=True)  # Add this line
 
+
