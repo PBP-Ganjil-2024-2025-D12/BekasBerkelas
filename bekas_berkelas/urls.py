@@ -22,8 +22,7 @@ urlpatterns = [
     path('', include('main.urls')),
     path('auth/', include('authentication.urls')),
     path('wishlist/', include('wishlist.urls')),
-    path('review/', include('review_rating.urls')),
+    path('profile/', include('review_rating.urls')),
     path('forum/', include('forum.urls')),
     path('katalog/', include('product_catalog.urls')),
-    path('dashboard/', include('user_dashboard.urls')),
 ]
