@@ -69,6 +69,6 @@ def show_question_n_replies(request, id) :
             'question': question,
             'replies': replies
         }
-        return render(request, 'question_detail.html', context)
+        return render(request, 'forum_detail.html', context)
     
     return HttpResponse(b'BAD REQUEST', status=400)
