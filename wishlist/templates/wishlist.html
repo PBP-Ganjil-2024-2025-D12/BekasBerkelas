@@ -1,7 +1,33 @@
 {% extends 'base.html' %} {% load static %} 
 {% block meta %}
+<title> Wishlist | BekasBerkelas </title>
 {% endblock meta %} 
+
 {% block content %}
 {% include 'navbar.html' %}
+<div class="container mx-auto mt-20 px-4 pt-5">
+    <h1 class="text-center text-4xl text-[#1F1C61] font-bold albert-sans mb-10"> Wish List </h1>
+
+    <!-- Wishlist Items -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {% if wishlist_items %}
+            {% for item in wishlist_items %}
+            <div class="border-2 border-[#0A39C4] rounded-lg shadow-lg p-4">
+                <img src="{{ item.car.image.url }}" alt="{{ item.car.name }}" class="w-full h-48 object-cover rounded-t-md mb-4">
+                <div>
+                    <h2 class="text-center text-xl text-[#1F1C61] font-bold albert-sans mb-2">{{ item.car.name }}</h2>
+                    <p class="text-left text-lg text-[#07288B] font-semibold albert-sans mb-1">Rp {{ item.car.price }}</p>
+                    <p class="text-left text-base text-black font-albert-sans">{{ item.car.brand_name }}</p>
+                    <p class="text-left text-base text-black font-albert-sans">{{ item.car.year }}</p>
+                    <p class="text-left text-base text-black font-albert-sans">{{ item.car.mileage }} km</p>
+                </div>
+            </div>
+            {% endfor %}
+
+        {% else %}
+            <p class="text-center text-lg text-black font=albert-sans col-span-4"> Belum ada mobil dalam Wish List </p>
+        {% endif %}
+    </div>
+</div>
 
 {% endblock content %}

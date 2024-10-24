@@ -20,7 +20,7 @@ def add_to_wishlist(request, car_id):
 @login_required(login_url='/login')
 def show_wishlist(request):
     wishlists = Wishlist.objects.filter(user=request.user)
-    return render(request, 'wishlist/wishlist.html', {'wishlist' : wishlists})
+    return render(request, 'wishlist.html', {'wishlist' : wishlists})
 
 @login_required(login_url='/login')
 def remove_from_wishlist(request, car_id):
