@@ -11,6 +11,8 @@ from django.contrib.auth import update_session_auth_hash
 import os
 import uuid
 from django.utils.html import strip_tags
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
 from django.http import JsonResponse
 
 # Create your views here.
@@ -72,6 +74,8 @@ def change_password(request):
             messages.error(request, 'There was an error updating your password. Please try again.')
     else:
         form = PasswordChangeForm(user=request.user)
+    
+    return render(request, 'change_password.html', {'form': form})
 
 @login_required
 @csrf_exempt
@@ -84,10 +88,17 @@ def update_profile(request):
             user_profile.name = strip_tags(request.POST.get('name'))
             data = user_profile.name
         
-        if 'email' in request.POST:
-            user_profile.email = strip_tags(request.POST.get('email'))
-            data = user_profile.email
         
+        if 'email' in request.POST:
+            validator = EmailValidator()
+            email = request.POST.get('email');
+            try:
+                validator(email)
+                user_profile.email = email
+                data = user_profile.email
+            except ValidationError:
+                return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
         if 'no_telp' in request.POST:
             user_profile.no_telp = strip_tags(request.POST.get('no_telp'))
             data = user_profile.no_telp

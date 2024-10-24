@@ -122,9 +122,12 @@
             <form id="changeEmailForm">
                 <div class="mb-4">
                     <label for="name" class="block text-sm albert-sans-thin text-gray-700">New Email</label>
-                    <input type="text" id="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter New Email" required>
+                    <input type="email" id="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter New Email" required>
                 </div>
             </form>
+
+            <div id="responseMessage"></div>
+
         </div>
         <!-- Modal footer -->
         <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
@@ -151,7 +154,7 @@
             <form id="changeNoTelpForm">
                 <div class="mb-4">
                     <label for="name" class="block text-sm albert-sans-thin text-gray-700">New Phone Number</label>
-                    <input type="text" id="no_telp" name="no_telp" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter New Phone Number" required>
+                    <input type="number" id="no_telp" name="no_telp" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter New Phone Number" required>
                 </div>
             </form>
         </div>
@@ -183,8 +186,9 @@
 
         modalContent.removeClass('opacity-100 scale-100');
         modalContent.addClass('opacity-0 scale-95');
-
+        
         setTimeout(() => {
+            $('#responseMessage').text('');
             modal.addClass('hidden');
             modalContent.addClass('hidden');
         }, 150);
@@ -221,6 +225,9 @@
                 console.log(response.status)
                 if (response.status == 'success'){
                     $(attributeID).text(response.data)
+                    hideModal()
+                } else {
+                    $('#responseMessage').text("Data tidak valid").css('color', 'red')
                 }
             },
             error: function(xhr, status, error) {
@@ -233,19 +240,16 @@
         $('#submitName').on('click', function(event) {
             event.preventDefault()
             updateProfile("#namaUser", "#changeNameForm")
-            hideModal()
         })
 
         $('#submitEmail').on('click', function(event) {
             event.preventDefault()
             updateProfile("#emailUser", "#changeEmailForm")
-            hideModal()
         })
 
         $('#submitNoTelp').on('click', function(event) {
             event.preventDefault()
             updateProfile("#noTelpUser", "#changeNoTelpForm")
-            hideModal()
         })
     })
 </script>
