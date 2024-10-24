@@ -6,16 +6,17 @@ from .models import UserProfile, UserRole
 class RegisterForm(UserCreationForm) :
     name = forms.CharField(max_length = 300, required = True)
     email = forms.EmailField(required = True)
+    no_telp = forms.CharField(max_length = 12, required = True)
     role = forms.ChoiceField(
         choices = UserRole.choices,
         initial = UserRole.BUYER,
         required = True
-    ) # TODO : Implement if role admin, they must input admin hash password to create account!
+    )
     profile_picture = forms.ImageField(required = False)
     
     class Meta :
         model = User
-        fields = ('username', 'name', 'email', 'role', 'password1', 'password2')
+        fields = ('username', 'name', 'email', 'no_telp', 'role', 'password1', 'password2')
     
     def save(self, commit=True) :
         user = super().save(commit = False)
@@ -26,6 +27,7 @@ class RegisterForm(UserCreationForm) :
                 user = user,
                 name = self.cleaned_data['name'],
                 email = self.cleaned_data['email'],
+                no_telp = self.cleaned_data['no_telp'],
                 role = self.cleaned_data['role'],
             ) 
         return user
