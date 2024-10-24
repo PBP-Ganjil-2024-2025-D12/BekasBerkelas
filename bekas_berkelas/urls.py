@@ -25,4 +25,5 @@ urlpatterns = [
     path('profile/', include('review_rating.urls')),
     path('forum/', include('forum.urls')),
     path('katalog/', include('product_catalog.urls')),
+    path('dashboard/', include('user_dashboard.urls'))
 ]
