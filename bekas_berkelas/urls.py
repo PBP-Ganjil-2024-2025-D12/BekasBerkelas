@@ -21,4 +21,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
     path('auth/', include('authentication.urls')),
+<<<<<<< HEAD
 ]
+=======
+    path('wishlist/', include('wishlist.urls')),
+]
+>>>>>>> 11b682fbf1e32353b3e9a1317d558963bd05539a
