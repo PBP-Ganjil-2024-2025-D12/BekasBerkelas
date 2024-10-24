@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Car</title>
+</head>
+<body>
+    <h1>Create a New Car Listing</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create Car</button>
+    </form>
+
+    <a href="{% url 'product_catalog:car_list' %}">Back to your cars</a>
+</body>
+</html>
