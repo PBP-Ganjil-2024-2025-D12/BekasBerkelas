@@ -1,78 +1,194 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car List</title>
-</head>
-<body>
-    <h1>Car List</h1>
+{% extends 'base.html' %} 
+{% load static %}
 
+{% block meta %}
+<title>Katalog | BekasBerkelas</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<head>
+    <style>
+        
+.form-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+.checkboxes {
+    grid-column: span 2;
+    display: flex;
+    justify-content: space-between;
+}
+
+.checkbox-container {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.checkbox-container:last-child {
+    margin-right: 0;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.input-field {
+    flex: 1;
+    border: 1px solid black;
+    padding: 8px;
+}
+
+
+
+    </style>
+</head>
+
+<section class="min-h-screen pt-20 px-10 md:px-10 flex flex-col items-center">
+    <h1 class="text-2xl font-bold text-center my-6">Katalog</h1>
+    <form method="GET" action="{% url 'product_catalog:car_list' %}" class="form-container mb-4">
+        <div class="form-group">
+            <input type="text" name="car_name" id="car_name" placeholder="Car Name" value="{{ form.car_name.value|default:'' }}" class="input-field">
+        </div>
+        <div class="form-group">
+            <input type="text" name="brand" id="brand" placeholder="Brand" value="{{ form.brand.value|default:'' }}" class="input-field">
+        </div>
+        <div class="form-group">
+            <input type="number" name="mileage" id="mileage" placeholder="Mileage" value="{{ form.mileage.value|default:'' }}" class="input-field">
+        </div>
+        <div class="form-group">
+            <input type="text" name="location" id="location" placeholder="Location" value="{{ form.location.value|default:'' }}" class="input-field">
+        </div>
+        <div class="form-group">
+            <select name="transmission" id="transmission" class="input-field">
+                <option value="">Transmission: </option>
+                {% for choice in form.transmission.field.choices %}
+                    <option value="{{ choice.0 }}" {% if choice.0 == form.transmission.value %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <select name="plate_type" id="plate_type" class="input-field">
+                <option value="">Plate Type</option>
+                {% for choice in form.plate_type.field.choices %}
+                    <option value="{{ choice.0 }}" {% if choice.0 == form.plate_type.value %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="checkboxes">
+            <div class="checkbox-container">
+                <input type="checkbox" name="rear_camera" id="rear_camera" {% if form.rear_camera.value %}checked{% endif %}>
+                <label for="rear_camera">Rear Camera</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" name="sun_roof" id="sun_roof" {% if form.sun_roof.value %}checked{% endif %}>
+                <label for="sun_roof">Sun Roof</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" name="auto_retract_mirror" id="auto_retract_mirror" {% if form.auto_retract_mirror.value %}checked{% endif %}>
+                <label for="auto_retract_mirror">Auto Retract Mirror</label>
+            </div>
+        </div>
+        <div class="flex justify-center col-span-4">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Filter</button>
+        </div>
+        
+
+    </form>
+    
     {% if is_seller %}
-        <p>Welcome, {{ request.user.username }}! Here are the cars you're selling:</p>
-        <a href="{% url 'product_catalog:create_car' %}">Add a new car</a>
-    {% elif is_admin %}
-        <p>Welcome, Admin {{ request.user.username }}! Here are all the cars:</p>
-    {% else %}
-        <p>Welcome, {{ request.user.username }}! Here are all the available cars:</p>
+    <div class="mb-4">
+        <a href="{% url 'product_catalog:create_car' %}" class="bg-green-500 text-white px-4 py-2 rounded">Create New Car</a>
+    </div>
     {% endif %}
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Image</th> <!-- Added header for image -->
-                <th>Car Name</th>
-                <th>Brand</th>
-                <th>Year</th>
-                <th>Mileage</th>
-                <th>Location</th>
-                <th>Transmission</th>
-                <th>Plate Type</th>
-                <th>Rear Camera</th>
-                <th>Sun Roof</th>
-                <th>Auto Retract Mirror</th>
-                <th>Price (Rp)</th>
-                <th>Instalment (Rp)</th>
-                {% if is_seller or is_admin %}
-                <th>Actions</th>  <!-- Added header for actions -->
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for car in cars %}
-            <tr>
-                <td>
-                    {% if car.image_url %}
-                        <img src="{{ car.image_url }}" alt="{{ car.car_name }}" style="width:100px;height:auto;">  <!-- Display the car image -->
-                    {% else %}
-                        No Image
-                    {% endif %}
-                </td>
-                <td>{{ car.car_name }}</td>
-                <td>{{ car.brand }}</td>
-                <td>{{ car.year }}</td>
-                <td>{{ car.mileage }}</td>
-                <td>{{ car.location }}</td>
-                <td>{{ car.transmission }}</td>
-                <td>{{ car.plate_type }}</td>
-                <td>{{ car.rear_camera|yesno:"Yes,No" }}</td>
-                <td>{{ car.sun_roof|yesno:"Yes,No" }}</td>
-                <td>{{ car.auto_retract_mirror|yesno:"Yes,No" }}</td>
-                <td>{{ car.price }}</td>
-                <td>{{ car.instalment }}</td>
-                {% if is_seller or is_admin %}
-                <td>
-                    <a href="{% url 'product_catalog:delete_car' car.id %}">Delete</a> <!-- Delete button -->
-                </td>
-                {% endif %}
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="13">No cars available.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
+        {% for car in cars %}
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+            {% if car.image_url %}
+            <img src="{{ car.image_url }}" alt="{{ car.car_name }}" class="w-full h-48 object-cover rounded-md">
+            {% endif %}
+            <div class="mt-2">
+                <h3 class="text-lg font-bold">{{ car.car_name }} - <span class="text-blue-500">Rp {{ car.price }}</span></h3>
+            </div>
+            {% if is_buyer %}
+            <div class="flex items-center space-x-2 mt-4">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
+                <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="openContactModal({{ car.id }})">Contact Me</button>
+                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" title="Add to Wishlist" onclick="toggleWishlist(this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" id="wishlist-icon-{{ car.id }}">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                </button>
+            </div>
+            {% else %}
+            <div class="flex items-center space-x-2 mt-4">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
+            </div>
+            {% endif %}
+    
+            <div id="car-details-{{ car.id }}" class="hidden mt-4 bg-gray-100 p-4 rounded">
+                <p><strong>Brand:</strong> {{ car.brand }}</p>
+                <p><strong>Year:</strong> {{ car.year }}</p>
+                <p><strong>Mileage:</strong> {{ car.mileage }}</p>
+                <p><strong>Location:</strong> {{ car.location }}</p>
+                <p><strong>Instalment (Rp):</strong> {{ car.instalment }}</p>
+                <button class="mt-2 bg-red-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">Close</button>
+            </div>
 
-</body>
-</html>
+            <div id="contact-modal-{{ car.id }}" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                    <h2 class="text-xl font-bold mb-4">Contact Seller</h2>
+                    <p><strong>Seller's Email:</strong> {{ car.seller.email }}</p>
+                    <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="closeContactModal({{ car.id }})">Close</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center col-span-3">No cars available.</p>
+        {% endfor %}
+    </div>
+
+    <script>
+        function toggleDetails(carId) {
+            const detailsDiv = document.getElementById(`car-details-${carId}`);
+            detailsDiv.classList.toggle('hidden');
+        }
+            function openContactModal(carId) {
+            const modal = document.getElementById(`contact-modal-${carId}`);
+            modal.classList.remove('hidden');
+        }
+
+        function closeContactModal(carId) {
+            const modal = document.getElementById(`contact-modal-${carId}`);
+            modal.classList.add('hidden');
+        }
+
+        function toggleWishlist(button) {
+            const icon = button.querySelector('svg');
+            const isFilled = icon.classList.contains('text-red-500');
+
+            if (isFilled) {
+                icon.classList.remove('text-red-500');
+                icon.classList.add('text-gray-500');
+            } else {
+                icon.classList.remove('text-gray-500');
+                icon.classList.add('text-red-500');
+            }
+        }
+    </script>
+</section>
+{% endblock content %}

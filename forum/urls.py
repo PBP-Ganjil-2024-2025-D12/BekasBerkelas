@@ -5,6 +5,6 @@ app_name = 'forum'
 
 urlpatterns = [
     path('', show_forum, name='show_forum'),
-    path('create_forum/', create_question_ajax, name='create_question_ajax'),
+    path('create/', create_question_ajax, name='create_question_ajax'),
     path('reply/', create_reply_ajax, name='create_reply_ajax'),
 ]
