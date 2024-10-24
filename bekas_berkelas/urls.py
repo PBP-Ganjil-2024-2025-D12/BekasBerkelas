@@ -16,8 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls.static import static
-from bekas_berkelas import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +25,5 @@ urlpatterns = [
     path('profile/', include('review_rating.urls')),
     path('forum/', include('forum.urls')),
     path('katalog/', include('product_catalog.urls')),
+    path('dashboard/', include('user_dashboard.urls'))
 ]
