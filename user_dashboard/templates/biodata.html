@@ -55,17 +55,17 @@
 
         <div class="grid grid-cols-5 px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Nama </h2>
-            <h2 class"col-span-2 albert-sans-semibold"> {{ request.user.userprofile.name }} </h2>
+            <h2 id="namaUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.name }} </h2>
         </div>
 
         <div class="grid grid-cols-5 px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Email </h2>
-            <h2 class"col-span-2 albert-sans-semibold"> {{ request.user.userprofile.email }} </h2>
+            <h2 id="emailUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.email }} </h2>
         </div>
 
         <div class="grid grid-cols-5 px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Nomor HP </h2>
-            <h2 class"col-span-2 albert-sans-semibold"> {{ request.user.userprofile.no_telp }} </h2>
+            <h2 id="noTelpUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.no_telp }} </h2>
         </div>
 
         <button id="modalNameButton" class="w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nama</button>
@@ -100,7 +100,7 @@
         <!-- Modal footer -->
         <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
             <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white albert-sans-semibold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
-            <button type="submit" id="submitProduct" form="productForm" class="bg-blue-600 hover:bg-blue-800 text-white albert-sans-semibold py-2 px-4 rounded-lg">Save</button>
+            <button type="submit" id="submitName" form="changeNameForm" class="bg-blue-600 hover:bg-blue-800 text-white albert-sans-semibold py-2 px-4 rounded-lg">Save</button>
         </div>
     </div>
 
@@ -122,14 +122,14 @@
             <form id="changeEmailForm">
                 <div class="mb-4">
                     <label for="name" class="block text-sm albert-sans-thin text-gray-700">New Email</label>
-                    <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter New Email" required>
+                    <input type="text" id="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter New Email" required>
                 </div>
             </form>
         </div>
         <!-- Modal footer -->
         <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
             <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white albert-sans-semibold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
-            <button type="submit" id="submitProduct" form="productForm" class="bg-blue-600 hover:bg-blue-800 text-white albert-sans-semibold py-2 px-4 rounded-lg">Save</button>
+            <button type="submit" id="submitEmail" form="changeEmailForm" class="bg-blue-600 hover:bg-blue-800 text-white albert-sans-semibold py-2 px-4 rounded-lg">Save</button>
         </div>
     </div>
 
@@ -151,14 +151,14 @@
             <form id="changeNoTelpForm">
                 <div class="mb-4">
                     <label for="name" class="block text-sm albert-sans-thin text-gray-700">New Phone Number</label>
-                    <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter New Phone Number" required>
+                    <input type="text" id="no_telp" name="no_telp" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter New Phone Number" required>
                 </div>
             </form>
         </div>
         <!-- Modal footer -->
         <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
             <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white albert-sans-semibold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
-            <button type="submit" id="submitProduct" form="productForm" class="bg-blue-600 hover:bg-blue-800 text-white albert-sans-semibold py-2 px-4 rounded-lg">Save</button>
+            <button type="submit" id="submitNoTelp" form="changeNoTelpForm" class="bg-blue-600 hover:bg-blue-800 text-white albert-sans-semibold py-2 px-4 rounded-lg">Save</button>
         </div>
     </div>
 </div>
@@ -170,8 +170,9 @@
         const modalContent = $(modalId);
 
         modal.removeClass('hidden');
+        modalContent.removeClass('hidden')
         setTimeout(() => {
-            modalContent.removeClass('hidden opacity-0 scale-95');
+            modalContent.removeClass('opacity-0 scale-95')   ;
             modalContent.addClass('opacity-100 scale-100');
         }, 50);
     }
@@ -181,10 +182,11 @@
         const modalContent = modal.find('.opacity-100.scale-100');
 
         modalContent.removeClass('opacity-100 scale-100');
-        modalContent.addClass('hidden opacity-0 scale-95');
+        modalContent.addClass('opacity-0 scale-95');
 
         setTimeout(() => {
             modal.addClass('hidden');
+            modalContent.addClass('hidden');
         }, 150);
         modalContent.find('form')[0].reset();
     }
@@ -206,5 +208,45 @@
             hideModal();
         });
     });
+
+    function updateProfile(attributeID, formID){
+        $.ajax({
+            url: '{% url 'dashboard:update_profile' %}',
+            method: 'POST',
+            data: new FormData($(formID)[0]),
+            processData: false, 
+            contentType: false,
+            
+            success: function(response){
+                console.log(response.status)
+                if (response.status == 'success'){
+                    $(attributeID).text(response.data)
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Error:', error);
+            }
+        })
+    }
+
+    $(document).ready(function(){
+        $('#submitName').on('click', function(event) {
+            event.preventDefault()
+            updateProfile("#namaUser", "#changeNameForm")
+            hideModal()
+        })
+
+        $('#submitEmail').on('click', function(event) {
+            event.preventDefault()
+            updateProfile("#emailUser", "#changeEmailForm")
+            hideModal()
+        })
+
+        $('#submitNoTelp').on('click', function(event) {
+            event.preventDefault()
+            updateProfile("#noTelpUser", "#changeNoTelpForm")
+            hideModal()
+        })
+    })
 </script>
 {% endblock mainbar %}
