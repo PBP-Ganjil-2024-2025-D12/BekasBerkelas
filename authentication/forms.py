@@ -2,6 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from .models import UserProfile, UserRole
+from user_dashboard.models import BuyerProfile, SellerProfile, AdminProfile
 
 class RegisterForm(UserCreationForm) :
     name = forms.CharField(max_length = 300, required = True)
@@ -23,11 +24,21 @@ class RegisterForm(UserCreationForm) :
         
         if commit :
             user.save()
-            UserProfile.objects.create(
+            user_profile = UserProfile.objects.create(
                 user = user,
                 name = self.cleaned_data['name'],
                 email = self.cleaned_data['email'],
                 no_telp = self.cleaned_data['no_telp'],
                 role = self.cleaned_data['role'],
-            ) 
+            )
+
+            if user_profile.role == UserRole.ADMIN:
+                AdminProfile.objects.create(user_profile=user_profile)
+            elif user_profile.role == UserRole.BUYER:
+                BuyerProfile.objects.create(user_profile=user_profile)
+            elif user_profile.role == UserRole.SELLER:
+                SellerProfile.objects.create(user_profile=user_profile)
+            else:
+                raise ValueError("Invalid user role")
+
         return user
