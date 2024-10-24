@@ -1,17 +1,155 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Car</title>
-</head>
-<body>
-    <h1>Create a New Car Listing</h1>
-    
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create Car</button>
-    </form>
+{% extends 'base.html' %}
+{% load static %}
 
-    <a href="{% url 'product_catalog:car_list' %}">Back to your cars</a>
-</body>
-</html>
+{% block meta %}
+<title>Create Car Listing | BebasBerkelas</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col md:flex-row w-screen bg-blue-100 px-4 pt-0 md:py-12 sm:px-6 lg:px-8">
+    <!-- Image -->
+    <div class="w-full md:w-1/2 flex items-center justify-center pt-8 mb-8 md:mb-0 md:ml-[5%]">
+        <img src="{% static 'image/logo-text.png' %}" alt="Logo" class="h-40 md:h-60 lg:h-80">
+    </div>
+
+    <!-- Form -->
+    <div class="w-full md:w-1/2 md:max-w-md space-y-8 bg-white p-8 rounded-xl shadow-lg albert-sans-semibold md:mr-[15%] mb-8 md:mb-0">
+        <h1 class="text-xl font-bold text-center mb-4">Create a New Car Listing</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div>
+                <label for="{{ form.car_name.id_for_label }}">Car Name</label>
+                {{ form.car_name }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.brand.id_for_label }}">Brand</label>
+                {{ form.brand }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.year.id_for_label }}">Year</label>
+                {{ form.year }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.mileage.id_for_label }}">Mileage</label>
+                {{ form.mileage }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.location.id_for_label }}">Location</label>
+                {{ form.location }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.transmission.id_for_label }}">Transmission</label>
+                {{ form.transmission }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.plate_type.id_for_label }}">Plate Type</label>
+                {{ form.plate_type }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.rear_camera.id_for_label }}">Rear Camera</label>
+                {{ form.rear_camera }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.sun_roof.id_for_label }}">Sun Roof</label>
+                {{ form.sun_roof }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.auto_retract_mirror.id_for_label }}">Auto Retract Mirror</label>
+                {{ form.auto_retract_mirror }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.electric_parking_brake.id_for_label }}">Electric Parking Brake</label>
+                {{ form.electric_parking_brake }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.map_navigator.id_for_label }}">Map Navigator</label>
+                {{ form.map_navigator }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.vehicle_stability_control.id_for_label }}">Vehicle Stability Control</label>
+                {{ form.vehicle_stability_control }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.keyless_push_start.id_for_label }}">Keyless Push Start</label>
+                {{ form.keyless_push_start }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.sports_mode.id_for_label }}">Sports Mode</label>
+                {{ form.sports_mode }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.camera_360_view.id_for_label }}">360 View Camera</label>
+                {{ form.camera_360_view }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.power_sliding_door.id_for_label }}">Power Sliding Door</label>
+                {{ form.power_sliding_door }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.auto_cruise_control.id_for_label }}">Auto Cruise Control</label>
+                {{ form.auto_cruise_control }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.price.id_for_label }}">Price</label>
+                {{ form.price }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.instalment.id_for_label }}">Instalment</label>
+                {{ form.instalment }}
+            </div>
+
+            <div class="mt-4 relative">
+                <label for="{{ form.image_url.id_for_label }}">Car Image URL</label>
+                {{ form.image_url }}
+            </div>
+
+            <div class="mt-8 relative">
+                <button type="submit" class="group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    Create Car
+                </button>
+            </div>
+        </form>
+
+        {% if messages %}
+        <div class="mt-4 space-y-2">
+            {% for message in messages %}
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r" role="alert">
+                <p class="font-bold">Error</p>
+                <p>{{ message }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="text-center mt-8 albert-sans-semibold">
+            <p class="text-sm text-[#1f1c61]">
+                <a href="{% url 'product_catalog:car_list' %}" class="font-medium text-blue-700 hover:text-blue-800 transition duration-150 ease-in-out">
+                    Back to your cars
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
