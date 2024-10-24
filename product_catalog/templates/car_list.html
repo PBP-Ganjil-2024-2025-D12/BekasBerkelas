@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car List</title>
+</head>
+<body>
+    <h1>Car List</h1>
+
+    {% if is_seller %}
+        <p>Welcome, {{ request.user.username }}! Here are the cars you're selling:</p>
+        <a href="{% url 'product_catalog:create_car' %}">Add a new car</a>
+    {% elif is_admin %}
+        <p>Welcome, Admin {{ request.user.username }}! Here are all the cars:</p>
+    {% else %}
+        <p>Welcome, {{ request.user.username }}! Here are all the available cars:</p>
+    {% endif %}
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Image</th> <!-- Added header for image -->
+                <th>Car Name</th>
+                <th>Brand</th>
+                <th>Year</th>
+                <th>Mileage</th>
+                <th>Location</th>
+                <th>Transmission</th>
+                <th>Plate Type</th>
+                <th>Rear Camera</th>
+                <th>Sun Roof</th>
+                <th>Auto Retract Mirror</th>
+                <th>Price (Rp)</th>
+                <th>Instalment (Rp)</th>
+                {% if is_seller or is_admin %}
+                <th>Actions</th>  <!-- Added header for actions -->
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in cars %}
+            <tr>
+                <td>
+                    {% if car.image_url %}
+                        <img src="{{ car.image_url }}" alt="{{ car.car_name }}" style="width:100px;height:auto;">  <!-- Display the car image -->
+                    {% else %}
+                        No Image
+                    {% endif %}
+                </td>
+                <td>{{ car.car_name }}</td>
+                <td>{{ car.brand }}</td>
+                <td>{{ car.year }}</td>
+                <td>{{ car.mileage }}</td>
+                <td>{{ car.location }}</td>
+                <td>{{ car.transmission }}</td>
+                <td>{{ car.plate_type }}</td>
+                <td>{{ car.rear_camera|yesno:"Yes,No" }}</td>
+                <td>{{ car.sun_roof|yesno:"Yes,No" }}</td>
+                <td>{{ car.auto_retract_mirror|yesno:"Yes,No" }}</td>
+                <td>{{ car.price }}</td>
+                <td>{{ car.instalment }}</td>
+                {% if is_seller or is_admin %}
+                <td>
+                    <a href="{% url 'product_catalog:delete_car' car.id %}">Delete</a> <!-- Delete button -->
+                </td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="13">No cars available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

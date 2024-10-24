@@ -5,7 +5,7 @@ from django.utils.html import strip_tags
 class ForumForm(ModelForm) :
     class Meta :
         model = Question
-        fields = ["title", "content", "car"]
+        fields = ["title", "content", "car", "category"]
         
     def clean_title(self) :
         title = self.cleaned_data["title"]
