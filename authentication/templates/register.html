@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<div class="min-h-screen flex flex-col md:flex-row w-screen bg-blue-100 px-4 pt-0 md:py-12 sm:px-6 lg:px-8">
+<div class="min-h-screen flex flex-col md:flex-row w-screen bg-blue-100 px-4 pt-0 md:py-6 sm:px-6 lg:px-8">
     <!-- Image -->
     <div class="w-full md:w-1/2 flex items-center justify-center pt-8 mb-8 md:mb-0 md:ml-[5%]">
         <img src="{% static 'image/logo-text.png' %}" alt="Logo" class="h-40 md:h-60 lg:h-80">
@@ -21,17 +21,22 @@
                 <input id="username" name="username" type="text" required class="appearance-none albert-sans-semibold rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Username">
             </div>
 
-            <div class="mt-4 relative">
+            <div class="mt-2 relative">
                 <label for="name">Name</label>
                 <input id="name" name="name" type="text" required class="appearance-none albert-sans-semibold rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Name">
             </div>
 
-            <div class="mt-4 relative">
+            <div class="mt-2 relative">
                 <label for="email">Email</label>
                 <input id="email" name="email" type="text" required class="appearance-none albert-sans-semibold rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email">
             </div>
 
-            <div class="mt-4 relative">
+            <div class="mt-2 relative">
+                <label for="no_telp">No Telp</label>
+                <input id="no_telp" name="no_telp" type="text" required class="appearance-none albert-sans-semibold rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="No Telp">
+            </div>
+
+            <div class="mt-2 relative">
                 <label for="role">User Role</label>
                 <div class="relative">
                     <select id="role" name="role" required class="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
@@ -48,12 +53,12 @@
                 </div>
             </div>
 
-            <div class="mt-4 relative">
+            <div class="mt-2 relative">
                 <label for="password1">Password</label>
                 <input id="password1" name="password1" type="password" required class="appearance-none albert-sans-semibold rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
             </div>
 
-            <div class="mt-4 relative">
+            <div class="mt-2 relative">
                 <label for="password2">Confirm Password</label>
                 <input id="password2" name="password2" type="password" required class="appearance-none albert-sans-semibold rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Confirm Password">
             </div>
