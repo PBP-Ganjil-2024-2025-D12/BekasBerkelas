@@ -14,4 +14,5 @@ class UserProfile(models.Model) :
     no_telp = models.CharField(default='-', max_length=12)
     role = models.CharField(default=UserRole.BUYER, choices=UserRole.choices, max_length=3)
     profile_picture = models.URLField(max_length=500, blank=True, null=True)
+    profile_picture_id = models.CharField(max_length=300, null=True)
     is_verified = models.BooleanField(default=False)
