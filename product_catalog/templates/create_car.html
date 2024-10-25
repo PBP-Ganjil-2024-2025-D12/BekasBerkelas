@@ -6,150 +6,207 @@
 {% endblock meta %}
 
 {% block content %}
-<div class="min-h-screen flex flex-col md:flex-row w-screen bg-blue-100 px-4 pt-0 md:py-12 sm:px-6 lg:px-8">
-    <!-- Image -->
-    <div class="w-full md:w-1/2 flex items-center justify-center pt-8 mb-8 md:mb-0 md:ml-[5%]">
-        <img src="{% static 'image/logo-text.png' %}" alt="Logo" class="h-40 md:h-60 lg:h-80">
-    </div>
+{% include 'navbar.html' %}
+<section class="min-h-screen pt-20 px-10 md:px-10 flex flex-col bg-blue-100 items-center">
+    <div class="min-h-screen flex items-center justify-center w-full bg-blue-100">
+        <!-- Form -->
+        <div class="space-y-8 bg-white p-8 rounded-xl shadow-lg albert-sans-semibold mb-8 w-full md:w-1/2">
+            <h1 class="text-xl font-bold text-center mb-4">Create a New Car Listing</h1>
 
-    <!-- Form -->
-    <div class="w-full md:w-1/2 md:max-w-md space-y-8 bg-white p-8 rounded-xl shadow-lg albert-sans-semibold md:mr-[15%] mb-8 md:mb-0">
-        <h1 class="text-xl font-bold text-center mb-4">Create a New Car Listing</h1>
+            <form method="POST" enctype="multipart/form-data" class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
 
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
+                <!-- Three-column Grid Layout for Text Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="mb-6">
+                        <label for="car_name" class="block text-lg font-medium text-gray-700">Car Name</label>
+                        <input type="text" name="car_name" id="car_name" value="{{ form.car_name.value }}"
+                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        {% if form.car_name.errors %}
+                            <div class="text-red-600">{{ form.car_name.errors }}</div>
+                        {% endif %}
+                    </div>
 
-            <div>
-                <label for="{{ form.car_name.id_for_label }}">Car Name</label>
-                {{ form.car_name }}
+                    <div class="mb-6">
+                        <label for="brand" class="block text-lg font-medium text-gray-700">Brand</label>
+                        <input type="text" name="brand" id="brand" value="{{ form.brand.value }}"
+                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        {% if form.brand.errors %}
+                            <div class="text-red-600">{{ form.brand.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
+                        <input type="number" name="year" id="year" value="{{ form.year.value }}"
+                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        {% if form.year.errors %}
+                            <div class="text-red-600">{{ form.year.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="mileage" class="block text-lg font-medium text-gray-700">Mileage</label>
+                        <input type="number" name="mileage" id="mileage" value="{{ form.mileage.value }}"
+                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        {% if form.mileage.errors %}
+                            <div class="text-red-600">{{ form.mileage.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="location" class="block text-lg font-medium text-gray-700">Location</label>
+                        <input type="text" name="location" id="location" value="{{ form.location.value }}"
+                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        {% if form.location.errors %}
+                            <div class="text-red-600">{{ form.location.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="transmission" class="block text-lg font-medium text-gray-700">Transmission</label>
+                        <select name="transmission" id="transmission" 
+                                class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Transmission</option>
+                            <option value="Manual" {% if form.transmission.value == 'Manual' %}selected{% endif %}>Manual</option>
+                            <option value="Automatic" {% if form.transmission.value == 'Automatic' %}selected{% endif %}>Automatic</option>
+                        </select>
+                        {% if form.transmission.errors %}
+                            <div class="text-red-600">{{ form.transmission.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="plate_type" class="block text-lg font-medium text-gray-700">Plate Type</label>
+                        <select name="plate_type" id="plate_type" 
+                                class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Plate Type</option>
+                            <option value="Even" {% if form.plate_type.value == 'Even' %}selected{% endif %}>Even</option>
+                            <option value="Odd" {% if form.plate_type.value == 'Odd' %}selected{% endif %}>Odd</option>
+                        </select>
+                        {% if form.plate_type.errors %}
+                            <div class="text-red-600">{{ form.plate_type.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+
+                    <div class="mb-6">
+                        <label for="price" class="block text-lg font-medium text-gray-700">Price</label>
+                        <input type="number" name="price" id="price" value="{{ form.price.value }}" step="0.01"
+                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        {% if form.price.errors %}
+                            <div class="text-red-600">{{ form.price.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="instalment" class="block text-lg font-medium text-gray-700">Instalment</label>
+                        <input type="number" name="instalment" id="instalment" value="{{ form.instalment.value }}" step="0.01"
+                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        {% if form.instalment.errors %}
+                            <div class="text-red-600">{{ form.instalment.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="image_url" class="block text-lg font-medium text-gray-700">Car Image URL</label>
+                        <input type="url" name="image_url" id="image_url" value="{{ form.image_url.value }}"
+                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        {% if form.image_url.errors %}
+                            <div class="text-red-600">{{ form.image_url.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Boolean Field Checklist Section -->
+                <div class="bg-gray-100 p-6 rounded-lg shadow-md mt-8">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-4">Additional Features</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="rear_camera" id="rear_camera" {% if form.rear_camera.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="rear_camera" class="ml-3 text-lg font-medium text-gray-700">Rear Camera</label>
+                        </div>
+
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="sun_roof" id="sun_roof" {% if form.sun_roof.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="sun_roof" class="ml-3 text-lg font-medium text-gray-700">Sun Roof</label>
+                        </div>
+
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="auto_retract_mirror" id="auto_retract_mirror" {% if form.auto_retract_mirror.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="auto_retract_mirror" class="ml-3 text-lg font-medium text-gray-700">Auto Retract Mirror</label>
+                        </div>
+
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="electric_parking_brake" id="electric_parking_brake" {% if form.electric_parking_brake.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="electric_parking_brake" class="ml-3 text-lg font-medium text-gray-700">Electric Parking Brake</label>
+                        </div>
+
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="map_navigator" id="map_navigator" {% if form.map_navigator.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="map_navigator" class="ml-3 text-lg font-medium text-gray-700">Map Navigator</label>
+                        </div>
+
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="vehicle_stability_control" id="vehicle_stability_control" {% if form.vehicle_stability_control.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="vehicle_stability_control" class="ml-3 text-lg font-medium text-gray-700">Vehicle Stability Control</label>
+                        </div>
+
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="keyless_push_start" id="keyless_push_start" {% if form.keyless_push_start.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="keyless_push_start" class="ml-3 text-lg font-medium text-gray-700">Keyless Push Start</label>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="sports_mode" id="sports_mode" {% if form.sports_mode.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="sports_mode" class="ml-3 text-lg font-medium text-gray-700">Sports Mode</label>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="camera_360_view" id="camera_360_view" {% if form.camera_360_view.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="camera_360_view" class="ml-3 text-lg font-medium text-gray-700">Camera 360 View</label>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="power_sliding_door" id="power_sliding_door" {% if form.power_sliding_door.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="power_sliding_door" class="ml-3 text-lg font-medium text-gray-700">Power Sliding Door</label>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" name="auto_cruise_control" id="auto_cruise_control" {% if form.auto_cruise_control.value %}checked{% endif %}
+                                   class="w-6 h-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="auto_cruise_control" class="ml-3 text-lg font-medium text-gray-700">Auto Cruise Control</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="mt-8 text-center">
+                    <button type="submit"
+                            class="bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-200">
+                        Submit Listing
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Error Messages -->
+            {% if messages %}
+            <div class="mt-8">
+                {% for message in messages %}
+                    <div class="bg-red-600 text-white p-4 rounded-lg">{{ message }}</div>
+                {% endfor %}
             </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.brand.id_for_label }}">Brand</label>
-                {{ form.brand }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.year.id_for_label }}">Year</label>
-                {{ form.year }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.mileage.id_for_label }}">Mileage</label>
-                {{ form.mileage }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.location.id_for_label }}">Location</label>
-                {{ form.location }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.transmission.id_for_label }}">Transmission</label>
-                {{ form.transmission }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.plate_type.id_for_label }}">Plate Type</label>
-                {{ form.plate_type }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.rear_camera.id_for_label }}">Rear Camera</label>
-                {{ form.rear_camera }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.sun_roof.id_for_label }}">Sun Roof</label>
-                {{ form.sun_roof }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.auto_retract_mirror.id_for_label }}">Auto Retract Mirror</label>
-                {{ form.auto_retract_mirror }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.electric_parking_brake.id_for_label }}">Electric Parking Brake</label>
-                {{ form.electric_parking_brake }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.map_navigator.id_for_label }}">Map Navigator</label>
-                {{ form.map_navigator }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.vehicle_stability_control.id_for_label }}">Vehicle Stability Control</label>
-                {{ form.vehicle_stability_control }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.keyless_push_start.id_for_label }}">Keyless Push Start</label>
-                {{ form.keyless_push_start }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.sports_mode.id_for_label }}">Sports Mode</label>
-                {{ form.sports_mode }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.camera_360_view.id_for_label }}">360 View Camera</label>
-                {{ form.camera_360_view }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.power_sliding_door.id_for_label }}">Power Sliding Door</label>
-                {{ form.power_sliding_door }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.auto_cruise_control.id_for_label }}">Auto Cruise Control</label>
-                {{ form.auto_cruise_control }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.price.id_for_label }}">Price</label>
-                {{ form.price }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.instalment.id_for_label }}">Instalment</label>
-                {{ form.instalment }}
-            </div>
-
-            <div class="mt-4 relative">
-                <label for="{{ form.image_url.id_for_label }}">Car Image URL</label>
-                {{ form.image_url }}
-            </div>
-
-            <div class="mt-8 relative">
-                <button type="submit" class="group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                    Create Car
-                </button>
-            </div>
-        </form>
-
-        {% if messages %}
-        <div class="mt-4 space-y-2">
-            {% for message in messages %}
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r" role="alert">
-                <p class="font-bold">Error</p>
-                <p>{{ message }}</p>
-            </div>
-            {% endfor %}
+            {% endif %}
         </div>
-        {% endif %}
-
-        <div class="text-center mt-8 albert-sans-semibold">
-            <p class="text-sm text-[#1f1c61]">
-                <a href="{% url 'product_catalog:car_list' %}" class="font-medium text-blue-700 hover:text-blue-800 transition duration-150 ease-in-out">
-                    Back to your cars
-                </a>
-            </p>
-        </div>
     </div>
-</div>
+</section>
 {% endblock content %}

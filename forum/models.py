@@ -13,7 +13,7 @@ class Category(models.TextChoices) :
 class Question(models.Model) :
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    car = models.OneToOneField(Car, on_delete=models.SET_NULL, null=True, blank=True)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=300)
     content = models.TextField()
     category = models.CharField(default=Category.UMUM, choices=Category.choices, max_length=2, null=False, blank=False)
