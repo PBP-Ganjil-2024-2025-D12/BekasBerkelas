@@ -104,3 +104,7 @@ def update_profile(request):
 @login_required(login_url=reverse_lazy('authentication:login'))
 def rating_list(request):
     return render(request, 'seller_rating_list.html', {})
+
+@login_required(login_url=reverse_lazy('authentication:login'))
+def verifikasi_penjual(request):
+    return render(request, 'adm_verifikasi_penjual.html', {})

@@ -28,7 +28,9 @@
                     <h2 class="albert-sans-thin">Ulasan Saya</h2>
                 </a>
             {% elif request.user.userprofile.role == 'ADM' %}
-                <p class="p-4 text-gray-600">Tipe pengguna tidak dikenal.</p>
+                <a class="p-4 rounded-md hover:bg-gray-100" href={% url 'dashboard:verifikasi_penjual' %}>
+                    <h2 class="albert-sans-thin">Verifikasi Penjual</h2>
+                </a>
             {% endif %}
 
         </div>
