@@ -25,7 +25,7 @@
     </div>
 {% endif %}
 
-<div class="flex flex-col items-center md:items-start md:grid md:grid md:grid-cols-[repeat(3,minmax(300px,1fr))] gap-4 px-4 py-4 min-h-screen p-10 min-w-full">
+<div class="flex flex-col items-center md:items-start md:grid md:grid md:grid-cols-[repeat(3,minmax(300px,1fr))] gap-4 px-4 py-4 min-h-screen p-10 -w-full">
     <div class="col-span-1 flex flex-col gap-4 items-center">
         <div class="h-min w-full max-w-80 flex flex-col gap-4 items-center p-5 border-2 border-gray-500 rounded-lg m-5">
             {% if request.user.userprofile.profile_picture %}
@@ -42,8 +42,8 @@
                 <button type="button" id="upload_profile" class="text-white albert-sans-semibold bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2">Upload Gambar</button>
             </form>
         </div>
-        <a class="w-full max-w-80" href={% url 'dashboard:change_password' %}>
-            <div class="w-full flex gap-2 items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5">
+        <a class="w-full min-w-64 max-w-80" href={% url 'dashboard:change_password' %}>
+            <div class="w-full flex gap-2 justify-center items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5">
                 <svg xmlns="http://www.w4.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M80-200v-80h800v80H80Zm46-242-52-30 34-60H40v-60h68l-34-58 52-30 34 58 34-58 52 30-34 58h68v60h-68l34 60-52 30-34-60-34 60Zm320 0-52-30 34-60h-68v-60h68l-34-58 52-30 34 58 34-58 52 30-34 58h68v60h-68l34 60-52 30-34-60-34 60Zm320 0-52-30 34-60h-68v-60h68l-34-58 52-30 34 58 34-58 52 30-34 58h68v60h-68l34 60-52 30-34-60-34 60Z"/></svg>
                     <h2 class="albert-sans-semibold"> Change Password </h2>
             </div>
@@ -69,9 +69,9 @@
             <h2 id="noTelpUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.no_telp }} </h2>
         </div>
 
-        <button id="modalNameButton" class="w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nama</button>
-        <button id="modalEmailShow" class="w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Email</button>
-        <button id="modalNoTelpShow" class="w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nomor Telepon</button>
+        <button id="modalNameButton" class="min-w-64 max-w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nama</button>
+        <button id="modalEmailShow" class="min-w-64 max-w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Email</button>
+        <button id="modalNoTelpShow" class="min-w-64 max-w-80 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nomor Telepon</button>
     </div>
 </div>
 
