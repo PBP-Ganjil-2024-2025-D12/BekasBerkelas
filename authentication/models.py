@@ -13,5 +13,5 @@ class UserProfile(models.Model) :
     email = models.EmailField()
     no_telp = models.CharField(default='-', max_length=12)
     role = models.CharField(default=UserRole.BUYER, choices=UserRole.choices, max_length=3)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    profile_picture = models.URLField(max_length=500, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
