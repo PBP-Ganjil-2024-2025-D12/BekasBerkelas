@@ -1,4 +1,4 @@
-{% extends base %}
+{% extends 'base_dashboard.html' %}
 {% load static %}
 
 {% block mainbar %}
@@ -25,7 +25,7 @@
     </div>
 {% endif %}
 
-<div class="flex flex-col items-center md:items-start md:grid md:grid-cols-4 gap-4 px-4 py-4 min-h-screen p-10 max-w-full">
+<div class="flex flex-col items-center md:items-start md:grid md:grid md:grid-cols-[repeat(3,minmax(300px,1fr))] gap-4 px-4 py-4 min-h-screen p-10 max-w-full">
     <div class="col-span-1 flex flex-col gap-4 items-center">
         <div class="h-min w-full max-w-80 flex flex-col gap-4 items-center p-5 border-2 border-gray-500 rounded-lg m-5">
             {% if request.user.userprofile.profile_picture %}
@@ -50,20 +50,20 @@
     </div>
 
 
-    <div class="col-span-3 flex flex-col gap-3 max-w-full items-center md:items-start">
+    <div class="col-span-2 flex flex-col gap-3 max-w-full items-center md:items-start">
         <h2 class="p-5 albert-sans-semibold text-lg"> Ubah Data Diri </h2>
 
-        <div class="flex gap-3 md:grid md:grid-cols-5 px-5">
+        <div class="flex gap-3 md:grid md:grid-cols-[repeat(3,minmax(100px,1fr))] px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Nama </h2>
             <h2 id="namaUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.name }} </h2>
         </div>
 
-        <div class="flex gap-3 md:grid md:grid-cols-5 px-5">
+        <div class="flex gap-3 md:grid md:grid-cols-[repeat(3,minmax(100px,1fr))] px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Email </h2>
             <h2 id="emailUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.email }} </h2>
         </div>
 
-        <div class="flex gap-3 md:grid md:grid-cols-5 px-5">
+        <div class="flex gap-3 md:grid md:grid-cols-[repeat(3,minmax(100px,1fr))] px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Nomor HP </h2>
             <h2 id="noTelpUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.no_telp }} </h2>
         </div>
