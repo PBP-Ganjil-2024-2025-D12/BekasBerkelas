@@ -1,9 +1,112 @@
 {% extends 'base.html' %} {% load static %}
-
 {% block meta %}
 <title>Forum | BekasBerkelas</title>
-{% endblock meta %}
+{% endblock meta %} 
 
 {% block content %}
 {% include 'navbar.html' %}
+<div class="overflow-x-hidden px-3 sm:px-4 md:px-8 pb-6 sm:pb-8 pt-20 sm:pt-24 min-h-screen bg-blue-100 flex flex-col">
+    <div class="w-full max-w-7xl mx-auto mb-4 sm:mb-6">
+        <a href="{% url 'forum:show_forum' %}" class="inline-flex items-center text-blue-600 hover:text-blue-800 albert-sans-semibold">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Kembali ke Forum
+        </a>
+    </div>
+
+    <div class="w-full max-w-7xl mx-auto mb-4 sm:mb-6 albert-sans-semibold">
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+            <div class="mb-6">
+                <div class="flex items-start justify-between mb-4">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ question.title }}</h1>
+
+                    <!-- IMPLEMENT THE EDIT DELETE FUNCTION -->
+                    {% if user == question.user or user.role == 'ADM' %}
+                    <div class="flex gap-2">
+                        <button class="text-blue-600 hover:text-blue-800" onclick="editQuestion('{{ question.id }}')">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800" onclick="deleteQuestion('{{ question.id }}')">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                    <div class="flex items-center">
+                        <img src="{% static 'images/default-avatar.png' %}" alt="Profile" class="w-8 h-8 rounded-full mr-2">
+                        <span>{{ question.user.username }}</span>
+                    </div>
+                    <span>{{ question.created_at|date:"d M Y, H:i" }} WIB</span>
+                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                        {% if question.category == 'UM' %}Umum
+                        {% elif question.category == 'JB' %}Jual Beli
+                        {% elif question.category == 'TT' %}Tips & Trik
+                        {% else %}Santai{% endif %}
+                    </span>
+                </div>
+
+                {% if question.car %}
+                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2">Related Car:</h3>
+                    <div class="flex items-center">
+                        <img src="{{ question.car.image.url }}" alt="{{ question.car.car_name }}" class="w-16 h-16 object-cover rounded-lg mr-4">
+                        <div>
+                            <p class="font-medium">{{ question.car.brand }} {{ question.car.car_name }}</p>
+                            <p class="text-sm text-gray-600">{{ question.car.year }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="prose max-w-none mb-8">
+                {{ question.content|linebreaks }}
+            </div>
+
+            <div class="border-t pt-6">
+                <h2 class="text-xl font-bold mb-4">Replies ({{ question.reply_count }})</h2>
+
+                <div class="space-y-4" id="repliesContainer">
+                    {% for reply in replies %}
+                    <div class="flex gap-4">
+                        <img src="{% static 'images/default-avatar.png' %}" alt="Profile" class="w-8 h-8 rounded-full">
+                        <div class="flex-1">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-medium">{{ reply.user.username }}</span>
+                                    <span class="text-sm text-gray-600">{{ reply.created_at|date:"d M Y, H:i" }} WIB</span>
+                                </div>
+                                <p class="text-gray-800">{{ reply.content|linebreaks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'forum:create_reply' question.id %}" class="mt-6">
+                    {% csrf_token %}
+                    <textarea 
+                        name="content"
+                        rows="3"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Add a reply..."></textarea>
+                    <div class="mt-2 flex justify-end">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-xl transition duration-300 ease-in-out text-sm shadow-sm">
+                            Post Reply
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
