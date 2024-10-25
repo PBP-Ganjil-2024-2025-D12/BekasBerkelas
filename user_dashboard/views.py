@@ -102,5 +102,5 @@ def update_profile(request):
 
 
 @login_required(login_url=reverse_lazy('authentication:login'))
-def product_list(request):
-    return render(request, 'seller_product_list.html', {})
+def rating_list(request):
+    return render(request, 'seller_rating_list.html', {})

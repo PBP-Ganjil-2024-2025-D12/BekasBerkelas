@@ -24,15 +24,15 @@
             </a>
 
             {% if request.user.userprofile.role == 'SEL' %}
-                <a class="p-4 rounded-md hover:bg-gray-100" href={% url 'dashboard:product_list' %}>
-                    <h2 class="albert-sans-thin">Produk Saya</h2>
+                <a class="p-4 rounded-md hover:bg-gray-100" href={% url 'dashboard:rating_list' %}>
+                    <h2 class="albert-sans-thin">Ulasan Saya</h2>
                 </a>
             {% elif request.user.userprofile.role == 'ADM' %}
                 <p class="p-4 text-gray-600">Tipe pengguna tidak dikenal.</p>
             {% endif %}
 
         </div>
-        <div class="bg-white min-w-80 max-w-80 md:max-w-full rounded-md md:col-span-4">
+        <div class="flex flex-col bg-white min-w-80 max-w-80 md:max-w-full h-full min-h-min rounded-md md:col-span-4">
             {% block mainbar %} {% endblock mainbar %}
         </div>
     </div>
