@@ -33,20 +33,11 @@ def user_biodata(request) :
 
 @login_required(login_url=reverse_lazy('authentication:login'))
 def upload_profile_picture(request):
-    if request.method == 'POST' and request.FILES['profile_picture']:
+    if request.method == 'POST':
         profile = request.user.userprofile
-        profile_picture = request.FILES['profile_picture']
+        profile_picture_url = request.POST["profile_picture_url"]
 
-        if profile.profile_picture:
-            old_file_path = os.path.join(settings.MEDIA_ROOT, profile.profile_picture.path)
-            
-            if os.path.exists(old_file_path):
-                os.remove(old_file_path)
-
-        new_filename = f"{uuid.uuid4()}.{profile_picture.name.split('.')[-1]}"
-        profile_picture.name = new_filename
-
-        profile.profile_picture = profile_picture
+        profile.profile_picture = profile_picture_url
         profile.save()
         messages.success(request, 'Profile picture uploaded successfully!')
 
