@@ -3,7 +3,7 @@ from authentication.models import UserProfile, UserRole
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from bekas_berkelas import settings
@@ -19,7 +19,7 @@ from django.http import JsonResponse
 def user_dashboard(request) :
     return redirect(reverse("dashboard:biodata"))
 
-@login_required
+@login_required(login_url=reverse_lazy('authentication:login')) # Handle Circular Import
 def user_biodata(request) :
     user = request.user
     user_profile = UserProfile.objects.get(user = user)
@@ -35,12 +35,12 @@ def user_biodata(request) :
         context = {'dashboard': 'base_admin_dashboard.html'}
         template = 'admin_dashboard.html'
     else:
-        redirect(reverse("auth:login"))
+        redirect(reverse_lazy("authentication:login"))
 
     return render(request, template, context)
 
 
-@login_required
+@login_required(login_url=reverse_lazy('authentication:login'))
 def upload_profile_picture(request):
     if request.method == 'POST' and request.FILES['profile_picture']:
         profile = request.user.userprofile
@@ -61,7 +61,7 @@ def upload_profile_picture(request):
 
     return redirect(reverse("dashboard:biodata"))
 
-@login_required
+@login_required(login_url=reverse_lazy('authentication:login'))
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(user=request.user, data=request.POST)
@@ -77,7 +77,7 @@ def change_password(request):
     
     return render(request, 'change_password.html', {'form': form})
 
-@login_required
+@login_required(login_url=reverse_lazy('authentication:login'))
 @csrf_exempt
 @require_POST
 def update_profile(request):
