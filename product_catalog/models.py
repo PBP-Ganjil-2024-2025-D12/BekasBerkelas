@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from user_dashboard.models import SellerProfile
 
 class Car(models.Model):
     CAR_TRANSMISSION_CHOICES = [
@@ -13,6 +14,7 @@ class Car(models.Model):
     ]
     
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    seller_buat_dashboard = models.ForeignKey(SellerProfile, on_delete=models.CASCADE)
     car_name = models.CharField(max_length=100)
     brand = models.CharField(max_length=100)
     year = models.PositiveIntegerField()
