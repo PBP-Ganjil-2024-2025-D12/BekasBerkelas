@@ -25,7 +25,7 @@
     </div>
 {% endif %}
 
-<div class="flex flex-col items-center md:items-start md:grid md:grid md:grid-cols-[repeat(3,minmax(300px,1fr))] gap-4 px-4 py-4 min-h-screen p-10 max-w-full">
+<div class="flex flex-col items-center md:items-start md:grid md:grid md:grid-cols-[repeat(3,minmax(300px,1fr))] gap-4 px-4 py-4 min-h-screen p-10 min-w-full">
     <div class="col-span-1 flex flex-col gap-4 items-center">
         <div class="h-min w-full max-w-80 flex flex-col gap-4 items-center p-5 border-2 border-gray-500 rounded-lg m-5">
             {% if request.user.userprofile.profile_picture %}
@@ -38,6 +38,7 @@
                 {% csrf_token %}
                 <label id="profile_upload" class="profile_picture albert-sans-thin">Upload Profile Picture</label>
                 <input type="hidden" id="profile_picture_url" name="profile_picture_url">
+                <input type="hidden" id="profile_picture_id" name="profile_picture_id">
                 <button type="button" id="upload_profile" class="text-white albert-sans-semibold bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2">Upload Gambar</button>
             </form>
         </div>
@@ -170,16 +171,23 @@
 <script src="https://upload-widget.cloudinary.com/latest/global/all.js" type="text/javascript">
 </script>
 <script>
+    var userid = {{request.user.id}}
+    var timeStamp = Date.now();
+
     var cloudinaryWidget = cloudinary.createUploadWidget({
         cloudName: 'dknxfk0qc', 
         uploadPreset: 'TK_PBP_D12',
         sources: ['local', 'camera'], 
         multiple: false,
         folder: 'user_profile_pictures',
-        maxFileSize: 2 * 1024 * 1024,
+        maxFileSize: 5 * 1024 * 1024,
+        cropping: true,
+        croppingAspectRatio: 1.0,
+        public_id: `profile_picture_user_${userid}_${timeStamp}`,
     }, (error, result) => { 
         if (!error && result && result.event === "success") { 
             $("#profile_picture_url").val(result.info.secure_url);
+            $("#profile_picture_id").val(result.info.public_id);
             $("#form_upload_profile").submit();
         }
     });

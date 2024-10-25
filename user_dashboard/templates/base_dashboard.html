@@ -24,7 +24,7 @@
             </a>
 
             {% if request.user.userprofile.role == 'SEL' %}
-                <a class="p-4 rounded-md hover:bg-gray-100" href="/product-list">
+                <a class="p-4 rounded-md hover:bg-gray-100" href={% url 'dashboard:product_list' %}>
                     <h2 class="albert-sans-thin">Produk Saya</h2>
                 </a>
             {% elif request.user.userprofile.role == 'ADM' %}
@@ -32,7 +32,7 @@
             {% endif %}
 
         </div>
-        <div class="bg-white rounded-md md: col-span-4">
+        <div class="bg-white rounded-md md:col-span-4 min-w-[316px] md:min-w-[900px]">
             {% block mainbar %} {% endblock mainbar %}
         </div>
     </div>

@@ -10,6 +10,7 @@ from bekas_berkelas import settings
 from django.contrib.auth import update_session_auth_hash
 import os
 import uuid
+import cloudinary.uploader
 from django.utils.html import strip_tags
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
@@ -36,8 +37,15 @@ def upload_profile_picture(request):
     if request.method == 'POST':
         profile = request.user.userprofile
         profile_picture_url = request.POST["profile_picture_url"]
+        profile_picture_id = request.POST["profile_picture_id"]
+        
+
+        if profile.profile_picture_id:
+            result = cloudinary.uploader.destroy(profile.profile_picture_id)
 
         profile.profile_picture = profile_picture_url
+        profile.profile_picture_id = profile_picture_id
+
         profile.save()
         messages.success(request, 'Profile picture uploaded successfully!')
 
@@ -65,7 +73,7 @@ def change_password(request):
 def update_profile(request):
     if request.method == 'POST':
         user_profile = request.user.userprofile
-        
+
         if 'name' in request.POST:
             user_profile.name = strip_tags(request.POST.get('name'))
             data = user_profile.name
@@ -73,7 +81,7 @@ def update_profile(request):
         
         if 'email' in request.POST:
             validator = EmailValidator()
-            email = request.POST.get('email');
+            email = request.POST.get('email')
             try:
                 validator(email)
                 user_profile.email = email
@@ -88,6 +96,11 @@ def update_profile(request):
         # Simpan perubahan yang dilakukan
         user_profile.save()
 
-        return JsonResponse({'status': 'success', 'message': 'Profile updated successfully', 'data' : data})
+        return JsonResponse({'status': 'success', 'message': 'Profile updated successfully', 'data': data})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+@login_required(login_url=reverse_lazy('authentication:login'))
+def product_list(request):
+    return render(request, 'seller_product_list.html', {})
