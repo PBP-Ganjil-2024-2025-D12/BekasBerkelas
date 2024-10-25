@@ -44,6 +44,9 @@
                     </button>
                     <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div class="py-1">
+                            <a href="/dashboard" class="block text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 hover:bg-gray-100">
+                                Account
+                            </a>
                             {% if request.user.userprofile.role == 'BUY' %}
                             <a href="#placeholder" class="block text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 hover:bg-gray-100">
                                 Wishlist
@@ -117,6 +120,9 @@
                     Wishlist
                 </a>
                 {% endif %}
+                <a href="/dashboard" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
+                    Account
+                </a>
                 <span class="block text-[#1f1c61] text-xl albert-sans-semibold px-3 py-2">
                     Halo, {{ request.user.userprofile.name }}!
                 </span>
