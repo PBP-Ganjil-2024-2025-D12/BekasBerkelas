@@ -25,19 +25,10 @@ def user_biodata(request) :
     user_profile = UserProfile.objects.get(user = user)
     user_role = user_profile.role
 
-    if user_role == UserRole.BUYER :
-        context = {'base': 'base_buyer_dashboard.html'}
-        template = 'biodata.html'
-    elif user_role == UserRole.SELLER:
-        context = {'base': 'base_seller_dashboard.html'}
-        template = 'biodata.html'
-    elif user_role == UserRole.ADMIN:
-        context = {'dashboard': 'base_admin_dashboard.html'}
-        template = 'admin_dashboard.html'
+    if user_role == UserRole.BUYER or user_role == UserRole.SELLER or user_role == UserRole.ADMIN  :
+        return render(request, 'biodata.html', {})
     else:
-        redirect(reverse_lazy("authentication:login"))
-
-    return render(request, template, context)
+        return redirect(reverse_lazy("authentication:login"))
 
 
 @login_required(login_url=reverse_lazy('authentication:login'))
