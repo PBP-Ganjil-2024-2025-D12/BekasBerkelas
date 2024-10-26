@@ -228,7 +228,7 @@ async function loadQuestions(page = 1) {
   });
 
   try {
-    const response = await fetch(`/forum/get-questions-json/?${params}`);
+    const response = await fetch(`/forum/get_questions_json/?${params}`);
     const data = await response.json();
 
     const questionsContainer = document.getElementById("questionsContainer");
@@ -277,7 +277,7 @@ async function loadQuestions(page = 1) {
 
 async function addForumEntry() {
   try {
-    const response = await fetch("/forum/create_question_ajax/", {
+    const response = await fetch("/forum/create_question/", {
       method: "POST",
       body: new FormData(document.querySelector("#carEntryForm")),
     });
