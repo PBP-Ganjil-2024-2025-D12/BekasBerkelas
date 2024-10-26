@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
     'main',
     'authentication',
     'user_dashboard',
@@ -144,5 +146,11 @@ MEDIA_ROOT = BASE_DIR / 'media'  # Path penyimpanan file media
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+cloudinary.config(
+    cloud_name = 'dknxfk0qc',
+    api_key = '333223883445576',
+    api_secret = '0IRoEZF3n6-Y3SL-ZGLRxR12iag',
+)
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost","http://127.0.0.1","http://steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id", "https://steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id"]
