@@ -178,6 +178,11 @@
         </div>
     </form>
 
+    {% if is_seller %}
+    <div class="mb-4">
+        <a href="{% url 'product_catalog:create_car' %}" class="bg-green-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">Create New Car</a>
+    </div>
+    {% endif %}
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
         {% for car in cars %}
@@ -188,7 +193,17 @@
             <div class="mt-2">
                 <h3 class="text-lg font-bold">{{ car.car_name }} - <span class="text-blue-500">Rp {{ car.price }}</span></h3>
             </div>
-            {% if is_admin %}
+            {% if is_buyer %}
+            <div class="flex items-center space-x-2 mt-4">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
+                <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="openContactModal({{ car.id }})">Contact Me</button>
+                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" title="Add to Wishlist" onclick="toggleWishlist(this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" id="wishlist-icon-{{ car.id }}">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                </button>
+            </div>        
+            {% else %}
             <div class="flex items-center space-x-2 mt-4">
                 <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
                 <form method="POST" action="{% url 'product_catalog:delete_car' car.id %}" style="display:inline;">
@@ -196,16 +211,6 @@
                     <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded" onclick="return confirm('Are you sure you want to delete this car?');">Delete</button>
                 </form>
             </div>
-            {% else %}
-            <div class="flex items-center space-x-2 mt-4">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="toggleDetails({{ car.id }})">View Details</button>
-                <button class="bg-green-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="openContactModal({{ car.id }})">Contact Me</button>
-                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" title="Add to Wishlist" onclick="toggleWishlist(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" id="wishlist-icon-{{ car.id }}">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                    </svg>
-                </button>
-            </div>        
             {% endif %}
     
             <div id="car-details-{{ car.id }}" class="hidden mt-4 bg-gray-100 p-4 rounded">
@@ -234,11 +239,12 @@
                 <button class="mt-2 bg-red-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">Close</button>
             </div>
 
-            <div id="contact-modal-{{ car.id }}" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center" role="dialog" aria-labelledby="modal-title-{{ car.id }}" aria-modal="true">
+            <div id="contact-modal-{{ car.id }}" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
-                    <div class="modal-content">
-                        <p>Loading...</p> <!-- Placeholder while loading -->
-                    </div>
+                    <h2 class="text-xl font-bold mb-4">Contact Seller</h2>
+                    <p><strong>Seller's Email:</strong> {{ car.seller.userprofile.email }}</p>
+                    <p><strong>Seller's No Telp:</strong> {{ car.seller.userprofile.no_telp }}</p>
+                    <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="closeContactModal({{ car.id }})">Close</button>
                 </div>
             </div>
         </div>
@@ -282,37 +288,6 @@
                 icon.classList.add('text-red-500');
             }
         }
-        function openContactModal(carId) {
-    const modal = document.getElementById(`contact-modal-${carId}`);
-    const modalContent = modal.querySelector('.modal-content');
-    modalContent.innerHTML = '<p>Loading...</p>'; // Show loading message
-
-    fetch(`/katalog/car/${carId}/contact/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.error) {
-                modalContent.innerHTML = '<p>Error loading contact information.</p>';
-            } else {
-                modalContent.innerHTML = `
-                    <h2 class="text-xl font-bold mb-4">Contact Seller</h2>
-                    <p><strong>Seller's Email:</strong> ${data.email}</p>
-                    <p><strong>Seller's Phone:</strong> ${data.phone}</p>
-                    <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="closeContactModal(${carId})">Close</button>
-                `;
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching contact details:', error);
-            modalContent.innerHTML = '<p>Error loading contact information. Please try again.</p>';
-        });
-
-    modal.classList.remove('hidden');
-}
     </script>
 </section>
 {% endblock content %}
