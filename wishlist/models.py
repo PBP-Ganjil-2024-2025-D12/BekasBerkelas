@@ -6,7 +6,10 @@ from product_catalog.models import Car
 
 class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ['user', 'car']
+        
     def __str__(self):
         return f"{self.car.car_name}"
