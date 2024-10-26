@@ -1,29 +1,76 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from .models import Wishlist
 from product_catalog.models import Car
+from django.views.decorators.http import require_http_methods
+import json
 
+@require_http_methods(["POST"])
 @login_required(login_url='/login')
-def add_to_wishlist(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-    
-    if request.method == "POST":
-        exisiting_item = Wishlist.objects.filter(user=request.user, car=car).exists()
+def add_to_wishlist(request):
+    try:
+        data = json.loads(request.body)
+        car_id = data.get('car_id')
         
-        if not exisiting_item:
-            wishlist_item = Wishlist(User=request.user, car=car)
-            wishlist_item.save()
-            return redirect("wishlist.html")
+        if not car_id:
+            return JsonResponse({'message': 'Car ID is required'}, status=400)
+            
+        car = get_object_or_404(Car, id=car_id)
+        user_profile = request.user.userprofile
+        wishlist_item, created = Wishlist.objects.get_or_create(user=user_profile, car=car)
         
-    return redirect("product_catalog.html")
+        if created:
+            return JsonResponse({'status': 'added', 'message': 'Car added to wishlist'})
+        else:
+            wishlist_item.delete()
+            return JsonResponse({'status': 'removed', 'message': 'Car removed from wishlist'})
+            
+    except json.JSONDecodeError:
+        return JsonResponse({'message': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'message': str(e)}, status=500)
+
 
 @login_required(login_url='/login')
 def show_wishlist(request):
     wishlists = Wishlist.objects.filter(user=request.user)
-    return render(request, 'wishlist.html', {'wishlist' : wishlists})
+    context = {
+        'wishlists': wishlists
+    }
+    return render(request, 'wishlist.html', context)
 
 @login_required(login_url='/login')
-def remove_from_wishlist(request, car_id):
-    wishlist_item = get_object_or_404(Wishlist, user=request.user, car_id=car_id)
-    wishlist_item.delete()
-    return redirect('wishlist_page')
+@require_http_methods(["POST"])
+def update_wishlist(request, pk):
+    try:
+        wishlist_item = get_object_or_404(Wishlist, pk=pk, user=request.user)
+        data = json.loads(request.body)
+        
+        if 'priority' in data:
+            wishlist_item.priority = data['priority']
+            
+        wishlist_item.save()
+        
+        return JsonResponse({'status': 'success', 'message': 'Wishlist updated successfully', 'priority': wishlist_item.priority})
+    
+    except json.JSONDecodeError:
+        return JsonResponse({'message': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+        
+@require_http_methods(["POST"])
+@login_required(login_url='/login')
+def remove_from_wishlist(request, pk):
+    try:
+        wishlist = get_object_or_404(Wishlist, pk=pk, user=request.user)
+        wishlist.delete()
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Wishlist item deleted successfully'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
