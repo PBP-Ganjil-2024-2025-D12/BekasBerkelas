@@ -65,12 +65,7 @@ def remove_from_wishlist(request, pk):
     try:
         wishlist = get_object_or_404(Wishlist, pk=pk, user=request.user)
         wishlist.delete()
-        return JsonResponse({
-            'status': 'success',
-            'message': 'Wishlist item deleted successfully'
-        })
+        return JsonResponse({'status': 'success', 'message': 'Wishlist item deleted successfully'})
+    
     except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=500)
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
