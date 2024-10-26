@@ -42,6 +42,25 @@ def show_wishlist(request):
 
 @login_required(login_url='/login')
 @require_http_methods(["POST"])
+def update_wishlist(request, pk):
+    try:
+        wishlist_item = get_object_or_404(Wishlist, pk=pk, user=request.user)
+        data = json.loads(request.body)
+        
+        if 'priority' in data:
+            wishlist_item.priority = data['priority']
+            
+        wishlist_item.save()
+        
+        return JsonResponse({'status': 'success', 'message': 'Wishlist updated successfully', 'priority': wishlist_item.priority})
+    
+    except json.JSONDecodeError:
+        return JsonResponse({'message': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+        
+@require_http_methods(["POST"])
+@login_required(login_url='/login')
 def remove_from_wishlist(request, pk):
     try:
         wishlist = get_object_or_404(Wishlist, pk=pk, user=request.user)
