@@ -1,4 +1,4 @@
-{% extends base %}
+{% extends 'base_dashboard.html' %}
 {% load static %}
 
 {% block mainbar %}
@@ -25,52 +25,71 @@
     </div>
 {% endif %}
 
-<div class="grid grid-cols-[repeat(4,minmax(260px,1fr))] gap-4 w-screen px-4 py-4 w-full min-h-screen p-10 max-w-full">
+<div class="flex gap-2 mt-4 mx-4 pt-3 pl-5 pb-3 border-b border-gray-400 p-4 ">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M560-440h200v-80H560v80Zm0-120h200v-80H560v80ZM200-320h320v-22q0-45-44-71.5T360-440q-72 0-116 26.5T200-342v22Zm160-160q33 0 56.5-23.5T440-560q0-33-23.5-56.5T360-640q-33 0-56.5 23.5T280-560q0 33 23.5 56.5T360-480ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z"/></svg>
+    <h2 class="albert-sans-semibold"> Biodata </h2>
+</div>
+<div class="flex flex-col grow items-center md:items-start md:grid md:grid md:grid-cols-[repeat(3,minmax(300px,1fr))] gap-4 py-4 p-10 w-full">
     <div class="col-span-1 flex flex-col gap-4 items-center">
         <div class="h-min w-full max-w-80 flex flex-col gap-4 items-center p-5 border-2 border-gray-500 rounded-lg m-5">
             {% if request.user.userprofile.profile_picture %}
-                <img class="w-28 h-28" src="{{ request.user.userprofile.profile_picture.url }}" alt="Profile Picture" width="400" height="400">
+                <img class="w-28 h-28" src="{{ request.user.userprofile.profile_picture }}" alt="Profile Picture" width="400" height="400">
             {% else %}
                 <img class="w-28 h-28" src="{% static 'user_dashboard/image/default-profile.png' %}" alt="Default Profile Picture" width="400" height="400">
             {% endif %}
 
-            <form class="flex flex-col gap-3 items-center" action="{% url 'dashboard:upload_profile_picture' %}" method="POST" enctype="multipart/form-data">
+            <form id="form_upload_profile" class="flex flex-col gap-3 items-center" action="{% url 'dashboard:upload_profile_picture' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <label for="profile_picture albert-sans-thin">Upload Profile Picture</label>
-                <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none" type="file" name="profile_picture" id="profile_picture" accept="image/*">
-                <button class="text-white albert-sans-semibold bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2" type="submit">Upload</button>
+                <label id="profile_upload" class="profile_picture albert-sans-thin">Upload Profile Picture</label>
+                <input type="hidden" id="profile_picture_url" name="profile_picture_url">
+                <input type="hidden" id="profile_picture_id" name="profile_picture_id">
+                <button type="button" id="upload_profile" class="text-white albert-sans-semibold bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2">Upload Gambar</button>
             </form>
         </div>
-        <a class="w-full max-w-80" href={% url 'dashboard:change_password' %}>
-            <div class="w-full flex gap-2 items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5">
+        {% if not request.user.userprofile.role == 'ADM' %}
+        <a class="w-full min-w-64 max-w-80" href={% url 'dashboard:change_password' %}>
+            <div class="w-full flex gap-2 justify-center items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5">
                 <svg xmlns="http://www.w4.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M80-200v-80h800v80H80Zm46-242-52-30 34-60H40v-60h68l-34-58 52-30 34 58 34-58 52 30-34 58h68v60h-68l34 60-52 30-34-60-34 60Zm320 0-52-30 34-60h-68v-60h68l-34-58 52-30 34 58 34-58 52 30-34 58h68v60h-68l34 60-52 30-34-60-34 60Zm320 0-52-30 34-60h-68v-60h68l-34-58 52-30 34 58 34-58 52 30-34 58h68v60h-68l34 60-52 30-34-60-34 60Z"/></svg>
                     <h2 class="albert-sans-semibold"> Change Password </h2>
             </div>
         </a>
+        {% endif %}
     </div>
 
 
-    <div class="col-span-3 flex flex-col gap-3 max-w-full">
+    <div class="col-span-2 flex flex-col gap-3 max-w-full items-center md:items-start">
         <h2 class="p-5 albert-sans-semibold text-lg"> Ubah Data Diri </h2>
 
-        <div class="grid grid-cols-5 px-5">
+        <div class="flex gap-3 md:grid md:grid-cols-[repeat(3,minmax(100px,1fr))] px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Nama </h2>
             <h2 id="namaUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.name }} </h2>
         </div>
 
-        <div class="grid grid-cols-5 px-5">
+        <div class="flex gap-3 md:grid md:grid-cols-[repeat(3,minmax(100px,1fr))] px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Email </h2>
             <h2 id="emailUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.email }} </h2>
         </div>
 
-        <div class="grid grid-cols-5 px-5">
+        <div class="flex gap-3 md:grid md:grid-cols-[repeat(3,minmax(100px,1fr))] px-5">
             <h2 class"col-span-3 albert-sans-semibold"> Nomor HP </h2>
             <h2 id="noTelpUser" class="col-span-2 albert-sans-semibold"> {{ request.user.userprofile.no_telp }} </h2>
         </div>
 
-        <button id="modalNameButton" class="w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nama</button>
-        <button id="modalEmailShow" class="w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Email</button>
-        <button id="modalNoTelpShow" class="w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nomor Telepon</button>
+        {% if request.user.userprofile.role == 'SEL' and not request.user.userprofile.is_verified %}
+        <div class="flex gap-3 md:grid md:grid-cols-[repeat(3,minmax(100px,1fr))] px-5">
+            <h2 class"col-span-3 albert-sans-semibold"> Status </h2>
+            <h2 id="noTelpUser" class="text-yellow-500 col-span-2 albert-sans-semibold text-nowrap"> Menunggu Verifikasi </h2>
+        </div>
+        {% elif request.user.userprofile.role == 'SEL' and request.user.userprofile.is_verified %}
+        <div class="flex gap-3 md:grid md:grid-cols-[repeat(3,minmax(100px,1fr))] px-5">
+            <h2 class"col-span-3 albert-sans-semibold"> Status </h2>
+            <h2 id="noTelpUser" class="text-green-500 col-span-2 albert-sans-semibold"> Terverifikasi </h2>
+        </div>
+        {% endif %}
+
+        <button id="modalNameButton" class="min-w-64 max-w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nama</button>
+        <button id="modalEmailShow" class="min-w-64 max-w-80 gap-2 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Email</button>
+        <button id="modalNoTelpShow" class="min-w-64 max-w-80 albert-sans-semibold text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5" type="submit">Ubah Nomor Telepon</button>
     </div>
 </div>
 
@@ -167,7 +186,37 @@
 </div>
 
 <script src="{% static 'user_dashboard/js/show_messages.js' %}"></script>
+<script src="https://upload-widget.cloudinary.com/latest/global/all.js" type="text/javascript">
+</script>
 <script>
+    var userid = {{request.user.id}}
+    var timeStamp = Date.now();
+
+    var cloudinaryWidget = cloudinary.createUploadWidget({
+        cloudName: 'dknxfk0qc', 
+        uploadPreset: 'TK_PBP_D12',
+        sources: ['local', 'camera'], 
+        multiple: false,
+        folder: 'user_profile_pictures',
+        maxFileSize: 5 * 1024 * 1024,
+        cropping: true,
+        croppingAspectRatio: 1.0,
+        public_id: `profile_picture_user_${userid}_${timeStamp}`,
+    }, (error, result) => { 
+        if (!error && result && result.event === "success") { 
+            $("#profile_picture_url").val(result.info.secure_url);
+            $("#profile_picture_id").val(result.info.public_id);
+            $("#form_upload_profile").submit();
+        }
+    });
+
+    $(document).ready(function(){
+        $("#upload_profile").on("click", function(event){
+            event.preventDefault();
+            cloudinaryWidget.open();
+        });
+    });
+
     function showModal(modalId) {
         const modal = $('#crudModal');
         const modalContent = $(modalId);

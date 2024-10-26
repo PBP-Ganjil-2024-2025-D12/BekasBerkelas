@@ -1,0 +1,17 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block mainbar %}
+<div class="flex gap-2 mt-4 mx-4 pt-3 pl-5 pb-3 border-b border-gray-400 p-4 ">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"/></svg>
+    <h2 class="albert-sans-semibold"> Verifikasi Penjual </h2>
+</div>
+<div class="flex flex-col grow items-center md:items-start md:grid md:grid md:grid-cols-[repeat(3,minmax(300px,1fr))] gap-4 py-4 p-10 w-full">
+    {% if not request.user.reviewrating %}
+    <div class="col-span-3 gap-5 h-full flex flex-col justify-center items-center ">
+        <svg xmlns="http://www.w3.org/2000/svg" height="50px" viewBox="0 -960 960 960" width="50px" fill="#9CA3AF"><path d="M720-120H280v-520l280-280 50 50q7 7 11.5 19t4.5 23v14l-44 174h258q32 0 56 24t24 56v80q0 7-2 15t-4 15L794-168q-9 20-30 34t-44 14Zm-360-80h360l120-280v-80H480l54-220-174 174v406Zm0-406v406-406Zm-80-34v80H160v360h120v80H80v-520h200Z"/></svg>
+        <h2 class="text-center text-gray-600 text-lg albert-sans-semibold"> Oops, sepertinya belum ada yang memberikan ulasan untuk produk Anda. <br> Ulasan akan muncul di sini setelah pelanggan memberikan feedback.</h2>
+    </div>
+    {% endif %}
+</div>
+{% endblock mainbar %}
