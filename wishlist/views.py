@@ -28,6 +28,7 @@ def add_to_wishlist(request):
             
     except json.JSONDecodeError:
         return JsonResponse({'message': 'Invalid JSON'}, status=400)
+    
     except Exception as e:
         return JsonResponse({'message': str(e)}, status=500)
 
@@ -56,6 +57,7 @@ def update_wishlist(request, pk):
     
     except json.JSONDecodeError:
         return JsonResponse({'message': 'Invalid JSON'}, status=400)
+    
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
         
