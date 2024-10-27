@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -11,7 +12,7 @@ from django.shortcuts import get_object_or_404
 
 @login_required(login_url='/auth/login')
 def show_profile(request, username):
-    seller = get_object_or_404(SellerProfile, username=username)
+    seller = get_object_or_404(SellerProfile, user_profile=UserProfile.objects.get(user=User.objects.get(username=username)))
     reviews = ReviewRating.objects.filter(reviewee=seller)
     cars = Car.objects.filter(seller_buat_dashboard=seller)
     context = {
