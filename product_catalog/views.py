@@ -189,10 +189,25 @@ def car_list(request):
 
 @login_required
 def view_details(request, car_id):
-
     car = get_object_or_404(Car, id=car_id)
+    
+    features = [
+        ('Rear Camera', car.rear_camera),
+        ('Sun Roof', car.sun_roof),
+        ('Auto Retract Mirror', car.auto_retract_mirror),
+        ('Electric Parking Brake', car.electric_parking_brake),
+        ('Map Navigator', car.map_navigator),
+        ('Vehicle Stability Control', car.vehicle_stability_control),
+        ('Keyless Push Start', car.keyless_push_start),
+        ('Sports Mode', car.sports_mode),
+        ('Camera 360 View', car.camera_360_view),
+        ('Power Sliding Door', car.power_sliding_door),
+        ('Auto Cruise Control', car.auto_cruise_control)
+    ]
+
     context = {
         'car': car,
+        'features': features,
     }
     return render(request, 'detail.html', context)
 
