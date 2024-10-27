@@ -21,8 +21,8 @@
                     <div class="flex-shrink-0">
                         <img class="w-8 h-8 rounded-full" src={{ info.profile_pic }} alt="Neil image">
                     </div>
-                    <div class="truncate mr-auto min-w-0 ms-4">
-                        <p class="text-sm font-medium text-gray-900">
+                    <div class="mr-auto min-w-0 ms-4">
+                        <p class="truncate text-sm font-medium text-gray-900">
                             {{info.nama}}
                         </p>
                         <p class="truncate text-sm text-gray-500">
@@ -173,7 +173,15 @@
         modalContent.addClass('opacity-0 scale-95');
         
         setTimeout(() => {
-            $('#responseMessage').text('');
+            $('#profile_pic_modal').attr('src','/static/user_dashboard/image/default-profile.png');
+            $('#idUser').text('Loading..')
+            $('#namaUser').text('Loading..')
+            $('#emailUser').text('Loading..')
+            $('#noTelpUser').text('Loading..')
+            $('#roleUser').text('Loading..')
+            $("#statusUser").text('Loading..')
+            $("#inputIdUser").val('Loading..')
+
             modal.addClass('hidden');
             modalContent.addClass('hidden');
         }, 150);
