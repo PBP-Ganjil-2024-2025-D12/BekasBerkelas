@@ -16,7 +16,6 @@ class Car(models.Model):
     ]
     
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
-    seller_buat_dashboard = models.ForeignKey(SellerProfile, on_delete=models.CASCADE)
     car_name = models.CharField(max_length=100)
     brand = models.CharField(max_length=100)
     year = models.PositiveIntegerField()
