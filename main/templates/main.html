@@ -1,9 +1,57 @@
-{% extends 'base.html' %} {% load static %} 
+{% extends 'base.html' %} 
+{% load static %} 
 
 {% block meta %}
 <title>Bekas Berkelas</title>
 {% endblock meta %} 
+
 {% block content %}
 {% include 'navbar.html' %}
+<div class="min-h-screen bg-white flex items-center justify-center">
+    <div class="container mx-auto px-4 py-16 sm:py-20">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <div class="w-full md:w-1/2">
+                <div class="relative w-full">
+                    <div class="relative w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] md:w-[450px] md:h-[450px] mx-auto rounded-full mt-5 sm:mt-0 overflow-hidden">
+                        <img src="{% static 'image/hero-image.png' %}" alt="Hero Section Image" >
+                    </div>
+                </div>
+            </div>
 
+            <div class="w-full md:w-1/2 text-center md:text-left px-4 md:px-0">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 albert-sans-semibold">
+                    <div class="inline-block">
+                        <span class="text-[#0728bb]">mobil </span>
+                        <span class="text-[#174ff3]">bekas</span>
+                    </div>
+                    <br />
+                    <div class="inline-block">
+                        <span class="text-[#0728bb]">kualitas </span>
+                        <span class="text-[#174ff3]">berkelas</span>
+                    </div>
+                </h1>
+                
+                <p class="text-lg md:text-xl lg:text-2xl leading-relaxed tracking-wide max-w-prose mb-8">
+                    Temukan mobil bekas terpilih dengan kualitas premium dan 
+                    harga terjangkau. Inspeksi ketat, performa terbaik—mobil 
+                    impian Anda menunggu di sini. Pilih mobil berkelas, rasakan 
+                    kepuasan tanpa kompromi!
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start albert-sans-semibold">
+                    <button onclick="window.location.href='/#'" class="w-full sm:w-auto px-4 sm:px-6 py-3 rounded-lg border border-blue-600 text-[#0728bb] hover:bg-blue-50 transition-colors text-sm sm:text-base">
+                        Jual Mobil Anda
+                    </button>
+                    <button onclick="window.location.href='/#'" class="w-full sm:w-auto px-4 sm:px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center justify-center sm:justify-start gap-2 text-sm sm:text-base">
+                        Cari Mobil
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14"/>
+                            <path d="M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

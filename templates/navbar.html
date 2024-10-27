@@ -7,22 +7,18 @@
             </div>
         
             <div class="md:flex items-center hidden">
-                <a href="#homepage" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
+                <a href="{% url 'main:main' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Beranda
                 </a>
-
-                {% if request.user.is_authenticated %}
-                {% if request.user.userprofile.role == 'BUY' or request.user.userprofile.role == 'ADM' %}
-                <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
+                
+                <a href="{% url 'product_catalog:car_list' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Katalog
                 </a>
-                {% endif %}
 
-                {% if request.user.userprofile.role == 'SEL' %}
-                <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
+                {% if request.user.is_authenticated and request.user.userprofile.role == 'SEL' %}
+                <a href="{% url 'product_catalog:mobil_saya' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Mobil Saya
                 </a>
-                {% endif %}
                 {% endif %}
 
                 <a href="{% url 'forum:show_forum' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-4">
@@ -33,7 +29,8 @@
                 <div class="relative inline-block text-left">
                     <button id="dropdown-button" class="inline-flex items-center text-[#1f1c61] hover:text-blue-800">
                         <span class="text-[#1f1c61] text-xl albert-sans-semibold mr-2">
-                            Welcome, {{ request.user.userprofile.name }}
+                            Welcome, 
+                            <span class="text-[#5A71BC]">{{ request.user.userprofile.name }}</span>
                         </span>
                         <svg id="" class="w-4 h-4 down-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M6 9l6 6 6-6" />
@@ -44,6 +41,9 @@
                     </button>
                     <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div class="py-1">
+                            <a href="/dashboard" class="block text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 hover:bg-gray-100">
+                                Account
+                            </a>
                             {% if request.user.userprofile.role == 'BUY' %}
                             <a href="#placeholder" class="block text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 hover:bg-gray-100">
                                 Wishlist
@@ -89,22 +89,18 @@
 
     <div class="mobile-menu hidden md:hidden px-4 w-full md:max-w-full">
         <div class="pt-2 pb-3 space-y-1 mx-auto">
-            <a href="#homepage" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
+            <a href="{% url 'main:main' %}" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
                 Beranda
             </a>
 
-            {% if request.user.is_authenticated %}
-            {% if request.user.userprofile.role == 'BUY' or request.user.userprofile.role == 'ADM' %}
             <a href="#placeholder" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] px-3 py-2 mb-2">
                 Katalog
             </a>
-            {% endif %}
 
-            {% if request.user.userprofile.role == 'SEL' %}
+            {% if request.user.is_authenticated and request.user.userprofile.role == 'SEL' %}
             <a href="#placeholder" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] px-3 py-2 mb-2">
                 Mobil Saya
             </a>
-            {% endif %}
             {% endif %}
             
             <a href="{% url 'forum:show_forum' %}" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
@@ -118,9 +114,15 @@
                 </a>
                 {% endif %}
                 <span class="block text-[#1f1c61] text-xl albert-sans-semibold px-3 py-2">
-                    Halo, {{ request.user.userprofile.name }}!
+                    Welcome, 
+                    <span class="text-[#5A71BC]">
+                        {{ request.user.userprofile.name }}!
+                    </span>
                 </span>
-                <a href="{% url 'authentication:logout' %}" class="block text-red-600 text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
+                <a href="/dashboard" class="block text-[#1f1c61] text-xl ml-3 albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
+                    Account
+                </a>
+                <a href="{% url 'authentication:logout' %}" class="block text-red-600 ml-3 text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
                     Logout
                 </a>
             {% endif %}

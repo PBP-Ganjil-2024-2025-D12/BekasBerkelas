@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% load static %}
+
+{% block meta %}
+<title>Profile | {{ seller.username }}</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="flex w-full">
+    <!-- left column -->
+    <div class="max-w-[33%]">
+        <img src="{% static 'image/logo-text.png' %}" alt="Logo" class="h-40 md:h-60 lg:h-80">
+        <label class="albert-sans-semibold">{{ seller.username }}</label>
+        <div class="flex items-center space-x-2">
+            <img src="{% static 'image/star_fill.svg' %}" alt="star" class="h-4">
+            <label class="albert-sans-semibold">{{ seller.rating }}</label>
+        </div>
+    </div>
+    <!-- rught column -->
+    <div class="max-w-[67%]">
+        {% if not cars %}
+        {% else %}
+            <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+                {% for car in cars %}
+                <div class="max-w-sm w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                    <div class="p-6">
+                      <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ car.car_name }}</h2>
+                      <p class="text-lg text-gray-600">{{ car.price }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div id='review_cards'></div>
+    </div>
+</div>
+
+
+{% endblock %}

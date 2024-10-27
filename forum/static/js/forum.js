@@ -1,3 +1,105 @@
+let currentQuestionId = null;
+let currentReplyId = null;
+
+function showDeleteModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const modalContent = document.getElementById(`${modalId}Content`);
+
+    modal.classList.remove("hidden");
+    setTimeout(() => {
+        modalContent.classList.remove("opacity-0", "scale-95");
+        modalContent.classList.add("opacity-100", "scale-100");
+    }, 50);
+}
+
+function hideDeleteModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const modalContent = document.getElementById(`${modalId}Content`);
+
+    modalContent.classList.remove("opacity-100", "scale-100");
+    modalContent.classList.add("opacity-0", "scale-95");
+
+    setTimeout(() => {
+        modal.classList.add("hidden");
+    }, 150);
+}
+
+window.deleteQuestion = function(questionId) {
+    currentQuestionId = questionId;
+    showDeleteModal('deleteQuestionModal');
+}
+
+window.deleteReply = function(questionId, replyId) {
+    currentQuestionId = questionId;
+    currentReplyId = replyId;
+    showDeleteModal('deleteReplyModal');
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('confirmDeleteQuestion')?.addEventListener('click', async function() {
+        try {
+            const formData = new FormData();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            formData.append('csrfmiddlewaretoken', csrfToken);
+
+            const response = await fetch(`/forum/${currentQuestionId}/delete_question/`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                window.location.href = '/forum/';
+            } else {
+                throw new Error('Failed to delete question');
+            }
+        } catch (error) {
+            console.error('Error deleting question:', error);
+        }
+        hideDeleteModal('deleteQuestionModal');
+    });
+
+    document.getElementById('confirmDeleteReply')?.addEventListener('click', async function() {
+        try {
+            const formData = new FormData();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            formData.append('csrfmiddlewaretoken', csrfToken);
+
+            const response = await fetch(`/forum/${currentQuestionId}/delete_reply/${currentReplyId}/`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Failed to delete reply');
+            }
+        } catch (error) {
+            console.error('Error deleting reply:', error);
+        }
+        hideDeleteModal('deleteReplyModal');
+    });
+
+    document.querySelectorAll('.close-modal').forEach(button => {
+        button.addEventListener('click', function() {
+            const modalId = this.closest('[id$="Modal"]').id;
+            hideDeleteModal(modalId);
+        });
+    });
+
+    window.addEventListener('click', function(event) {
+        const deleteQuestionModal = document.getElementById('deleteQuestionModal');
+        const deleteReplyModal = document.getElementById('deleteReplyModal');
+        
+        if (event.target === deleteQuestionModal) {
+            hideDeleteModal('deleteQuestionModal');
+        }
+        if (event.target === deleteReplyModal) {
+            hideDeleteModal('deleteReplyModal');
+        }
+    });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("car_search");
   const dropdown = document.getElementById("car_dropdown");
@@ -78,6 +180,27 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   updateVisibleOptions();
+  loadQuestions();
+
+  let searchTimeout;
+  const forumSearchInput = document.querySelector(
+    'input[placeholder="Cari Diskusi..."]'
+  );
+  forumSearchInput.addEventListener("input", function () {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => loadQuestions(), 300);
+  });
+
+  const filterSelects = document.querySelectorAll("select");
+  filterSelects.forEach((select) => {
+    select.addEventListener("change", () => loadQuestions());
+  });
+
+  const carEntryForm = document.getElementById("carEntryForm");
+  carEntryForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    addForumEntry();
+  });
 });
 
 function showModal() {
@@ -103,9 +226,6 @@ function hideModal() {
   }, 150);
 }
 
-document.getElementById("cancelButton").addEventListener("click", hideModal);
-document.getElementById("closeModalBtn").addEventListener("click", hideModal);
-
 function getCategoryLabel(category) {
   const categories = {
     UM: "Umum",
@@ -118,52 +238,63 @@ function getCategoryLabel(category) {
 
 function createForumCard(question) {
   const categoryLabel = getCategoryLabel(question.fields.category);
-  const categoryColorClass =
-    {
-      UM: "bg-blue-100 text-blue-800",
-      JB: "bg-green-100 text-green-800",
-      TT: "bg-purple-100 text-purple-800",
-      SA: "bg-yellow-100 text-yellow-800",
-    }[question.fields.category] || "bg-gray-100 text-gray-800";
+  const categoryColorClass = {
+      UM: "bg-blue-100 text-blue-800 albert-sans-semibold",
+      JB: "bg-green-100 text-green-800 albert-sans-semibold",
+      TT: "bg-purple-100 text-purple-800 albert-sans-semibold",
+      SA: "bg-yellow-100 text-yellow-800 albert-sans-semibold",
+  }[question.fields.category] || "bg-gray-100 text-gray-800 albert-sans-semibold";
+
+  const sanitizedContent = DOMPurify.sanitize(question.fields.content);
 
   return `
-        <div class="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
-            <div class="flex items-start space-x-4">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-2 mb-1">
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${categoryColorClass}">
-                            ${categoryLabel}
-                        </span>
-                        <span class="text-sm text-gray-500">${question.fields.created_at}</span>
-                    </div>
-                    <a href="/forum/${question.pk}" class="block">
-                        <h3 class="text-lg font-semibold text-gray-900 hover:text-blue-600 mb-2">
-                            ${question.fields.title}
-                        </h3>
-                    </a>
-                    <p class="text-gray-600 mb-3 line-clamp-2">${question.fields.content}</p>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
-                                </path>
-                            </svg>
-                            ${question.fields.username}
-                        </div>
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                                </path>
-                            </svg>
-                            ${question.fields.reply_count} replies
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+      <div class="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
+          <div class="flex items-start space-x-4">
+              <div class="flex-1 min-w-0">
+                  <div class="flex items-center space-x-2 mb-1">
+                      <span class="px-2.5 py-0.5 rounded-full text-xs ${categoryColorClass}">
+                          ${categoryLabel}
+                      </span>
+                      <span class="text-sm text-gray-500">${question.fields.created_at}</span>
+                  </div>
+                  <a href="/forum/${question.pk}" class="block">
+                      <h3 class="text-lg font-semibold text-gray-900 hover:text-blue-600 mb-2 truncate">
+                          ${question.fields.title}
+                      </h3>
+                  </a>
+                  <div class="content-wrapper">
+                      <p class="text-gray-600 mb-3 truncate-2-lines">${sanitizedContent}</p>
+                  </div>
+                  <div class="flex items-center justify-between">
+                      <div class="flex items-center space-x-4">
+                          <div class="flex items-center text-sm text-gray-500">
+                              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                  </path>
+                              </svg>
+                              ${question.fields.username}
+                          </div>
+                          <div class="flex items-center text-sm text-gray-500">
+                              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                                  </path>
+                              </svg>
+                              ${question.fields.reply_count} replies
+                          </div>
+                      </div>
+                      <a href="/forum/${question.pk}" class="flex items-center text-sm text-blue-600 hover:text-blue-800 albert-sans-semibold group">
+                          <span class="mr-1">Show More</span>
+                          <svg class="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                          </svg>
+                      </a>
+                  </div>
+              </div>
+          </div>
+      </div>
+  `;
 }
 
 function createPagination(totalPages, currentPage) {
@@ -228,7 +359,7 @@ async function loadQuestions(page = 1) {
   });
 
   try {
-    const response = await fetch(`/forum/get-questions-json/?${params}`);
+    const response = await fetch(`/forum/get_questions_json/?${params}`);
     const data = await response.json();
 
     const questionsContainer = document.getElementById("questionsContainer");
@@ -277,7 +408,7 @@ async function loadQuestions(page = 1) {
 
 async function addForumEntry() {
   try {
-    const response = await fetch("/forum/create_question_ajax/", {
+    const response = await fetch("/forum/create_question/", {
       method: "POST",
       body: new FormData(document.querySelector("#carEntryForm")),
     });
@@ -294,26 +425,5 @@ async function addForumEntry() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  loadQuestions();
-
-  let searchTimeout;
-  const searchInput = document.querySelector(
-    'input[placeholder="Cari Diskusi..."]'
-  );
-  searchInput.addEventListener("input", function () {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => loadQuestions(), 300);
-  });
-
-  const filterSelects = document.querySelectorAll("select");
-  filterSelects.forEach((select) => {
-    select.addEventListener("change", () => loadQuestions());
-  });
-
-  const carEntryForm = document.getElementById("carEntryForm");
-  carEntryForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    addForumEntry();
-  });
-});
+document.getElementById("cancelButton").addEventListener("click", hideModal);
+document.getElementById("closeModalBtn").addEventListener("click", hideModal);

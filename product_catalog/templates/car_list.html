@@ -190,7 +190,10 @@
             </div>
             {% if is_admin %}
             <div class="flex items-center space-x-2 mt-4">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
+                <form method="POST" action="{% url 'product_catalog:view_details' car.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
+                </form>
                 <form method="POST" action="{% url 'product_catalog:delete_car' car.id %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded" onclick="return confirm('Are you sure you want to delete this car?');">Delete</button>
@@ -198,7 +201,10 @@
             </div>
             {% else %}
             <div class="flex items-center space-x-2 mt-4">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="toggleDetails({{ car.id }})">View Details</button>
+                <form method="POST" action="{% url 'product_catalog:view_details' car.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
+                </form>
                 <button class="bg-green-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="openContactModal({{ car.id }})">Contact Me</button>
                 <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" title="Add to Wishlist" onclick="toggleWishlist(this)">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" id="wishlist-icon-{{ car.id }}">
@@ -285,7 +291,7 @@
         function openContactModal(carId) {
     const modal = document.getElementById(`contact-modal-${carId}`);
     const modalContent = modal.querySelector('.modal-content');
-    modalContent.innerHTML = '<p>Loading...</p>'; // Show loading message
+    modalContent.innerHTML = '<p>Loading...</p>';
 
     fetch(`/katalog/car/${carId}/contact/`)
         .then(response => {

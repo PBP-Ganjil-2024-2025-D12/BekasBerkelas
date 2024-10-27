@@ -2,26 +2,25 @@ from django.shortcuts import render, redirect
 from .models import Car
 from django.contrib.auth.decorators import login_required
 from .forms import CarForm, CarFilterForm
-from authentication.models import UserProfile  # Adjust the import according to your app structure
+from authentication.models import UserProfile
 from django.shortcuts import get_object_or_404
 from wishlist.models import Wishlist
 from django.http import JsonResponse
 from user_dashboard.models import SellerProfile 
-
+import uuid
 
 
 @login_required
 def mobil_saya(request):
     user_profile = UserProfile.objects.get(user=request.user)
-    if user_profile.role == 'SEL':  # Replace 'seller' with the appropriate role value if needed
-        cars = Car.objects.filter(seller=request.user)  # Fetch only the cars that belong to the seller
+    if user_profile.role == 'SEL':
+        cars = Car.objects.filter(seller=request.user)
     else:
         return redirect('product_catalog:car_list')
     form = CarFilterForm(request.GET)
     user_wishlist = Wishlist.objects.filter(user=request.user).values_list('id', flat=True)
 
     if form.is_valid():
-        # Standard filters
         car_name = form.cleaned_data.get('car_name')
         brand = form.cleaned_data.get('brand')
         year = form.cleaned_data.get('year')
@@ -45,7 +44,6 @@ def mobil_saya(request):
         if plate_type:
             cars = cars.filter(plate_type=plate_type)
 
-        # Boolean filters - only filter when True
         if form.cleaned_data.get('rear_camera'):
             cars = cars.filter(rear_camera=True)
         if form.cleaned_data.get('sun_roof'):
@@ -69,7 +67,6 @@ def mobil_saya(request):
         if form.cleaned_data.get('auto_cruise_control'):
             cars = cars.filter(auto_cruise_control=True)
 
-        # Range filters for price and installment
         price_min = form.cleaned_data.get('price_min')
         price_max = form.cleaned_data.get('price_max')
         instalment_min = form.cleaned_data.get('instalment_min')
@@ -111,15 +108,14 @@ def contact_seller(request, car_id):
 @login_required
 def car_list(request):
     user_profile = UserProfile.objects.get(user=request.user)
-    if user_profile.role == 'SEL':  # Replace 'seller' with the appropriate role value if needed
-        cars = Car.objects.filter(seller=request.user)  # Fetch only the cars that belong to the seller
+    if user_profile.role == 'SEL': 
+        cars = Car.objects.filter(seller=request.user)
     else:
         cars = Car.objects.all()
     form = CarFilterForm(request.GET)
     user_wishlist = Wishlist.objects.filter(user=request.user).values_list('id', flat=True)
 
     if form.is_valid():
-        # Standard filters
         car_name = form.cleaned_data.get('car_name')
         brand = form.cleaned_data.get('brand')
         year = form.cleaned_data.get('year')
@@ -143,7 +139,6 @@ def car_list(request):
         if plate_type:
             cars = cars.filter(plate_type=plate_type)
 
-        # Boolean filters - only filter when True
         if form.cleaned_data.get('rear_camera'):
             cars = cars.filter(rear_camera=True)
         if form.cleaned_data.get('sun_roof'):
@@ -167,7 +162,6 @@ def car_list(request):
         if form.cleaned_data.get('auto_cruise_control'):
             cars = cars.filter(auto_cruise_control=True)
 
-        # Range filters for price and installment
         price_min = form.cleaned_data.get('price_min')
         price_max = form.cleaned_data.get('price_max')
         instalment_min = form.cleaned_data.get('instalment_min')
@@ -192,6 +186,14 @@ def car_list(request):
     }
     return render(request, 'car_list.html', context)
 
+@login_required
+def view_details(request, car_id):
+
+    car = get_object_or_404(Car, id=car_id)
+    context = {
+        'car': car,
+    }
+    return render(request, 'detail.html', context)
 
 @login_required
 def delete_car(request, car_id):
@@ -200,7 +202,7 @@ def delete_car(request, car_id):
     user_profile = get_object_or_404(UserProfile, user=request.user)
     if user_profile.role == 'SEL' and car.seller == request.user:
         car.delete()
-        return redirect('product_catalog:car_list')
+        return redirect('product_catalog:mobil_saya')
     elif user_profile.role == 'ADM':
         car.delete()
         return redirect('product_catalog:car_list')
@@ -210,6 +212,7 @@ def delete_car(request, car_id):
 @login_required
 def create_car(request):
     user_profile = UserProfile.objects.get(user=request.user)
+    car_id = uuid.uuid4()
 
     if user_profile.role != 'SEL': 
         return redirect('authentication:login')
@@ -222,15 +225,17 @@ def create_car(request):
             car = form.save(commit=False)
             car.seller = request.user
             car.seller_buat_dashboard  = seller_profile
+
             car.save()
             return redirect('product_catalog:mobil_saya')
         else:
-            print(form.errors)  # This will log any validation errors
+            print(form.errors)
 
     else:
         form = CarForm()
 
     context = {
         'form': form,
+        'car_id': car_id
     }
     return render(request, 'create_car.html', context)
