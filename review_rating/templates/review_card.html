@@ -2,13 +2,13 @@
 {% load static %} 
 
 {% block content %}
-<div class="w-96 bg-white shadow-md rounded-3xl p-6 max-h-64 overflow-hidden">  <!-- Added overflow-hidden -->
+<div class="w-full bg-white shadow-md rounded-3xl p-6 max-h-64 overflow-hidden">  <!-- Added overflow-hidden -->
     <div class="w-full flex justify-between items-center">
         <div class="w-fit space-x-2 flex items-center">
-            <img src="{% static 'image/logo-text.png' %}" class="w-12 h-12 rounded-full">
+            <img src="{% static 'image/logo-text.png' %}" class="w-8 h-8 rounded-full">
             <p class="albert-sans-semibold">username</p>
         </div>
-        <div class="w-fit space-x-2 flex">
+        <div class="w-fit space-x-1 flex">
             {% for i in stars %}
                 <img src="{% static 'image/star_fill.svg' %}" class="w-6 h-6">
             {% endfor %}

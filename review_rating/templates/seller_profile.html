@@ -1,0 +1,30 @@
+{% extends 'base.html' %} {% load static %}
+
+{% block meta %}
+<title>Profile | Insert Name Here</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div>
+    <!-- left column -->
+    <div class="max-w-[33%]">
+        <img src="{% static 'image/logo-text.png' %}" alt="Logo" class="h-40 md:h-60 lg:h-80">
+        <label class="albert-sans-semibold">Username</label>
+    </div>
+    <!-- rught column -->
+    <div class="max-w-[67%]">
+        {% if not cars %}
+        {% else %}
+            <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+                {% for car in cars%}
+                
+            </div>
+        {% endif %}
+
+        <div id='review_cards'></div>
+    </div>
+</div>
+
+
+{% endblock %}
