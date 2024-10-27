@@ -118,52 +118,55 @@ function getCategoryLabel(category) {
 
 function createForumCard(question) {
   const categoryLabel = getCategoryLabel(question.fields.category);
-  const categoryColorClass =
-    {
+  const categoryColorClass = {
       UM: "bg-blue-100 text-blue-800",
       JB: "bg-green-100 text-green-800",
       TT: "bg-purple-100 text-purple-800",
       SA: "bg-yellow-100 text-yellow-800",
-    }[question.fields.category] || "bg-gray-100 text-gray-800";
+  }[question.fields.category] || "bg-gray-100 text-gray-800";
+
+  const sanitizedContent = DOMPurify.sanitize(question.fields.content);
 
   return `
-        <div class="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
-            <div class="flex items-start space-x-4">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-2 mb-1">
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${categoryColorClass}">
-                            ${categoryLabel}
-                        </span>
-                        <span class="text-sm text-gray-500">${question.fields.created_at}</span>
-                    </div>
-                    <a href="/forum/${question.pk}" class="block">
-                        <h3 class="text-lg font-semibold text-gray-900 hover:text-blue-600 mb-2">
-                            ${question.fields.title}
-                        </h3>
-                    </a>
-                    <p class="text-gray-600 mb-3 line-clamp-2">${question.fields.content}</p>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
-                                </path>
-                            </svg>
-                            ${question.fields.username}
-                        </div>
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                                </path>
-                            </svg>
-                            ${question.fields.reply_count} replies
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+      <div class="p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
+          <div class="flex items-start space-x-4">
+              <div class="flex-1 min-w-0">
+                  <div class="flex items-center space-x-2 mb-1">
+                      <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${categoryColorClass}">
+                          ${categoryLabel}
+                      </span>
+                      <span class="text-sm text-gray-500">${question.fields.created_at}</span>
+                  </div>
+                  <a href="/forum/${question.pk}" class="block">
+                      <h3 class="text-lg font-semibold text-gray-900 hover:text-blue-600 mb-2 truncate">
+                          ${question.fields.title}
+                      </h3>
+                  </a>
+                  <div class="content-wrapper">
+                      <p class="text-gray-600 mb-3 truncate-2-lines">${sanitizedContent}</p>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                      <div class="flex items-center text-sm text-gray-500">
+                          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                              </path>
+                          </svg>
+                          ${question.fields.username}
+                      </div>
+                      <div class="flex items-center text-sm text-gray-500">
+                          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                              </path>
+                          </svg>
+                          ${question.fields.reply_count} replies
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  `;
 }
 
 function createPagination(totalPages, currentPage) {
