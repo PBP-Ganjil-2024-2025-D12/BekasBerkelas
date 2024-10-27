@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 from .models import Wishlist
 from product_catalog.models import Car
 from django.views.decorators.http import require_http_methods
@@ -58,9 +59,9 @@ def edit_wishlist(request, wishlist_id):
     
     if request.method == 'POST':
         priority_map = {
-            'LOW': 1,
-            'MEDIUM': 2,
-            'HIGH': 3
+            'Rendah': 1,
+            'Sedang': 2,
+            'Tinggi': 3
         }
         new_priority = request.POST.get('priority')
         wishlist.priority = priority_map.get(new_priority, 1)  # Default to 1 if invalid priority
@@ -73,16 +74,7 @@ def edit_wishlist(request, wishlist_id):
 @require_http_methods(["POST"])
 @login_required(login_url='/auth/login')
 def remove_from_wishlist(request, wishlist_id):
-    try:
-        wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
-        wishlist.delete()
-        return JsonResponse({
-            'status': 'success',
-            'message': 'Wishlist item deleted successfully'
-        })
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=500)
+    wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
+    wishlist.delete()
+    return HttpResponseRedirect(reverse('wishlist:show_wishlist'))
 
