@@ -1,4 +1,3 @@
-
 function showModal() {
     const modal = document.getElementById("crudModal");
     const modalContent = document.getElementById("crudModalContent");
@@ -56,11 +55,13 @@ async function refreshReviews() {
         `;
     }
     else {
-        classNameString = "columns-1 sm:columns-2 lg:columns-2 gap-6 space-y-6 w-full"
-        reviews.slice(0,6).forEach((item) => {
-            const reviewData = item.fields;
+        classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full"
+        reviews.forEach((item) => {
+            const reviewData = item.fields; 
             const rating = reviewData.rating;
-            const reviewer_pfp = reviewData.reviewer.user_profile.profile_picture;
+            const reviewer_pfp = reviewData.reviewer.user_profile.profile_picture 
+                ? reviewData.reviewer.user_profile.profile_picture 
+                : 'review_rating\static\image\default_profile_picture.png';
             const reviewer_name = reviewData.reviewer.user_profile.user.username;
             const review = reviewData.review;
             const filledStars = `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="25" viewBox="0 0 26 25" fill="none">
@@ -91,15 +92,11 @@ async function refreshReviews() {
                 </div>
                 `;
             });
-            htmlString +=`<div class="mt-4">
-                        <a href="/profile/${sellerUsername}/reviews" class="albert-sans-semibold text-blue-600 font-semibold hover:underline">Selengkapnya →</a>
-                    </div>`;
         }
         document.getElementById("review_cards").className = classNameString;
         document.getElementById("review_cards").innerHTML = htmlString;
     }
 refreshReviews();
-
 
 async function addReview() {
     try {
