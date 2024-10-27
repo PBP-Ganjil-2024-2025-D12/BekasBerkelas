@@ -128,7 +128,7 @@
             <div class="flex items-center space-x-2 mt-4">
                 <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
                 <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="openContactModal({{ car.id }})">Contact Me</button>
-                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" title="Add to Wishlist" onclick="toggleWishlist(this, {{ car.id }})">
+                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" title="Add to Wishlist" onclick="toggleWishlist(event, this)" data-car-id="{{ car.id }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" id="wishlist-icon-{{ car.id }}">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                     </svg>
@@ -177,29 +177,69 @@
             modal.classList.add('hidden');
         }
 
-        function toggleWishlist(button, carId) {
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        function toggleWishlist(event, button) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+            const carId = button.getAttribute('data-car-id');
             const icon = button.querySelector('svg');
-            const isFilled = icon.classList.contains('text-red-500');
+            
+            if (!isAuthenticated) {
+                window.location.href = '/login/';
+                return;
+            }
+            
+            const csrftoken = getCookie('csrftoken');
             
             fetch(`/wishlist/add/${carId}/`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json', 
                 },
-                body: JSON.stringify({ car_id: carId })
+                body: JSON.stringify({   
+                    car_id: carId       
+                }),                      
+                credentials: 'same-origin'
             })
-            .then(response => response.json())
+
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.status === 'added') {
-                    icon.classList.remove('text-gray-500');
-                    icon.classList.add('text-red-500');
-                } else if (data.status === 'removed') {
-                    icon.classList.remove('text-red-500');
-                    icon.classList.add('text-gray-500');
+                if (data.status === 'success') {
+                    if (data.action === 'added') {
+                        icon.classList.remove('text-gray-500');
+                        icon.classList.add('text-red-500');
+                    } else if (data.action === 'removed') {
+                        icon.classList.remove('text-red-500');
+                        icon.classList.add('text-gray-500');
+                    }
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memproses permintaan Anda');
+            });
         }
     </script>
 </section>

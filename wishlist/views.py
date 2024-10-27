@@ -18,7 +18,7 @@ def add_to_wishlist(request):
             
         car = get_object_or_404(Car, id=car_id)
         user_profile = request.user.userprofile
-        wishlist_item, created = Wishlist.objects.get_or_create(user=user_profile, car=car)
+        wishlist_item, created = Wishlist.objects.get_or_create(user=user_profile, car=car, defaults={'priority':'1'})
         
         if created:
             return JsonResponse({'status': 'added', 'message': 'Car added to wishlist'})
@@ -31,39 +31,40 @@ def add_to_wishlist(request):
     except Exception as e:
         return JsonResponse({'message': str(e)}, status=500)
 
-
 @login_required(login_url='/login')
 def show_wishlist(request):
+    priority_filter = request.GET.get('priority', None)
     wishlists = Wishlist.objects.filter(user=request.user)
+    
+    if priority_filter:
+        wishlists = wishlists.filter(priority=priority_filter)
+        
     context = {
-        'wishlists': wishlists
+        'wishlists': wishlists,
+        'selected_priority': priority_filter,
+        'priority_choices': Wishlist.PRIORITY_CHOICES
     }
     return render(request, 'wishlist.html', context)
 
+
 @login_required(login_url='/login')
-@require_http_methods(["POST"])
-def update_wishlist(request, pk):
-    try:
-        wishlist_item = get_object_or_404(Wishlist, pk=pk, user=request.user)
-        data = json.loads(request.body)
-        
-        if 'priority' in data:
-            wishlist_item.priority = data['priority']
-            
-        wishlist_item.save()
-        
-        return JsonResponse({'status': 'success', 'message': 'Wishlist updated successfully', 'priority': wishlist_item.priority})
+def edit_wishlist(request, wishlist_id):
+    wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user.userprofile)
     
-    except json.JSONDecodeError:
-        return JsonResponse({'message': 'Invalid JSON'}, status=400)
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-        
+    if request.method == 'POST':
+        new_priority = request.POST.get('priority')
+        wishlist.priority = new_priority
+        wishlist.save()
+        return redirect('wishlist:show_wishlist')
+    
+    return render(request, 'edit_wishlist.html', {'wishlist': wishlist})
+
+
 @require_http_methods(["POST"])
 @login_required(login_url='/login')
-def remove_from_wishlist(request, pk):
+def remove_from_wishlist(request, wishlist_id):
     try:
-        wishlist = get_object_or_404(Wishlist, pk=pk, user=request.user)
+        wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user.userprofile)
         wishlist.delete()
         return JsonResponse({
             'status': 'success',
@@ -74,3 +75,4 @@ def remove_from_wishlist(request, pk):
             'status': 'error',
             'message': str(e)
         }, status=500)
+
