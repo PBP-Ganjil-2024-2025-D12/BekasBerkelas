@@ -116,7 +116,7 @@ def create_reply(request, pk):
 def delete_question(request, pk) :
     question = get_object_or_404(Question, pk=pk)
     
-    if not (request.user.userprofile.role == question.user or request.user.userprofile.role == 'ADM') :
+    if not (request.user == question.user or request.user.userprofile.role == 'ADM') :
         return HttpResponse(b'FORBIDDEN', status=403)
     question.delete()
     return HttpResponseRedirect(reverse('forum:show_forum'))
