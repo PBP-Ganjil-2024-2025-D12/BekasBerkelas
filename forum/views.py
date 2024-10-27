@@ -4,10 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.core import serializers
+from django.urls import reverse
 from forum.models import Question, Reply
 from product_catalog.models import Car
 from pytz import timezone
@@ -107,6 +108,30 @@ def create_reply(request, pk):
             content=content
         )
     return redirect('forum:forum_detail', pk=pk)
+
+@csrf_exempt
+@require_POST
+@login_required(login_url='/auth/login')
+def delete_question(request, pk) :
+    question = get_object_or_404(Question, pk=pk)
+    
+    if request.user != question.user or request.user.role != 'ADM' :
+        return HttpResponse(b'FORBIDDEN', status=403)
+    question.delete()
+    return HttpResponseRedirect(reverse('forum:show_forum'))
+
+@csrf_exempt
+@require_POST
+@login_required(login_url='/auth/login')
+def delete_reply(request, question_pk, reply_pk) :
+    reply = get_object_or_404(Reply, pk=reply_pk)
+    question = get_object_or_404(Question, pk=question_pk)
+    
+    if request.user != reply.user or request.user != question.user or request.user.role != 'ADM' :
+        return HttpResponse(b'FORBIDDEN', status=403)
+    reply.delete()
+    return HttpResponseRedirect(reverse('forum:forum_detail', kwargs={'pk': question_pk}))
+    
 
 def forum_detail(request, pk):
     question = get_object_or_404(Question, pk=pk)
