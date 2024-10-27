@@ -8,7 +8,6 @@
 {% include 'navbar.html' %}
 
 <div class="flex w-full">
-    <!-- left column -->
     <div class="max-w-[33%]">
         <img src="{% static 'image/logo-text.png' %}" alt="Logo" class="h-40 md:h-60 lg:h-80">
         <label class="albert-sans-semibold">{{ seller.username }}</label>
@@ -17,7 +16,6 @@
             <label class="albert-sans-semibold">{{ seller.rating }}</label>
         </div>
     </div>
-    <!-- rught column -->
     <div class="max-w-[67%]">
         {% if not cars %}
         {% else %}

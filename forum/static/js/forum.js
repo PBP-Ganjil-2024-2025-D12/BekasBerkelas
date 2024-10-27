@@ -66,16 +66,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const response = await fetch(`/forum/${currentQuestionId}/delete_reply/${currentReplyId}/`, {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {
                 window.location.reload();
             } else {
-                throw new Error('Failed to delete reply');
+                console.error('Failed to delete reply');
             }
         } catch (error) {
-            console.error('Error deleting reply:', error);
+            console.error('Error:', error);
         }
         hideDeleteModal('deleteReplyModal');
     });

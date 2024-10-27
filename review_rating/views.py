@@ -9,18 +9,35 @@ from product_catalog.models import Car
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 @login_required(login_url='/auth/login')
 def show_profile(request, username):
-    seller = get_object_or_404(SellerProfile, user_profile=UserProfile.objects.get(user=User.objects.get(username=username)))
-    reviews = ReviewRating.objects.filter(reviewee=seller)
-    cars = Car.objects.filter(seller_buat_dashboard=seller)
-    context = {
-        'seller': seller,
-        'cars' : cars,
-        'reviews': reviews
-    }
-    return render(request, "seller_profile.html", context)
+    try:
+        user = get_object_or_404(User, username=username)
+        user_profile = user.userprofile
+        
+        context = {
+            'profile_user': user,
+            'user_profile': user_profile
+        }
+        
+        if user_profile.role == 'SEL':
+            seller = get_object_or_404(SellerProfile, user_profile=user_profile)
+            context.update({
+                'seller': seller,
+                'cars': Car.objects.filter(seller_buat_dashboard=seller),
+                'reviews': ReviewRating.objects.filter(reviewee=seller)
+            })
+            template_name = "seller_profile.html"
+            
+        else:
+            template_name = "buyer_admin_profile.html"
+            
+        return render(request, template_name, context)
+        
+    except User.DoesNotExist:
+        raise Http404("User profile not found")
 
 @csrf_exempt
 @require_POST
