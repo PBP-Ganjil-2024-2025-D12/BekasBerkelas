@@ -17,12 +17,12 @@
 }
 
 .wishlist-button svg {
-    fill: black; /* Default color */
-    transition: fill 0.3s; /* Smooth transition */
+    fill: black;
+    transition: fill 0.3s;
 }
 
 .wishlist-button.active svg {
-    fill: red; /* Color when clicked */
+    fill: red;
 }
 
 .form-container {
@@ -72,15 +72,15 @@
         padding: 12px;
         background-color: #007BFF;
         color: white;
-        border: none; 
-        border-radius: 4px; 
+        border: none;
+        border-radius: 4px;
         font-size: 16px;
-        cursor: pointer;
+        cursor: pointer; 
         margin-bottom: 20px;
-        transition: background-color 0.3s; 
+        transition: background-color 0.3s;
     }
 .toggle-button:hover {
-    background-color: #0056b3; 
+    background-color: #0056b3;
 }
 
     </style>
@@ -193,7 +193,10 @@
             </div>
             {% if is_buyer %}
             <div class="flex items-center space-x-2 mt-4">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
+                <form method="POST" action="{% url 'product_catalog:view_details' car.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
+                </form>
                 <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="openContactModal({{ car.id }})">Contact Me</button>
                 <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" title="Add to Wishlist" onclick="toggleWishlist(this)">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" id="wishlist-icon-{{ car.id }}">
@@ -203,7 +206,10 @@
             </div>        
             {% else %}
             <div class="flex items-center space-x-2 mt-4">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
+                <form method="POST" action="{% url 'product_catalog:view_details' car.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
+                </form>
                 <form method="POST" action="{% url 'product_catalog:delete_car' car.id %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded" onclick="return confirm('Are you sure you want to delete this car?');">Delete</button>
