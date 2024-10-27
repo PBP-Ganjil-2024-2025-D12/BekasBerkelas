@@ -83,6 +83,19 @@
     background-color: #0056b3;
 }
 
+button.wishlist-button {
+    color: white;
+    background-color: gray;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+button.wishlist-button.active {
+    background-color: red;
+}
+
+
     </style>
 </head>
 
@@ -206,9 +219,7 @@
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
                 </form>
                 <button class="bg-green-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="openContactModal('{{ car.id }}')">Contact Me</button>
-                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150 bg-blue-500 text-white px-4 py-2 rounded" 
-                        title="Add to Wishlist" 
-                        onclick="addToWishlist('{{ car.id }}')">
+                <button class="wishlist-button" data-is-authenticated="true" data-car-id="{{ car.id }}" onclick="toggleWishlist(event, this)">
                     Add to Wishlist
                 </button>
                 
@@ -256,33 +267,55 @@
     </div>
 
     <script>
-        function addToWishlist(carId) {
-            fetch(`/wishlist/add/${carId}/`, {
+        function toggleWishlist(event, button) {
+            event.preventDefault();
+            event.stopPropagation();
+        
+            const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+            const carId = button.getAttribute('data-car-id');
+        
+            if (!isAuthenticated) {
+                window.location.href = '/auth/login';
+                return;
+            }
+        
+            const csrftoken = getCookie('csrftoken');
+        
+            fetch(`/wishlist/add/${carId}`, {
                 method: 'POST',
                 headers: {
+                    'X-CSRFToken': csrftoken,
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'),
                 },
-                body: JSON.stringify({ car_id: carId })
+                body: JSON.stringify({
+                    car_id: carId
+                }),
+                credentials: 'same-origin'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.status === 'success') {
-                    alert(data.message);
-                } else {
-                    alert(data.message);
+                    if (data.action === 'added') {
+                        button.classList.add('active');
+                        button.textContent = 'Remove from Wishlist';
+                    } else if (data.action === 'removed') {
+                        button.classList.remove('active');
+                        button.textContent = 'Add to Wishlist';
+                    }
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memproses permintaan Anda');
+            });
         }
-        document.getElementById('toggle-filters').addEventListener('click', function() {
-        var additionalFilters = document.getElementById('additional-filters');
-        if (additionalFilters.style.display === 'none' || additionalFilters.style.display === '') {
-            additionalFilters.style.display = 'block';
-        } else {
-            additionalFilters.style.display = 'none';
-        }
-        });
+        
+
         function toggleDetails(carId) {
             const detailsDiv = document.getElementById(`car-details-${carId}`);
             detailsDiv.classList.toggle('hidden');
