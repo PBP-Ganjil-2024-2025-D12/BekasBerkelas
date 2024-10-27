@@ -8,7 +8,7 @@ urlpatterns = [
     path('create_question/', create_question, name='create_question'),
     path('<uuid:pk>/', forum_detail, name='forum_detail'),
     path('<uuid:pk>/create_reply/', create_reply, name='create_reply'),
-    path('<uuid:pk>/delete_reply/<uuid:reply_pk>/', delete_reply, name='delete_reply'),
+    path('<uuid:question_pk>/delete_reply/<uuid:reply_pk>/', delete_reply, name='delete_reply'),
     path('<uuid:pk>/delete_question/', delete_question, name='delete_question'),
     path('get_questions_json/', get_questions_json, name='get_questions_json'),
 ]

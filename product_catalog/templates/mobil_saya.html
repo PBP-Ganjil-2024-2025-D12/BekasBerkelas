@@ -68,19 +68,19 @@
 }
 
 .toggle-button {
-        width: 100%; /* Full width */
-        padding: 12px; /* More padding for a button feel */
-        background-color: #007BFF; /* Button color */
-        color: white; /* Text color */
-        border: none; /* Remove default border */
-        border-radius: 4px; /* Rounded corners */
-        font-size: 16px; /* Larger font size */
-        cursor: pointer; /* Pointer cursor */
-        margin-bottom: 20px; /* Space below the button */
-        transition: background-color 0.3s; /* Smooth color transition */
+        width: 100%;
+        padding: 12px;
+        background-color: #007BFF;
+        color: white;
+        border: none; 
+        border-radius: 4px; 
+        font-size: 16px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        transition: background-color 0.3s; 
     }
 .toggle-button:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+    background-color: #0056b3; 
 }
 
     </style>
@@ -96,12 +96,10 @@
             <input type="text" name="brand" id="brand" placeholder="Brand" value="{{ form.brand.value|default:'' }}" class="input-field">
         </div>
     
-        <!-- Toggle Button moved below inputs -->
         <button type="button" id="toggle-filters" class="toggle-button mb-4 group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
             Show/Hide Additional Filters
         </button>
     
-        <!-- Additional Filters -->
         <div id="additional-filters" style="display:none;">
             <div class="form-group">
                 <input type="number" name="mileage" id="mileage" placeholder="Mileage" value="{{ form.mileage.value|default:'' }}" class="input-field">
