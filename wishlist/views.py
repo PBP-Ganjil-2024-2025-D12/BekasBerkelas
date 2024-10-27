@@ -15,26 +15,18 @@ def add_to_wishlist(request, car_id):
         user = request.user
             
         try:
-            wishlist_item, created = Wishlist.objects.get_or_create(
-                user=user,
-                car=car, 
-                defaults={'priority':'1'}
-            )
+            wishlist_item, created = Wishlist.objects.get_or_create(user=user, car=car, defaults={'priority':'1'})
             
             if created:
-                print("Created new wishlist item")
-                return JsonResponse({'status': 'success','action': 'added','message': 'Car added to wishlist'})
+                return JsonResponse({'status': 'success','action': 'added','message': 'Menambahkan ke wishlist'})
             else:
-                print("Removing existing wishlist item")
                 wishlist_item.delete()
-                return JsonResponse({'status': 'success','action': 'removed','message': 'Car removed from wishlist'})
+                return JsonResponse({'status': 'success','action': 'removed','message': 'Menghapus dari wishlist'})
                 
         except Exception as e:
-            print(f"Error with wishlist operation: {str(e)}")
             return JsonResponse({'status': 'error','message': f'Error with wishlist operation: {str(e)}'}, status=500)
             
     except Exception as e:
-        print(f"Main error: {str(e)}")
         return JsonResponse({'status': 'error','message': str(e)}, status=500)
 
 @login_required(login_url='/auth/login')
@@ -45,11 +37,7 @@ def show_wishlist(request):
     if priority_filter:
         wishlists = wishlists.filter(priority=priority_filter)
         
-    context = {
-        'wishlists': wishlists,
-        'selected_priority': priority_filter,
-        'priority_choices': Wishlist.PRIORITY_CHOICES
-    }
+    context = {'wishlists': wishlists, 'selected_priority': priority_filter, 'priority_choices': Wishlist.PRIORITY_CHOICES}
     return render(request, 'wishlist.html', context)
 
 
@@ -58,13 +46,9 @@ def edit_wishlist(request, wishlist_id):
     wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
     
     if request.method == 'POST':
-        priority_map = {
-            'Rendah': 1,
-            'Sedang': 2,
-            'Tinggi': 3
-        }
+        priority_map = {'Rendah': 1, 'Sedang': 2, 'Tinggi': 3}
         new_priority = request.POST.get('priority')
-        wishlist.priority = priority_map.get(new_priority, 1)  # Default to 1 if invalid priority
+        wishlist.priority = priority_map.get(new_priority, 1)
         wishlist.save()
         return redirect('wishlist:show_wishlist')
     

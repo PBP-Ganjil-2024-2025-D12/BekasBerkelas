@@ -16,7 +16,6 @@
             <form method="POST" class="bg-white shadow-lg rounded-lg p-6 space-y-6">
                 {% csrf_token %}
                 
-                <!-- Display Current Priority -->
                 <div class="text-center">
                     <p class="text-lg text-[#157A70] font-normal">Prioritas Saat Ini: 
                         <span class="font-semibold">
@@ -28,7 +27,6 @@
                     </p>
                 </div>
 
-                <!-- Select New Priority -->
                 <div class="flex flex-col items-center space-y-2">
                     <label for="priority" class="text-[#1F1C61] font-bold text-lg">Prioritas Baru:</label>
                     <select name="priority" class="w-36 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#07288B]">
@@ -38,7 +36,6 @@
                     </select>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="flex justify-center space-x-4 pt-4">
                     <button type="submit" class="bg-[#174FF3] hover:bg-[#0A39C4] text-white font-medium px-6 py-2 rounded-lg transition duration-300 shadow-sm">
                         Simpan
