@@ -10,7 +10,7 @@
                 <a href="{% url 'main:main' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Beranda
                 </a>
-
+                
                 <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Katalog
                 </a>
@@ -113,16 +113,16 @@
                     Wishlist
                 </a>
                 {% endif %}
-                <a href="/dashboard" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
-                    Account
-                </a>
                 <span class="block text-[#1f1c61] text-xl albert-sans-semibold px-3 py-2">
                     Welcome, 
                     <span class="text-[#5A71BC]">
                         {{ request.user.userprofile.name }}!
                     </span>
                 </span>
-                <a href="{% url 'authentication:logout' %}" class="block text-red-600 text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
+                <a href="/dashboard" class="block text-[#1f1c61] text-xl ml-3 albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
+                    Account
+                </a>
+                <a href="{% url 'authentication:logout' %}" class="block text-red-600 ml-3 text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
                     Logout
                 </a>
             {% endif %}
