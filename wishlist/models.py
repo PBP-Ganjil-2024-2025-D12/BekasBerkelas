@@ -6,9 +6,9 @@ import uuid
 class Wishlist(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     PRIORITY_CHOICES = [
-        (1, 'Low'),
-        (2, 'Medium'),
-        (3, 'High')
+        (1, 'Rendah'),
+        (2, 'Sedang'),
+        (3, 'Tinggi')
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
