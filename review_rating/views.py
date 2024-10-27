@@ -13,6 +13,16 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 
 @login_required(login_url='/auth/login')
+def show_reviews(request, username):
+    seller = get_object_or_404(SellerProfile, user_profile=UserProfile.objects.get(user=User.objects.get(username=username)))
+    reviews = ReviewRating.objects.filter(reviewee=seller)
+    context = {
+        'seller': seller,
+        'reviews': reviews
+    }
+    return render(request, "seller_reviews.html", context)
+
+@login_required(login_url='/auth/login')
 def show_profile(request, username):
     try:
         user = get_object_or_404(User, username=username)
@@ -91,4 +101,22 @@ def add_review(request, username):
 def show_json(request, username):
     seller = get_object_or_404(SellerProfile, user_profile=UserProfile.objects.get(user=User.objects.get(username=username)))
     reviews = ReviewRating.objects.filter(reviewee=seller)
-    return HttpResponse(serializers.serialize("json", reviews), content_type="application/json")
+    
+    data = []
+    for review in reviews:
+        data.append({
+            'fields': {
+                'rating': review.rating,
+                'review': review.review,
+                'reviewer': {
+                    'user_profile': {
+                        'profile_picture': str(review.reviewer.user_profile.profile_picture),
+                        'user': {
+                            'username': review.reviewer.user_profile.user.username
+                        }
+                    }
+                }
+            }
+        })
+    
+    return JsonResponse(data, safe=False)
