@@ -387,7 +387,6 @@ select:focus + div svg {
 
         modal.classList.remove('hidden');
         
-        // Close modal when clicking outside
         modal.addEventListener('click', function(event) {
             if (event.target === modal) {
                 closeContactModal(carId);
@@ -415,7 +414,6 @@ select:focus + div svg {
         return cookieValue;
     }
 
-    // Add escape key listener for modals
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             const modals = document.querySelectorAll('[id^="contact-modal-"]');
