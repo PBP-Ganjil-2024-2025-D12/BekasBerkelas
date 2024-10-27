@@ -23,11 +23,6 @@
 
                     {% if user == question.user or user.userprofile.role == 'ADM' %}
                     <div class="flex gap-2">
-                        <button class="text-blue-600 hover:text-blue-800" onclick="editQuestion('{{ question.id }}')">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                            </svg>
-                        </button>
                         <button class="text-red-600 hover:text-red-800" onclick="deleteQuestion('{{ question.id }}')">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -39,7 +34,11 @@
 
                 <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
                     <div class="flex items-center">
-                        <img src="{% static 'images/default-avatar.png' %}" alt="Profile" class="w-8 h-8 rounded-full mr-2">
+                        {% if request.user.userprofile.profile_picture %}
+                            <img class="w-8 h-8 rounded-full mr-2" src="{{ request.user.userprofile.profile_picture }}" alt="Profile Picture" width="400" height="400">
+                        {% else %}
+                            <img class="w-8 h-8 rounded-full mr-2" src="{% static 'user_dashboard/image/default-profile.png' %}" alt="Default Profile Picture" width="400" height="400">
+                        {% endif %}
                         <span>{{ question.user.username }}</span>
                     </div>
                     <span>{{ question.formatted_time }} WIB</span>
@@ -65,7 +64,7 @@
                 {% endif %}
             </div>
 
-            <div class="prose max-w-none mb-8">
+            <div class="prose max-w-none mb-8 content-wrapper break-words">
                 {{ question.content|linebreaks }}
             </div>
 
@@ -75,7 +74,11 @@
                 <div class="space-y-4" id="repliesContainer">
                     {% for reply in replies %}
                     <div class="flex gap-4">
-                        <img src="{% static 'images/default-avatar.png' %}" alt="Profile" class="w-8 h-8 rounded-full">
+                        {% if request.user.userprofile.profile_picture %}
+                            <img class="w-8 h-8 rounded-full mr-2" src="{{ request.user.userprofile.profile_picture }}" alt="Profile Picture" width="400" height="400">
+                        {% else %}
+                            <img class="w-8 h-8 rounded-full mr-2" src="{% static 'user_dashboard/image/default-profile.png' %}" alt="Default Profile Picture" width="400" height="400">
+                        {% endif %}
                         <div class="flex-1">
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <div class="flex items-center justify-between mb-2">
