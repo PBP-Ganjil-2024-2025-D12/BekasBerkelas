@@ -108,6 +108,8 @@ def show_json(request, username):
             'fields': {
                 'rating': review.rating,
                 'review': review.review,
+                'id': str(review.id),
+                'can_delete': (request.user == review.reviewer.user_profile.user or request.user.userprofile.role == 'ADM'),
                 'reviewer': {
                     'user_profile': {
                         'profile_picture': str(review.reviewer.user_profile.profile_picture),
@@ -120,3 +122,16 @@ def show_json(request, username):
         })
     
     return JsonResponse(data, safe=False)
+
+@csrf_exempt
+@require_POST
+def delete_review(request, review_id):
+    if request.user.is_authenticated:
+        try:
+            review = ReviewRating.objects.get(id=review_id)
+            review.delete()
+            return JsonResponse({"status": "success"}, status=200)
+        except ReviewRating.DoesNotExist:
+            return JsonResponse({"error": "Review not found"}, status=404)
+    else:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
