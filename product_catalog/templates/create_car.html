@@ -12,14 +12,15 @@
         <div class="space-y-8 bg-white p-8 rounded-xl shadow-lg albert-sans-semibold mb-8 w-full md:w-1/2">
             <h1 class="text-xl font-bold text-center mb-4">Create a New Car Listing</h1>
 
-            <form method="POST" enctype="multipart/form-data" class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+            <form method="POST" enctype="multipart/form-data" id="form_car" class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="mb-6">
                         <label for="car_name" class="block text-lg font-medium text-gray-700">Car Name</label>
-                        <input type="text" name="car_name" id="car_name" value="{{ form.car_name.value }}"
+                        <input type="text" name="car_name" id="car_name"
+                               {% if form.car_name.value %} value="{{ form.car_name.value }}" {% else %} value="" {% endif %}
                                class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
                         {% if form.car_name.errors %}
                             <div class="text-red-600">{{ form.car_name.errors }}</div>
@@ -28,12 +29,14 @@
 
                     <div class="mb-6">
                         <label for="brand" class="block text-lg font-medium text-gray-700">Brand</label>
-                        <input type="text" name="brand" id="brand" value="{{ form.brand.value }}"
+                        <input type="text" name="brand" id="brand"
+                               {% if form.brand.value %} value="{{ form.brand.value }}" {% else %} value="" {% endif %}
                                class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
                         {% if form.brand.errors %}
                             <div class="text-red-600">{{ form.brand.errors }}</div>
                         {% endif %}
                     </div>
+                    
 
                     <div class="mb-6">
                         <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
@@ -55,12 +58,20 @@
 
                     <div class="mb-6">
                         <label for="location" class="block text-lg font-medium text-gray-700">Location</label>
-                        <input type="text" name="location" id="location" value="{{ form.location.value }}"
-                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        <select name="location" id="location"
+                                class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Location</option>
+                            <option value="Jakarta Utara" {% if form.location.value == 'Jakarta Utara' %}selected{% endif %}>Jakarta Utara</option>
+                            <option value="Jakarta Selatan" {% if form.location.value == 'Jakarta Selatan' %}selected{% endif %}>Jakarta Selatan</option>
+                            <option value="Jakarta Barat" {% if form.location.value == 'Jakarta Barat' %}selected{% endif %}>Jakarta Barat</option>
+                            <option value="Jakarta Timur" {% if form.location.value == 'Jakarta Timur' %}selected{% endif %}>Jakarta Timur</option>
+                            <option value="Jakarta Pusat" {% if form.location.value == 'Jakarta Pusat' %}selected{% endif %}>Jakarta Pusat</option>
+                        </select>
                         {% if form.location.errors %}
                             <div class="text-red-600">{{ form.location.errors }}</div>
                         {% endif %}
                     </div>
+                    
 
                     <div class="mb-6">
                         <label for="transmission" class="block text-lg font-medium text-gray-700">Transmission</label>
@@ -107,14 +118,6 @@
                         {% endif %}
                     </div>
 
-                    <div class="mb-6">
-                        <label for="image_url" class="block text-lg font-medium text-gray-700">Car Image URL</label>
-                        <input type="url" name="image_url" id="image_url" value="{{ form.image_url.value }}"
-                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
-                        {% if form.image_url.errors %}
-                            <div class="text-red-600">{{ form.image_url.errors }}</div>
-                        {% endif %}
-                    </div>
                 </div>
 
                 <div class="bg-gray-100 p-6 rounded-lg shadow-md mt-8">
@@ -185,11 +188,10 @@
                     </div>
                 </div>
 
-                <div class="mt-8 text-center">
-                    <button type="submit"
-                            class="bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-200">
-                        Submit Listing
-                    </button>
+                <div class="mb-6">
+                    <label class="ml-3 text-lg font-medium text-gray-700">Upload & Submit</label>
+                    <input type="hidden" id="image_url" name="image_url">
+                    <button type="button" id="upload_widget_opener" class="bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-200 mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">Upload Car Picture</button>
                 </div>
 
             </form>
@@ -204,4 +206,30 @@
         </div>
     </div>
 </section>
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>  
+<script>
+    
+    var carId = '{{ car_id }}';
+    var cloudinaryWidget = cloudinary.createUploadWidget({
+        cloudName: 'dknxfk0qc', 
+        uploadPreset: 'TK_PBP_D12',
+        sources: ['local', 'camera'], 
+        multiple: false,
+        folder: 'produk_foto',
+        maxFileSize: 5 * 1024 * 1024,
+        cropping: true,
+        croppingAspectRatio: 1.0,
+        public_id: carId,
+    }, (error, result) => { 
+        if (!error && result && result.event === "success") { 
+            document.getElementById("image_url").value = result.info.secure_url;
+            document.getElementById("form_car").submit();
+        }
+    });
+
+    document.getElementById("upload_widget_opener").addEventListener("click", function() {
+        cloudinaryWidget.open();
+    });
+</script>
 {% endblock content %}
+

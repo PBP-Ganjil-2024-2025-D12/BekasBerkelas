@@ -11,12 +11,12 @@
                     Beranda
                 </a>
                 
-                <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
+                <a href="{% url 'product_catalog:car_list' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Katalog
                 </a>
 
                 {% if request.user.is_authenticated and request.user.userprofile.role == 'SEL' %}
-                <a href="#placeholder" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
+                <a href="{% url 'product_catalog:mobil_saya' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Mobil Saya
                 </a>
                 {% endif %}

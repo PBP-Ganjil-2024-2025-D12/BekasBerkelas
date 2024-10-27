@@ -10,6 +10,9 @@ class CarForm(forms.ModelForm):
             'map_navigator', 'vehicle_stability_control', 'keyless_push_start', 'sports_mode',
             'camera_360_view', 'power_sliding_door', 'auto_cruise_control', 'price', 'instalment','image_url'
         ]
+        widgets = {
+            'image_url': forms.HiddenInput()
+        }
 class CarFilterForm(forms.Form):
     car_name = forms.CharField(max_length=100, required=False)
     brand = forms.CharField(max_length=100, required=False)
