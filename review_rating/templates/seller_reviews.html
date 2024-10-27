@@ -107,6 +107,5 @@ const sellerUsername = "{{ seller.user_profile.user.username }}";
         return fetch("{% url 'review_rating:show_json' username=seller.user_profile.user.username %}").then((res) => res.json())
     }
 </script>
-<script src="/static/js/review_all.js"></script>
-
+<script src="{% static 'js/review_all.js' %}"></script>
 {% endblock %}
