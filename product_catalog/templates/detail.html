@@ -152,5 +152,13 @@
             });
         });
     });
+    function formatRupiah(price) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
+    }
+
+    document.querySelectorAll(".product-price").forEach(function(priceElement) {
+      const price = priceElement.getAttribute("data-price");
+      priceElement.innerText = formatRupiah(price);
+    });
 </script>
 {% endblock %}

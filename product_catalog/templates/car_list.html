@@ -3,255 +3,259 @@
 
 {% block meta %}
 <title>Katalog | BekasBerkelas</title>
-<style>
-.wishlist-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.wishlist-button.active {
-    background-color: #EF4444;
-    color: white;
-}
-
-select:focus + div svg {
-    transform: rotate(180deg);
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.toggle-button {
-    transition: background-color 0.3s;
-}
-
-.modal-overlay {
-    transition: opacity 0.3s ease-out;
-}
-
-.modal-content {
-    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-}
-</style>
 {% endblock meta %}
 
 {% block content %}
 {% include 'navbar.html' %}
-<div class="overflow-x-hidden px-3 sm:px-4 md:px-8 pb-6 sm:pb-8 pt-20 sm:pt-24 min-h-screen bg-blue-100 flex flex-col">
-    <div class="w-full max-w-7xl mx-auto mb-4 sm:mb-6">
-        <div class="flex justify-between items-center">
-            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-[#1f1c61] albert-sans-semibold">
-                Katalog
-            </h1>
+<head>
+    <style>
+        
+.wishlist-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.wishlist-button svg {
+    fill: black; /* Default color */
+    transition: fill 0.3s; /* Smooth transition */
+}
+
+.wishlist-button.active svg {
+    fill: red; /* Color when clicked */
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+.checkboxes {
+    grid-column: span 2;
+    display: flex;
+    justify-content: space-between;
+}
+
+.checkbox-container {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.checkbox-container:last-child {
+    margin-right: 0;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.input-field {
+    flex: 1;
+    border: 1px solid black;
+    padding: 8px;
+}
+
+.toggle-button {
+        width: 100%;
+        padding: 12px;
+        background-color: #007BFF;
+        color: white; 
+        border: none; 
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        transition: background-color 0.3s;
+    }
+.toggle-button:hover {
+    background-color: #0056b3;
+}
+
+button.wishlist-button {
+    color: white;
+    background-color: gray;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+button.wishlist-button.active {
+    background-color: red;
+    color: white;
+}
+
+    </style>
+</head>
+
+<section class="min-h-screen pt-20 px-10 md:px-10 flex flex-col items-center">
+    <h1 class="text-2xl font-bold text-center my-6">Katalog</h1>
+    <form method="GET" action="{% url 'product_catalog:car_list' %}" class="form-container mb-4">
+        <div class="form-group" style="grid-column: span 2;">
+            <input type="text" name="car_name" id="car_name" placeholder="Car Name" value="{{ form.car_name.value|default:'' }}" class="input-field">
         </div>
-    </div>
-
-    <div class="w-full max-w-7xl mx-auto mb-4 sm:mb-6 albert-sans-semibold">
-        <div class="bg-white rounded-lg p-3 sm:p-4 shadow-sm">
-            <form method="GET" action="{% url 'product_catalog:car_list' %}" class="space-y-4">
-                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                    <div class="flex-1">
-                        <input type="text" name="car_name" id="car_name" placeholder="Car Name" 
-                               value="{{ form.car_name.value|default:'' }}"
-                               class="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div class="flex-1">
-                        <input type="text" name="brand" id="brand" placeholder="Brand" 
-                               value="{{ form.brand.value|default:'' }}"
-                               class="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    
-                    <button type="button" id="toggle-filters" 
-                            class="w-full sm:w-auto px-4 py-2 text-sm sm:text-base bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        Show/Hide Filters
-                    </button>
-                </div>
-
-                <div id="additional-filters" class="hidden space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <input type="number" name="mileage" id="mileage" placeholder="Mileage" 
-                               value="{{ form.mileage.value|default:'' }}"
-                               class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
-                               
-                        <input type="text" name="location" id="location" placeholder="Location" 
-                               value="{{ form.location.value|default:'' }}"
-                               class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
-
-                        <div class="relative">
-                            <select name="transmission" id="transmission" 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none">
-                                <option value="">Transmission</option>
-                                {% for choice in form.transmission.field.choices %}
-                                    <option value="{{ choice.0 }}" {% if choice.0 == form.transmission.value %}selected{% endif %}>
-                                        {{ choice.1 }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <div class="relative">
-                            <select name="plate_type" id="plate_type"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none">
-                                <option value="">Plate Type</option>
-                                {% for choice in form.plate_type.field.choices %}
-                                    <option value="{{ choice.0 }}" {% if choice.0 == form.plate_type.value %}selected{% endif %}>
-                                        {{ choice.1 }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="rear_camera" id="rear_camera"
-                                   {% if form.rear_camera.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Rear Camera</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="sun_roof" id="sun_roof"
-                                   {% if form.sun_roof.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Sun Roof</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="auto_retract_mirror" id="auto_retract_mirror"
-                                   {% if form.auto_retract_mirror.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Auto Retract Mirror</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="electric_parking_brake" id="electric_parking_brake"
-                                   {% if form.electric_parking_brake.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Electric Parking Brake</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="map_navigator" id="map_navigator"
-                                   {% if form.map_navigator.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Map Navigator</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="vehicle_stability_control" id="vehicle_stability_control"
-                                   {% if form.vehicle_stability_control.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Vehicle Stability Control</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="keyless_push_start" id="keyless_push_start"
-                                   {% if form.keyless_push_start.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Keyless Push Start</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="sports_mode" id="sports_mode"
-                                   {% if form.sports_mode.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Sports Mode</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="camera_360_view" id="camera_360_view"
-                                   {% if form.camera_360_view.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Camera 360 View</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="power_sliding_door" id="power_sliding_door"
-                                   {% if form.power_sliding_door.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Power Sliding Door</span>
-                        </label>
-                        
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="auto_cruise_control" id="auto_cruise_control"
-                                   {% if form.auto_cruise_control.value %}checked{% endif %}
-                                   class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                            <span class="text-sm">Auto Cruise Control</span>
-                        </label>
-                    </div>
-
-                    <div class="flex justify-end">
-                        <button type="submit" 
-                                class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                            Apply Filters
-                        </button>
-                    </div>
-                </div>
-            </form>
+        <div class="form-group" style="grid-column: span 2;">
+            <input type="text" name="brand" id="brand" placeholder="Brand" value="{{ form.brand.value|default:'' }}" class="input-field">
         </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mx-auto">
-        {% for car in cars %}
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
-            {% if car.image_url %}
-            <img src="{{ car.image_url }}" alt="{{ car.car_name }}" class="w-full h-48 object-cover">
-            {% endif %}
-            
-            <div class="p-4">
-                <h3 class="text-lg font-bold text-[#1f1c61]">{{ car.car_name }}</h3>
-                <p class="text-blue-500 font-semibold">Rp {{ car.price }}</p>
-                
-                <div class="mt-4 flex flex-wrap gap-2">
-                    {% if is_admin %}
-                        <form method="POST" action="{% url 'product_catalog:view_details' car.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
-                                View Details
-                            </button>
-                        </form>
-                        <form method="POST" action="{% url 'product_catalog:delete_car' car.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300"
-                                    onclick="return confirm('Are you sure you want to delete this car?');">
-                                Delete
-                            </button>
-                        </form>
-                    {% else %}
-                        <form method="POST" action="{% url 'product_catalog:view_details' car.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
-                                View Details
-                            </button>
-                        </form>
-                        <button onclick="openContactModal('{{ car.id }}')"
-                                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300">
-                            Contact Me
-                        </button>
-                        <button class="wishlist-button px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300"
-                                data-is-authenticated="true" data-car-id="{{ car.id }}" onclick="toggleWishlist(event, this)">
-                            Add to Wishlist
-                        </button>
-                    {% endif %}
+    
+        <!-- Toggle Button moved below inputs -->
+        <button type="button" id="toggle-filters" class="toggle-button mb-4 group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+            Show/Hide Additional Filters
+        </button>
+    
+        <!-- Additional Filters -->
+        <div id="additional-filters" style="display:none;">
+            <div class="form-group">
+                <input type="number" name="mileage" id="mileage" placeholder="Mileage" value="{{ form.mileage.value|default:'' }}" class="input-field">
+            </div>
+            <div class="form-group">
+                <input type="text" name="location" id="location" placeholder="Location" value="{{ form.location.value|default:'' }}" class="input-field">
+            </div>
+            <div class="form-group">
+                <select name="transmission" id="transmission" class="input-field">
+                    <option value="">Transmission: </option>
+                    {% for choice in form.transmission.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.transmission.value %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="plate_type" id="plate_type" class="input-field">
+                    <option value="">Plate Type</option>
+                    {% for choice in form.plate_type.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.plate_type.value %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-container">
+                    <input type="checkbox" name="rear_camera" id="rear_camera" {% if form.rear_camera.value %}checked{% endif %}>
+                    <label for="rear_camera">Rear Camera</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="sun_roof" id="sun_roof" {% if form.sun_roof.value %}checked{% endif %}>
+                    <label for="sun_roof">Sun Roof</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="auto_retract_mirror" id="auto_retract_mirror" {% if form.auto_retract_mirror.value %}checked{% endif %}>
+                    <label for="auto_retract_mirror">Auto Retract Mirror</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="electric_parking_brake" id="electric_parking_brake" {% if form.electric_parking_brake.value %}checked{% endif %}>
+                    <label for="electric_parking_brake">Electric Parking Brake</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="map_navigator" id="map_navigator" {% if form.map_navigator.value %}checked{% endif %}>
+                    <label for="map_navigator">Map Navigator</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="vehicle_stability_control" id="vehicle_stability_control" {% if form.vehicle_stability_control.value %}checked{% endif %}>
+                    <label for="vehicle_stability_control">Vehicle Stability Control</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="keyless_push_start" id="keyless_push_start" {% if form.keyless_push_start.value %}checked{% endif %}>
+                    <label for="keyless_push_start">Keyless Push Start</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="sports_mode" id="sports_mode" {% if form.sports_mode.value %}checked{% endif %}>
+                    <label for="sports_mode">Sports Mode</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="camera_360_view" id="camera_360_view" {% if form.camera_360_view.value %}checked{% endif %}>
+                    <label for="camera_360_view">Camera 360 View</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="power_sliding_door" id="power_sliding_door" {% if form.power_sliding_door.value %}checked{% endif %}>
+                    <label for="power_sliding_door">Power Sliding Door</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" name="auto_cruise_control" id="auto_cruise_control" {% if form.auto_cruise_control.value %}checked{% endif %}>
+                    <label for="auto_cruise_control">Auto Cruise Control</label>
                 </div>
             </div>
+        </div>
+    
+        <div class="flex justify-center col-span-4">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">Filter</button>
+        </div>
+    </form>
 
-            <div id="contact-modal-{{ car.id }}" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
+        {% for car in cars %}
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+            {% if car.image_url %}
+            <img src="{{ car.image_url }}" alt="{{ car.car_name }}" class="w-full h-48 object-cover rounded-md">
+            {% endif %}
+            <div class="mt-2">
+                <h3 class="text-lg font-bold">{{ car.car_name }} - <span class="text-blue-500">Rp {{ car.price }}</span></h3>
+            </div>
+            {% if is_admin %}
+            <div class="flex items-center space-x-2 mt-4">
+                <form method="POST" action="{% url 'product_catalog:view_details' car.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
+                </form>
+                <form method="POST" action="{% url 'product_catalog:delete_car' car.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded" onclick="return confirm('Are you sure you want to delete this car?');">Delete</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="flex items-center space-x-2 mt-4">
+                <form method="POST" action="{% url 'product_catalog:view_details' car.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
+                </form>
+                <button class="bg-green-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="openContactModal('{{ car.id }}')">Contact Me</button>
+                <button class="wishlist-button" data-is-authenticated="true" data-car-id="{{ car.id }}" onclick="toggleWishlist(event, this)">
+                    Add to Wishlist
+                </button>
+                
+                
+                
+            </div>        
+            {% endif %}
+    
+            <div id="car-details-{{ car.id }}" class="hidden mt-4 bg-gray-100 p-4 rounded">
+                <p><strong>Brand:</strong> {{ car.brand }}</p>
+                <p><strong>Year:</strong> {{ car.year }}</p>
+                <p><strong>Mileage:</strong> {{ car.mileage }}</p>
+                <p><strong>Location:</strong> {{ car.location }}</p>
+                <p><strong>Instalment (Rp):</strong> {{ car.instalment }}</p>
+                <p><strong>Electric Parking Brake:</strong> 
+                    {% if car.electric_parking_brake %}Yes{% else %}No{% endif %}</p>
+                <p><strong>Map Navigator:</strong> 
+                    {% if car.map_navigator %}Yes{% else %}No{% endif %}</p>
+                <p><strong>Vehicle Stability Control:</strong> 
+                    {% if car.vehicle_stability_control %}Yes{% else %}No{% endif %}</p>
+                <p><strong>Keyless Push Start:</strong> 
+                    {% if car.keyless_push_start %}Yes{% else %}No{% endif %}</p>
+                <p><strong>Sports Mode:</strong> 
+                    {% if car.sports_mode %}Yes{% else %}No{% endif %}</p>
+                <p><strong>Camera 360 View:</strong> 
+                    {% if car.camera_360_view %}Yes{% else %}No{% endif %}</p>
+                <p><strong>Power Sliding Door:</strong> 
+                    {% if car.power_sliding_door %}Yes{% else %}No{% endif %}</p>
+                <p><strong>Auto Cruise Control:</strong> 
+                    {% if car.auto_cruise_control %}Yes{% else %}No{% endif %}</p>
+                
+                <button class="mt-2 bg-red-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">Close</button>
+            </div>
+
+            <div id="contact-modal-{{ car.id }}" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center" role="dialog" aria-labelledby="modal-title-{{ car.id }}" aria-modal="true">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
                     <div class="modal-content">
                         <p>Loading...</p>
                     </div>
@@ -259,81 +263,44 @@ select:focus + div svg {
             </div>
         </div>
         {% empty %}
-        <div class="col-span-full text-center py-8">
-            <p class="text-gray-500 text-lg">No cars available.</p>
-        </div>
+        <p class="text-center col-span-3">No cars available.</p>
         {% endfor %}
     </div>
-</div>
 
-<script>
-    document.getElementById('toggle-filters').addEventListener('click', function() {
+    <script>
+        document.getElementById('toggle-filters').addEventListener('click', function() {
         var additionalFilters = document.getElementById('additional-filters');
         if (additionalFilters.style.display === 'none' || additionalFilters.style.display === '') {
             additionalFilters.style.display = 'block';
         } else {
             additionalFilters.style.display = 'none';
         }
-    });
-
-    function toggleWishlist(event, button) {
-        event.preventDefault();
-        event.stopPropagation();
-    
-        const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
-        const carId = button.getAttribute('data-car-id');
-    
-        if (!isAuthenticated) {
-            window.location.href = '/auth/login';
-            return;
-        }
-    
-        const csrftoken = getCookie('csrftoken');
-    
-        fetch(`/wishlist/add/${carId}`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                car_id: carId
-            }),
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                if (data.action === 'added') {
-                    button.classList.add('active');
-                    button.textContent = 'Added to Wishlist';
-                    button.classList.remove('bg-gray-500', 'hover:bg-gray-600');
-                    button.classList.add('bg-red-500', 'hover:bg-red-600');
-                } else if (data.action === 'removed') {
-                    button.classList.remove('active');
-                    button.textContent = 'Add to Wishlist';
-                    button.classList.remove('bg-red-500', 'hover:bg-red-600');
-                    button.classList.add('bg-gray-500', 'hover:bg-gray-600');
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat memproses permintaan Anda');
         });
-    }
-
-    function openContactModal(carId) {
-        const modal = document.getElementById(`contact-modal-${carId}`);
-        const modalContent = modal.querySelector('.modal-content');
-        modalContent.innerHTML = '<p class="text-center">Loading...</p>';
-
-        fetch(`/katalog/car/${carId}/contact/`)
+        function toggleWishlist(event, button) {
+            event.preventDefault();
+            event.stopPropagation();
+        
+            const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+            const carId = button.getAttribute('data-car-id');
+        
+            if (!isAuthenticated) {
+                window.location.href = '/auth/login';
+                return;
+            }
+        
+            const csrftoken = getCookie('csrftoken');
+        
+            fetch(`/wishlist/add/${carId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    car_id: carId
+                }),
+                credentials: 'same-origin'
+            })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -341,89 +308,90 @@ select:focus + div svg {
                 return response.json();
             })
             .then(data => {
-                if (data.error) {
-                    modalContent.innerHTML = `
-                        <div class="text-center">
-                            <p class="text-red-500">Error loading contact information.</p>
-                            <button onclick="closeContactModal('${carId}')" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300">
-                                Close
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    modalContent.innerHTML = `
-                        <div class="space-y-4">
-                            <h2 class="text-xl font-bold text-[#1f1c61]">Contact Seller</h2>
-                            <div class="space-y-2">
-                                <p class="flex items-center">
-                                    <span class="font-semibold mr-2">Email:</span>
-                                    <span>${data.email}</span>
-                                </p>
-                                <p class="flex items-center">
-                                    <span class="font-semibold mr-2">Phone:</span>
-                                    <span>${data.phone}</span>
-                                </p>
-                            </div>
-                            <div class="flex justify-end">
-                                <button onclick="closeContactModal('${carId}')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                if (data.status === 'success') {
+                    if (data.action === 'added') {
+                        button.classList.add('active');
+                        button.textContent = 'Added to Wishlist';
+                    } else if (data.action === 'removed') {
+                        button.classList.remove('active');
+                        button.textContent = 'Add to Wishlist';
+                    }
                 }
             })
             .catch(error => {
-                console.error('Error fetching contact details:', error);
-                modalContent.innerHTML = `
-                    <div class="text-center">
-                        <p class="text-red-500">Error loading contact information. Please try again.</p>
-                        <button onclick="closeContactModal('${carId}')" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300">
-                            Close
-                        </button>
-                    </div>
-                `;
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memproses permintaan Anda');
             });
-
-        modal.classList.remove('hidden');
+        }
         
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                closeContactModal(carId);
+
+        function toggleDetails(carId) {
+            const detailsDiv = document.getElementById(`car-details-${carId}`);
+            detailsDiv.classList.toggle('hidden');
+        }
+            function openContactModal(carId) {
+            const modal = document.getElementById(`contact-modal-${carId}`);
+            modal.classList.remove('hidden');
+        }
+
+        function closeContactModal(carId) {
+            const modal = document.getElementById(`contact-modal-${carId}`);
+            modal.classList.add('hidden');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
             }
+            return cookieValue;
+        }
+        function openContactModal(carId) {
+    const modal = document.getElementById(`contact-modal-${carId}`);
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.innerHTML = '<p>Loading...</p>';
+
+    fetch(`/katalog/car/${carId}/contact/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                modalContent.innerHTML = '<p>Error loading contact information.</p>';
+            } else {
+                modalContent.innerHTML = `
+                    <h2 class="text-xl font-bold mb-4">Contact Seller</h2>
+                    <p><strong>Seller's Email:</strong> ${data.email}</p>
+                    <p><strong>Seller's Phone:</strong> ${data.phone}</p>
+                    <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="closeContactModal('${carId}')">Close</button>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching contact details:', error);
+            modalContent.innerHTML = '<p>Error loading contact information. Please try again.</p>';
         });
+
+    modal.classList.remove('hidden');
+}
+function formatRupiah(price) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
     }
 
-    function closeContactModal(carId) {
-        const modal = document.getElementById(`contact-modal-${carId}`);
-        modal.classList.add('hidden');
-    }
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const modals = document.querySelectorAll('[id^="contact-modal-"]');
-            modals.forEach(modal => {
-                if (!modal.classList.contains('hidden')) {
-                    const carId = modal.id.replace('contact-modal-', '');
-                    closeContactModal(carId);
-                }
-            });
-        }
+    document.querySelectorAll(".product-price").forEach(function(priceElement) {
+      const price = priceElement.getAttribute("data-price");
+      priceElement.innerText = formatRupiah(price);
     });
-</script>
+    </script>
+</section>
 {% endblock content %}
