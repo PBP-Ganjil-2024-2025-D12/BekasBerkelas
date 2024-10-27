@@ -10,23 +10,28 @@
 {% include 'navbar.html' %}
 <div class="container mx-auto mt-20 px-4 pt-5">
     <h1 class="text-center text-4xl text-[#1F1C61] font-bold albert-sans mb-10">Wish List</h1>
+    
+    <!-- Filter Section -->
+    <div class="mb-8">
+        <form method="get" class="flex items-center justify-center gap-4">
+            <label class="text-[#1F1C61] font-semibold">Filter by Priority:</label>
+            <select name="priority" class="border rounded-md px-3 py-2" onchange="this.form.submit()">
+                <option value="">All Priorities</option>
+                {% for value, label in priority_choices %}
+                <option value="{{ value }}" {% if selected_priority == value|stringformat:"i" %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         {% if wishlists %}
             {% for item in wishlists %}
-            <div class="border-2 border-[#0A39C4] rounded-lg shadow-lg p-4">
+            <div class="border-2 border-[#0A39C4] rounded-lg shadow-lg p-4" id="wishlist-item-{{ item.id }}">
                 <div class="relative">
                     <img src="{{ item.car.image.url }}" alt="{{ item.car.name }}" class="w-full h-48 object-cover rounded-t-md mb-4">
-
-                    <button 
-                        onclick="toggleWishlist(this, {{ item.car.id }})"
-                        class="absolute top-2 right-2 bg-white rounded-full p-2 wishlist-btn"
-                        data-car-id="{{ item.car.id }}"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="red" viewBox="0 0 24 24" stroke="red">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                    </button>
                 </div>
                 <div>
                     <h2 class="text-center text-xl text-[#1F1C61] font-bold albert-sans mb-2">{{ item.car.name }}</h2>
@@ -35,19 +40,29 @@
                     <p class="text-left text-base text-black font-albert-sans">{{ item.car.year }}</p>
                     <p class="text-left text-base text-black font-albert-sans">{{ item.car.mileage }} km</p>
                     
-                    <div class="mt-3">
-                        <label class="text-sm text-gray-600">Priority:</label>
-                        <select 
-                            onchange="updatePriority({{ item.id }}, this.value)"
-                            class="ml-2 border rounded px-2 py-1"
-                            value="{{ item.priority }}"
-                        >
-                            <option value="1" {% if item.priority == 1 %}selected{% endif %}>Low</option>
-                            <option value="2" {% if item.priority == 2 %}selected{% endif %}>Medium</option>
-                            <option value="3" {% if item.priority == 3 %}selected{% endif %}>High</option>
-                        </select>
-                    </div>
-                </div>
+                    <div class="mt-3 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-600">Priority: 
+                                {% if item.priority == 1 %}Low
+                                {% elif item.priority == 2 %}Medium
+                                {% else %}High{% endif %}
+                            </span>
+                            <a href="{% url 'wishlist:edit_wishlist' wishlist_id=item.id %}" 
+                               class="ml-2 bg-blue-500 text-white px-2 py-1 rounded text-sm hover:bg-blue-600">
+                                Edit
+                            </a>
+                        </div>
+                        
+                        <!-- Right section with love button -->
+                        <button class="wishlist-btn text-red-500 hover:text-gray-500 transition duration-150" 
+                                title="Remove from Wishlist" 
+                                onclick="removeFromWishlist(this, {{ item.car.id }}, {{ item.id }});">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                        </button>
+                    </div>                    
+                </div>                    
             </div>
             {% endfor %}
         {% else %}
@@ -57,49 +72,35 @@
 </div>
 
 <script>
-    function toggleWishlist(button, carId) {
-        $.ajax({
-            url: '/wishlist/add/',
-            type: 'POST',
-            data: JSON.stringify({
-                'car_id': carId
-            }),
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            },
-            success: function(response) {
-                const svg = button.querySelector('svg');
-                if (response.status === 'removed') {
-                    location.reload();
-                }
-            },
-            error: function(error) {
-                console.error('Error:', error);
-            }
-        });
-    }
+    function removeFromWishlist(button, carId, wishlistId) {
 
-    function updatePriority(wishlistId, priority) {
-        $.ajax({
-            url: `/wishlist/update/${wishlistId}/`,
-            type: 'POST',
-            data: JSON.stringify({
-                'priority': parseInt(priority)
-            }),
+        fetch(`/wishlist/delete/${wishlistId}/`, {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            },
-            success: function(response) {
-                if (response.status === 'success') {
-                    // Optional: show success message
-                    console.log('Priority updated successfully');
-                }
-            },
-            error: function(error) {
-                console.error('Error:', error);
             }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Remove the entire wishlist item card from the DOM
+                const wishlistItem = document.getElementById(`wishlist-item-${wishlistId}`);
+                wishlistItem.remove();
+
+                // If no more items, show the empty message
+                const remainingItems = document.querySelectorAll('.grid > div').length;
+                if (remainingItems === 0) {
+                    const grid = document.querySelector('.grid');
+                    grid.innerHTML = '<p class="text-center text-lg text-black font-albert-sans col-span-4">Belum ada mobil dalam Wish List</p>';
+                }
+            } else {
+                alert('Failed to remove item from wishlist');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while removing the item');
         });
     }
 

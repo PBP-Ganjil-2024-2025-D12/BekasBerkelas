@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>Edit Wishlist | BekasBerkelas</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mx-auto mt-20 px-4 pt-5">
+    <h1 class="text-center text-4xl text-[#1F1C61] font-bold albert-sans mb-10">Edit Wishlist</h1>
+    
+    <div class="max-w-md mx-auto">
+        <form method="POST" class="bg-white p-6 rounded-lg shadow-lg">
+            {% csrf_token %}
+            <div class="mb-4">
+                <h2 class="text-xl font-bold mb-2">{{ wishlist.menu.name }}</h2>
+                <p class="text-gray-600">Current Priority: 
+                    {% if wishlist.priority == 'LOW' %}Low Priority
+                    {% elif wishlist.priority == 'MEDIUM' %}Medium Priority
+                    {% else %}High Priority{% endif %}
+                </p>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    New Priority:
+                </label>
+                <select name="priority" class="w-full border rounded px-3 py-2">
+                    <option value="LOW" {% if wishlist.priority == 'LOW' %}selected{% endif %}>Low Priority</option>
+                    <option value="MEDIUM" {% if wishlist.priority == 'MEDIUM' %}selected{% endif %}>Medium Priority</option>
+                    <option value="HIGH" {% if wishlist.priority == 'HIGH' %}selected{% endif %}>High Priority</option>
+                </select>
+            </div>
+            
+            <div class="flex justify-between">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Save Changes
+                </button>
+                <a href="{% url 'wishlist:show_wishlist' %}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
