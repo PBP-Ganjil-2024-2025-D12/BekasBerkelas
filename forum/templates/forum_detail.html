@@ -41,8 +41,8 @@
                 <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
                     <div class="flex flex-col sm:flex-row sm:items-center">
                         <div class="flex items-center gap-2">
-                            {% if request.user.userprofile.profile_picture %}
-                                <img class="w-8 h-8 rounded-full flex-shrink-0" src="{{ request.user.userprofile.profile_picture }}" alt="Profile Picture" width="400" height="400">
+                            {% if question.user.userprofile.profile_picture %}
+                                <img class="w-8 h-8 rounded-full flex-shrink-0" src="{{ question.user.userprofile.profile_picture }}" alt="Profile Picture" width="400" height="400">
                             {% else %}
                                 <img class="w-8 h-8 rounded-full flex-shrink-0" src="{% static 'user_dashboard/image/default-profile.png' %}" alt="Default Profile Picture" width="400" height="400">
                             {% endif %}
