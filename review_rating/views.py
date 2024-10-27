@@ -129,7 +129,11 @@ def delete_review(request, review_id):
     if request.user.is_authenticated:
         try:
             review = ReviewRating.objects.get(id=review_id)
+            reviewee = review.reviewee
             review.delete()
+            average_rating = ReviewRating.objects.filter(reviewee=reviewee).aggregate(Avg('rating'))['rating__avg']
+            reviewee.rating = average_rating
+            reviewee.save()
             return JsonResponse({"status": "success"}, status=200)
         except ReviewRating.DoesNotExist:
             return JsonResponse({"error": "Review not found"}, status=404)
