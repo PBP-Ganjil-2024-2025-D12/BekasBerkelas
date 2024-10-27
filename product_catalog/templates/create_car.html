@@ -188,21 +188,13 @@
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label class="ml-3 text-lg font-medium text-gray-700">Upload & Submit</label>
+                <div class="mt-6 mb-6">
+                    <label class="ml-3text-lg font-medium text-gray-700">Upload & Submit</label>
                     <input type="hidden" id="image_url" name="image_url">
                     <button type="button" id="upload_widget_opener" class="bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-200 mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">Upload Car Picture</button>
                 </div>
 
             </form>
-
-            {% if messages %}
-            <div class="mt-8">
-                {% for message in messages %}
-                    <div class="bg-red-600 text-white p-4 rounded-lg">{{ message }}</div>
-                {% endfor %}
-            </div>
-            {% endif %}
         </div>
     </div>
 </section>
