@@ -7,7 +7,7 @@
             </div>
         
             <div class="md:flex items-center hidden">
-                <a href="#homepage" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
+                <a href="{% url 'main:main' %}" class="text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 mr-2">
                     Beranda
                 </a>
 
@@ -33,7 +33,8 @@
                 <div class="relative inline-block text-left">
                     <button id="dropdown-button" class="inline-flex items-center text-[#1f1c61] hover:text-blue-800">
                         <span class="text-[#1f1c61] text-xl albert-sans-semibold mr-2">
-                            Welcome, {{ request.user.userprofile.name }}
+                            Welcome, 
+                            <span class="text-[#5A71BC]">{{ request.user.userprofile.name }}</span>
                         </span>
                         <svg id="" class="w-4 h-4 down-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M6 9l6 6 6-6" />
@@ -92,7 +93,7 @@
 
     <div class="mobile-menu hidden md:hidden px-4 w-full md:max-w-full">
         <div class="pt-2 pb-3 space-y-1 mx-auto">
-            <a href="#homepage" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
+            <a href="{% url 'main:main' %}" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
                 Beranda
             </a>
 
@@ -124,7 +125,10 @@
                     Account
                 </a>
                 <span class="block text-[#1f1c61] text-xl albert-sans-semibold px-3 py-2">
-                    Halo, {{ request.user.userprofile.name }}!
+                    Welcome, 
+                    <span class="text-[#5A71BC]">
+                        {{ request.user.userprofile.name }}!
+                    </span>
                 </span>
                 <a href="{% url 'authentication:logout' %}" class="block text-red-600 text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
                     Logout
