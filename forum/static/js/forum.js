@@ -66,16 +66,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const response = await fetch(`/forum/${currentQuestionId}/delete_reply/${currentReplyId}/`, {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {
                 window.location.reload();
             } else {
-                throw new Error('Failed to delete reply');
+                console.error('Failed to delete reply');
             }
         } catch (error) {
-            console.error('Error deleting reply:', error);
+            console.error('Error:', error);
         }
         hideDeleteModal('deleteReplyModal');
     });
@@ -408,20 +411,20 @@ async function loadQuestions(page = 1) {
 
 async function addForumEntry() {
   try {
-    const response = await fetch("/forum/create_question/", {
-      method: "POST",
-      body: new FormData(document.querySelector("#carEntryForm")),
-    });
+      const response = await fetch("/forum/create_question/", {
+          method: "POST",
+          body: new FormData(document.querySelector("#carEntryForm")),
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to add entry");
-    }
-
-    document.getElementById("carEntryForm").reset();
-    hideModal();
-    loadQuestions();
+      if (response.ok) {
+          document.getElementById("carEntryForm").reset();
+          hideModal();
+          loadQuestions();
+      } else {
+          window.location.reload();
+      }
   } catch (error) {
-    console.error("Error creating forum entry:", error);
+      window.location.reload();
   }
 }
 

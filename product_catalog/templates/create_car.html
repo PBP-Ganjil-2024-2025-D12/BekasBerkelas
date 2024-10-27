@@ -19,7 +19,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="mb-6">
                         <label for="car_name" class="block text-lg font-medium text-gray-700">Car Name</label>
-                        <input type="text" name="car_name" id="car_name" value="{{ form.car_name.value }}"
+                        <input type="text" name="car_name" id="car_name"
+                               {% if form.car_name.value %} value="{{ form.car_name.value }}" {% else %} value="" {% endif %}
                                class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
                         {% if form.car_name.errors %}
                             <div class="text-red-600">{{ form.car_name.errors }}</div>
@@ -28,12 +29,14 @@
 
                     <div class="mb-6">
                         <label for="brand" class="block text-lg font-medium text-gray-700">Brand</label>
-                        <input type="text" name="brand" id="brand" value="{{ form.brand.value }}"
+                        <input type="text" name="brand" id="brand"
+                               {% if form.brand.value %} value="{{ form.brand.value }}" {% else %} value="" {% endif %}
                                class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
                         {% if form.brand.errors %}
                             <div class="text-red-600">{{ form.brand.errors }}</div>
                         {% endif %}
                     </div>
+                    
 
                     <div class="mb-6">
                         <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
@@ -55,12 +58,20 @@
 
                     <div class="mb-6">
                         <label for="location" class="block text-lg font-medium text-gray-700">Location</label>
-                        <input type="text" name="location" id="location" value="{{ form.location.value }}"
-                               class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                        <select name="location" id="location"
+                                class="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Location</option>
+                            <option value="Jakarta Utara" {% if form.location.value == 'Jakarta Utara' %}selected{% endif %}>Jakarta Utara</option>
+                            <option value="Jakarta Selatan" {% if form.location.value == 'Jakarta Selatan' %}selected{% endif %}>Jakarta Selatan</option>
+                            <option value="Jakarta Barat" {% if form.location.value == 'Jakarta Barat' %}selected{% endif %}>Jakarta Barat</option>
+                            <option value="Jakarta Timur" {% if form.location.value == 'Jakarta Timur' %}selected{% endif %}>Jakarta Timur</option>
+                            <option value="Jakarta Pusat" {% if form.location.value == 'Jakarta Pusat' %}selected{% endif %}>Jakarta Pusat</option>
+                        </select>
                         {% if form.location.errors %}
                             <div class="text-red-600">{{ form.location.errors }}</div>
                         {% endif %}
                     </div>
+                    
 
                     <div class="mb-6">
                         <label for="transmission" class="block text-lg font-medium text-gray-700">Transmission</label>
@@ -109,7 +120,6 @@
 
                 </div>
 
-                <!-- Boolean Field Checklist Section -->
                 <div class="bg-gray-100 p-6 rounded-lg shadow-md mt-8">
                     <h2 class="text-lg font-semibold text-gray-700 mb-4">Additional Features</h2>
 

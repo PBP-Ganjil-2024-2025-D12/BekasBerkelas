@@ -45,7 +45,7 @@
                                 Account
                             </a>
                             {% if request.user.userprofile.role == 'BUY' %}
-                            <a href="#placeholder" class="block text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 hover:bg-gray-100">
+                            <a href="/wishlist" class="block text-center text-xl text-[#1f1c61] albert-sans-semibold px-5 py-2 hover:bg-gray-100">
                                 Wishlist
                             </a>
                             {% endif %}
@@ -109,7 +109,7 @@
 
             {% if request.user.is_authenticated %}
                 {% if request.user.userprofile.role == 'BUY' %}
-                <a href="#placeholder" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
+                <a href="/wishlist" class="block text-[#1f1c61] text-xl albert-sans-semibold hover:bg-[#F5F5F5] rounded-xl px-3 py-2 mb-2">
                     Wishlist
                 </a>
                 {% endif %}

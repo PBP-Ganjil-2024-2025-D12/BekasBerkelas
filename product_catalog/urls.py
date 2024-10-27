@@ -7,7 +7,7 @@ urlpatterns = [
     path('', car_list, name='car_list'),
     path('mobil_saya/', mobil_saya, name='mobil_saya'),
     path('create_car/', create_car, name='create_car'),
-    path('delete_car/<int:car_id>/', delete_car, name='delete_car'),
-    path('car/<int:car_id>/contact/', contact_seller, name='contact_seller'),
-    path('detail/<int:car_id>/', view_details, name='view_details'),
+    path('delete_car/<uuid:car_id>/', delete_car, name='delete_car'),
+    path('car/<uuid:car_id>/contact/', contact_seller, name='contact_seller'),
+    path('detail/<uuid:car_id>/', view_details, name='view_details'),
 ]
