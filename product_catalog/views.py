@@ -234,7 +234,7 @@ def create_car(request):
         return redirect('authentication:login')
     
     if not user_profile.is_verified:
-        messages.error(request, "You must be verified")
+        messages.error(request, "Ask admin for verification")
         return redirect('product_catalog:mobil_saya')
     
     seller_profile = SellerProfile.objects.get(user_profile=user_profile)
