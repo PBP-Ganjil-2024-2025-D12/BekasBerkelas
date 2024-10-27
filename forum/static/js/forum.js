@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const showMoreButton = document.createElement("div");
   showMoreButton.className =
     "show-more-btn p-2 text-center text-indigo-600 hover:bg-indigo-50 cursor-pointer border-t";
-  showMoreButton.textContent = "Show More";
+  showMoreButton.textContent = "Selengkapnya";
   showMoreButton.style.display = "none";
   dropdown.appendChild(showMoreButton);
 
@@ -284,11 +284,11 @@ function createForumCard(question) {
                                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
                                   </path>
                               </svg>
-                              ${question.fields.reply_count} replies
+                              ${question.fields.reply_count} balasan
                           </div>
                       </div>
                       <a href="/forum/${question.pk}" class="flex items-center text-sm text-blue-600 hover:text-blue-800 albert-sans-semibold group">
-                          <span class="mr-1">Show More</span>
+                          <span class="mr-1">Selengkapnya</span>
                           <svg class="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                           </svg>

@@ -77,7 +77,7 @@ def create_question(request):
     category = request.POST.get('category')
     
     if not title.strip() or not content.strip():
-        return HttpResponse(b'BAD REQUEST', status=400)
+        return redirect('forum:show_forum')
     
     car = None
     if car_id and car_id.strip():
