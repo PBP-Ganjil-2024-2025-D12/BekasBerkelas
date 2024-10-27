@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from user_dashboard.models import SellerProfile, BuyerProfile
 import uuid
 
 class ReviewRating(models.Model):
@@ -8,8 +9,8 @@ class ReviewRating(models.Model):
     rating = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews_posted')
-    reviewee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews_received')
+    reviewer = models.ForeignKey(BuyerProfile, on_delete=models.CASCADE, related_name='reviews_posted')
+    reviewee = models.ForeignKey(SellerProfile, on_delete=models.CASCADE, related_name='reviews_received')
 
     class Meta:
         db_table = 'review_rating'
