@@ -116,7 +116,7 @@ def create_reply(request, pk):
 def delete_question(request, pk) :
     question = get_object_or_404(Question, pk=pk)
     
-    if request.user.userprofile.role == question.user or request.user.userprofile.role == 'ADM' :
+    if not (request.user.userprofile.role == question.user or request.user.userprofile.role == 'ADM') :
         return HttpResponse(b'FORBIDDEN', status=403)
     question.delete()
     return HttpResponseRedirect(reverse('forum:show_forum'))
@@ -124,7 +124,6 @@ def delete_question(request, pk) :
 @csrf_exempt
 @require_POST
 @login_required(login_url='/auth/login')
-# MW DIIMPLEMENT GA DELETE REPLY?
 def delete_reply(request, question_pk, reply_pk) :
     reply = get_object_or_404(Reply, pk=reply_pk)
     question = get_object_or_404(Question, pk=question_pk)
