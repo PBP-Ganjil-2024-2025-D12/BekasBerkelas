@@ -214,8 +214,12 @@ def create_car(request):
     user_profile = UserProfile.objects.get(user=request.user)
     car_id = uuid.uuid4()
 
-    if user_profile.role != 'SEL': 
+    if user_profile.role != 'SEL':
         return redirect('authentication:login')
+
+    if not user_profile.is_verified:
+        return redirect('product_catalog:mobil_saya')
+       
     
     seller_profile = SellerProfile.objects.get(user_profile=user_profile)
 
