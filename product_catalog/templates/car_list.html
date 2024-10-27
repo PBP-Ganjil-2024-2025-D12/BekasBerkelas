@@ -88,6 +88,7 @@
 
 <section class="min-h-screen pt-20 px-10 md:px-10 flex flex-col items-center">
     <h1 class="text-2xl font-bold text-center my-6">Katalog</h1>
+
     <form method="GET" action="{% url 'product_catalog:car_list' %}" class="form-container mb-4">
         <div class="form-group" style="grid-column: span 2;">
             <input type="text" name="car_name" id="car_name" placeholder="Car Name" value="{{ form.car_name.value|default:'' }}" class="input-field">
@@ -192,21 +193,21 @@
             <div class="flex items-center space-x-2 mt-4">
                 <form method="POST" action="{% url 'product_catalog:view_details' car.id %}" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">View Details</button>
                 </form>
                 <form method="POST" action="{% url 'product_catalog:delete_car' car.id %}" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded" onclick="return confirm('Are you sure you want to delete this car?');">Delete</button>
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="return confirm('Are you sure you want to delete this car?');">Delete</button>
                 </form>
             </div>
             {% else %}
             <div class="flex items-center space-x-2 mt-4">
                 <form method="POST" action="{% url 'product_catalog:view_details' car.id %}" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">View Details</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">View Details</button>
                 </form>
-                <button class="bg-green-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="openContactModal('{{ car.id }}')">Contact Me</button>
-                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150 bg-blue-500 text-white px-4 py-2 rounded" 
+                <button class="bg-blue-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" onclick="openContactModal('{{ car.id }}')">Contact Me</button>
+                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150 bg-blue-500 text-white px-4 py-2 rounded group albert-sans-semibold relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out" 
                         title="Add to Wishlist" 
                         onclick="addToWishlist('{{ car.id }}')">
                     Add to Wishlist
