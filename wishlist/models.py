@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from product_catalog.models import Car
+import uuid
 
 class Wishlist(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     PRIORITY_CHOICES = [
         (1, 'Low'),
         (2, 'Medium'),
