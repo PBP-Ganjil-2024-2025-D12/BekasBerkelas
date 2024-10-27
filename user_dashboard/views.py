@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from authentication.models import UserProfile, UserRole
+from review_rating.models import ReviewRating
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
@@ -105,8 +106,41 @@ def rating_list(request):
 
     if request.user.userprofile.role != 'SEL':
         return redirect('/dashboard')
+    
+    daftar_review = {}
+    if not request.user.userprofile.sellerprofile.reviews_received.exists():
+        has_review = False
+    else :
+        daftar_review_seller = request.user.userprofile.sellerprofile.reviews_received.all()
+        has_review = True
 
-    return render(request, 'seller_rating_list.html', {})
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(daftar_review_seller, 10)
+        page_obj = paginator.get_page(page_number)
+
+        for review in page_obj.object_list:
+
+            if not review.reviewer.user_profile.profile_picture:
+                reviewer_profile = static('user_dashboard/image/default-profile.png')
+            else:
+                reviewer_profile = review.reviewer.user_profile.profile_picture
+
+            print(reviewer_profile)
+
+            daftar_review[str(review.id)] = {
+                'review' : review.review,
+                'rating' : review.rating,
+                'reviewer' : review.reviewer.user_profile.name,
+                'reviewer_profile_pic' : reviewer_profile 
+            }
+
+    context = {
+        'has_review' : has_review,
+        'daftar_review' : daftar_review,
+        'page_obj' : page_obj
+    }
+
+    return render(request, 'seller_rating_list.html', context)
 
 @login_required(login_url='/auth/login')
 def verifikasi_penjual(request):
@@ -126,7 +160,7 @@ def verifikasi_penjual(request):
 
     unverified_seller_query = UserProfile.objects.filter(role='SEL', is_verified=False)
     page_number = request.GET.get('page', 1)
-    paginator = Paginator(unverified_seller_query, 5)
+    paginator = Paginator(unverified_seller_query, 10)
     page_obj = paginator.get_page(page_number)
     
     if not unverified_seller_query.exists():
