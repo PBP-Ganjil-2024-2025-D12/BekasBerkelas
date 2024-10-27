@@ -268,6 +268,14 @@ button.wishlist-button.active {
     </div>
 
     <script>
+        document.getElementById('toggle-filters').addEventListener('click', function() {
+        var additionalFilters = document.getElementById('additional-filters');
+        if (additionalFilters.style.display === 'none' || additionalFilters.style.display === '') {
+            additionalFilters.style.display = 'block';
+        } else {
+            additionalFilters.style.display = 'none';
+        }
+        });
         function toggleWishlist(event, button) {
             event.preventDefault();
             event.stopPropagation();
