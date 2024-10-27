@@ -128,10 +128,14 @@
             <div class="flex items-center space-x-2 mt-4">
                 <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="toggleDetails({{ car.id }})">View Details</button>
                 <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="openContactModal({{ car.id }})">Contact Me</button>
-                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" title="Add to Wishlist" onclick="toggleWishlist(event, this)" data-car-id="{{ car.id }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" id="wishlist-icon-{{ car.id }}">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                    </svg>
+                <button class="wishlist-btn text-gray-500 hover:text-red-500 transition duration-150" 
+                    title="Add to Wishlist" 
+                    onclick="toggleWishlist(event, this)" 
+                    data-car-id="{{ car.id }}"
+                    data-is-authenticated="{{ request.user.is_authenticated|lower }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" id="wishlist-icon-{{ car.id }}">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
                 </button>
             </div>
             {% else %}
@@ -201,13 +205,13 @@
             const icon = button.querySelector('svg');
             
             if (!isAuthenticated) {
-                window.location.href = '/login/';
+                window.location.href = '/auth/login';
                 return;
             }
             
             const csrftoken = getCookie('csrftoken');
             
-            fetch(`/wishlist/add/${carId}/`, {
+            fetch(`/wishlist/add/${carId}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrftoken,

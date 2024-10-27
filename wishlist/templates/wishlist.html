@@ -11,7 +11,6 @@
 <div class="container mx-auto mt-20 px-4 pt-5">
     <h1 class="text-center text-4xl text-[#1F1C61] font-bold albert-sans mb-10">Wish List</h1>
     
-    <!-- Filter Section -->
     <div class="mb-8">
         <form method="get" class="flex items-center justify-center gap-4">
             <label class="text-[#1F1C61] font-semibold">Filter by Priority:</label>
@@ -31,12 +30,12 @@
             {% for item in wishlists %}
             <div class="border-2 border-[#0A39C4] rounded-lg shadow-lg p-4" id="wishlist-item-{{ item.id }}">
                 <div class="relative">
-                    <img src="{{ item.car.image.url }}" alt="{{ item.car.name }}" class="w-full h-48 object-cover rounded-t-md mb-4">
+                    <img src="{{ item.car.image_url }}" alt="{{ item.car.name }}" class="w-full h-48 object-cover rounded-t-md mb-4">
                 </div>
                 <div>
-                    <h2 class="text-center text-xl text-[#1F1C61] font-bold albert-sans mb-2">{{ item.car.name }}</h2>
+                    <h2 class="text-center text-xl text-[#1F1C61] font-bold albert-sans mb-2">{{ item.car.car_name }}</h2>
                     <p class="text-left text-lg text-[#07288B] font-semibold albert-sans mb-1">Rp {{ item.car.price }}</p>
-                    <p class="text-left text-base text-black font-albert-sans">{{ item.car.brand_name }}</p>
+                    <p class="text-left text-base text-black font-albert-sans">{{ item.car.brand }}</p>
                     <p class="text-left text-base text-black font-albert-sans">{{ item.car.year }}</p>
                     <p class="text-left text-base text-black font-albert-sans">{{ item.car.mileage }} km</p>
                     
@@ -84,11 +83,9 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Remove the entire wishlist item card from the DOM
                 const wishlistItem = document.getElementById(`wishlist-item-${wishlistId}`);
                 wishlistItem.remove();
 
-                // If no more items, show the empty message
                 const remainingItems = document.querySelectorAll('.grid > div').length;
                 if (remainingItems === 0) {
                     const grid = document.querySelector('.grid');
