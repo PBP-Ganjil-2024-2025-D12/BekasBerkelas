@@ -37,7 +37,7 @@ def show_profile(request, username):
             seller = get_object_or_404(SellerProfile, user_profile=user_profile)
             context.update({
                 'seller': seller,
-                'cars': Car.objects.filter(seller_buat_dashboard=seller),
+                'cars': Car.objects.filter(seller=user),
                 'reviews': ReviewRating.objects.filter(reviewee=seller)
             })
             template_name = "seller_profile.html"
