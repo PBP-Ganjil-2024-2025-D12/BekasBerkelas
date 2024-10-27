@@ -47,7 +47,9 @@
                                 <img class="w-8 h-8 rounded-full flex-shrink-0" src="{% static 'user_dashboard/image/default-profile.png' %}" alt="Default Profile Picture" width="400" height="400">
                             {% endif %}
                             <div class="flex items-center gap-2">
-                                <span class="font-semibold">{{ question.user.username }}</span>
+                                <a href="/profile/{{ question.user.username }}" class="flex items-center text-sm text-blue-600 hover:text-blue-800 font-semibold albert-sans-semibold group">
+                                    <span class="font-semibold">{{ question.user.username }}</span>
+                                </a>
                                 <span class="sm:hidden px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium whitespace-nowrap">
                                     {% if question.category == 'UM' %}Umum
                                     {% elif question.category == 'JB' %}Jual Beli
@@ -70,13 +72,27 @@
                 </div>
 
                 {% if question.car %}
-                <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                    <h3 class="text-sm font-medium text-gray-700 mb-2">Related Car:</h3>
-                    <div class="flex items-center">
-                        <img src="{{ question.car.image_url }}" alt="Car Image" class="w-30 h-16 object-cover rounded-lg mr-4">
-                        <div>
-                            <p class="font-medium">{{ question.car.brand }} {{ question.car.car_name }}</p>
-                            <p class="text-sm text-gray-600">{{ question.car.year }}</p>
+                <div class="max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 p-4 border border-gray-100">
+                    <h3 class="text-sm font-medium text-gray-500 mb-3">Related Car:</h3>
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <img src="{{ question.car.image_url }}" 
+                                 alt="Car Image" 
+                                 class="w-32 h-24 object-cover rounded-lg shadow-md">
+                        </div>
+                        <div class="flex-1 min-w-0 flex flex-col justify-center">
+                            <p class="text-lg font-semibold text-gray-900 mb-1">
+                                {{ question.car.brand }} {{ question.car.car_name }}
+                            </p>
+                            <p class="text-sm text-gray-600">
+                                Tahun {{ question.car.year }}
+                            </p>
+                            <a href="/katalog/{{ question.car.pk }}" class="flex items-center text-sm mt-2 text-blue-600 hover:text-blue-800 albert-sans-semibold group">
+                                <span class="mr-1">Show More</span>
+                                <svg class="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -127,12 +143,24 @@
                         {% endif %}
                         <div class="flex-1 min-w-0">
                             <div class="bg-gray-50 rounded-lg p-4">
-                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2">
+                                <div class="flex items-center justify-between gap-2 mb-2">
                                     <div class="flex items-center gap-2">
-                                        <span class="font-semibold text-gray-800 whitespace-nowrap">{{ reply.user.username }}</span>
+                                        <a href="/profile/{{ reply.user.username }}" class="flex items-center text-sm text-blue-600 hover:text-blue-800 font-semibold albert-sans-semibold group">
+                                            <span class="font-semibold whitespace-nowrap">{{ reply.user.username }}</span>
+                                        </a>
+                                        <span class="text-sm text-gray-600 whitespace-nowrap">{{ reply.formatted_time }} WIB</span>
                                         <span class="text-gray-800">{{ reply.role }}</span>
                                     </div>
-                                    <span class="text-sm text-gray-600 whitespace-nowrap">{{ reply.formatted_time }} WIB</span>
+                                    <div class="flex items-center">
+                                        {% if user == reply.user or user == question.user or user.userprofile.role == 'ADM' %}
+                                        <button class="text-red-600 hover:text-red-800 flex-shrink-0" 
+                                                onclick="deleteReply('{{ question.pk }}', '{{ reply.pk }}')">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                        </button>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 <div class="break-words"> 
                                     <p class="font-light">{{ reply.content|linebreaks }}</p>
@@ -160,7 +188,6 @@
                 {% endif %}
             </div>
 
-            <!-- CEK MW DIIMPLEMENT APA KAGA -->
             <div id="deleteReplyModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
                 <div id="deleteReplyModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
                     <div class="flex items-center justify-between p-4 border-b rounded-t">
@@ -175,13 +202,13 @@
                     </div>
             
                     <div class="p-6">
-                        <p class="text-gray-700 mb-4">Apakah Anda yakin ingin menghapus balasan ini? Tindakan ini tidak dapat dibatalkan.</p>
+                        <p class="text-gray-700 mb-4">Are you sure you want to delete this reply?</p>
                         <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 justify-center md:justify-end albert-sans-semibold">
                             <button type="button" id="confirmDeleteReply" class="bg-red-500 hover:bg-red-600 text-white rounded-full px-4 py-2 transition duration-300 shadow-md">
-                                Hapus
+                                Delete
                             </button>
-                            <button type="button" class="text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-full px-4 py-2 transition duration-300 shadow-md close-modal">
-                                Batal
+                            <button type="button" class="text-white  bg-blue-500 hover:bg-blue-600 rounded-full px-4 py-2 transition duration-300 shadow-md close-modal">
+                                Cancel
                             </button>
                         </div>
                     </div>

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+<style>
+    .car-details {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .car-details img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    @media (min-width: 768px) {
+        .car-details {
+            grid-template-columns: 1fr 2fr;
+        }
+    }
+
+    .seller-details {
+        border: 1px solid #e0e0e0;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .content {
+        margin-top: 80px;
+    }
+</style>
+
+{% block meta %}
+<title>View Details | BebasBerkelas</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="content">
+    <br>
+    <br>
+    <h1>{{ car.car_name }}</h1>
+
+    <h2 class="text-2xl font-bold text-center my-6">Car Details</h2>
+    <div class="car-details grid grid-cols-1 md:grid-cols-3 gap-4 bg-white shadow-md rounded-lg p-6 mb-4">
+        <div class="col-span-1">
+            {% if car.image_url %}
+                <img src="{{ car.image_url }}" alt="{{ car.car_name }}" class="w-full h-auto rounded-md">
+            {% else %}
+                <div class="w-full h-48 bg-gray-200 flex items-center justify-center rounded-md">
+                    <span>No Image Available</span>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-span-2">
+            <p class="text-lg font-semibold"><strong>Car Name:</strong> {{ car.car_name }}</p>
+            <p><strong>Brand:</strong> {{ car.brand }}</p>
+            <p><strong>Year:</strong> {{ car.year }}</p>
+            <p><strong>Mileage:</strong> {{ car.mileage }} km</p>
+            <p><strong>Location:</strong> {{ car.location }}</p>
+            <p class="text-blue-500"><strong>Price:</strong> Rp {{ car.price }}</p>
+            <p><strong>Instalment (Rp):</strong> {{ car.instalment }}</p>
+            <p><strong>Rear Camera:</strong> {{ car.rear_camera|yesno:"Yes,No" }}</p>
+            <p><strong>Sun Roof:</strong> {{ car.sun_roof|yesno:"Yes,No" }}</p>
+            <p><strong>Auto Retract Mirror:</strong> {{ car.auto_retract_mirror|yesno:"Yes,No" }}</p>
+            <p><strong>Electric Parking Brake:</strong> {{ car.electric_parking_brake|yesno:"Yes,No" }}</p>
+            <p><strong>Map Navigator:</strong> {{ car.map_navigator|yesno:"Yes,No" }}</p>
+            <p><strong>Vehicle Stability Control:</strong> {{ car.vehicle_stability_control|yesno:"Yes,No" }}</p>
+            <p><strong>Keyless Push Start:</strong> {{ car.keyless_push_start|yesno:"Yes,No" }}</p>
+            <p><strong>Sports Mode:</strong> {{ car.sports_mode|yesno:"Yes,No" }}</p>
+            <p><strong>Camera 360 View:</strong> {{ car.camera_360_view|yesno:"Yes,No" }}</p>
+            <p><strong>Power Sliding Door:</strong> {{ car.power_sliding_door|yesno:"Yes,No" }}</p>
+            <p><strong>Auto Cruise Control:</strong> {{ car.auto_cruise_control|yesno:"Yes,No" }}</p>
+        </div>
+    </div>
+
+    <h2 class="text-2xl font-bold text-center my-6">Seller Information</h2>
+    <div class="seller-details bg-white shadow-md rounded-lg p-6">
+        <p class="text-lg font-semibold"><strong>Seller Username:</strong> {{ car.seller.username }}</p>
+        <p><strong>Seller Email:</strong> {{ car.seller.email }}</p>
+        <p><strong>Contact Number:</strong> {{ car.seller.userprofile.no_telp }}</p>
+        <a href="{% url 'review_rating:show_profile' car.seller.username %}" class="inline-block mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+            Seller Profile
+        </a>
+    </div>
+
+    <a href="{% url 'product_catalog:car_list' %}" class="text-blue-600 hover:underline">Back to Catalog</a>
+</div>
+
+{% endblock %}

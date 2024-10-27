@@ -20,7 +20,7 @@ class Car(models.Model):
     car_name = models.CharField(max_length=100)
     brand = models.CharField(max_length=100)
     year = models.PositiveIntegerField()
-    mileage = models.PositiveIntegerField()  
+    mileage = models.PositiveIntegerField() 
     location = models.CharField(max_length=100)
     transmission = models.CharField(max_length=10, choices=CAR_TRANSMISSION_CHOICES)
     plate_type = models.CharField(max_length=10, choices=PLATE_TYPE_CHOICES)
@@ -36,7 +36,7 @@ class Car(models.Model):
     power_sliding_door = models.BooleanField(default=False)
     auto_cruise_control = models.BooleanField(default=False)
     price = models.DecimalField(max_digits=15, decimal_places=2)
-    instalment = models.DecimalField(max_digits=15, decimal_places=2) 
+    instalment = models.DecimalField(max_digits=15, decimal_places=2)
     image_url = models.URLField(max_length=200, blank=True)
 
 
