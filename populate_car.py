@@ -3,15 +3,14 @@ import django
 import csv
 import random
 
-# Set the settings module (replace 'yourproject.settings' with your actual settings module)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bekas_berkelas.settings')
 django.setup()
 
 from django.contrib.auth.models import User
-from product_catalog.models import Car  # Replace 'yourapp' with your app's name
+from product_catalog.models import Car 
 
-# Retrieve all sellers (users created before)
-sellers = User.objects.filter(userprofile__role='SEL')  # Assuming 'SEL' is the role for sellers
+
+sellers = User.objects.filter(userprofile__role='SEL')
 
 # Read data from the CSV file
 with open('cars.csv', mode='r', encoding='utf-8') as file:
