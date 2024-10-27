@@ -8,6 +8,7 @@ from wishlist.models import Wishlist
 from django.http import JsonResponse
 from user_dashboard.models import SellerProfile 
 import uuid
+from django.contrib import messages
 
 
 @login_required
@@ -216,10 +217,10 @@ def create_car(request):
 
     if user_profile.role != 'SEL':
         return redirect('authentication:login')
-
+    
     if not user_profile.is_verified:
+        messages.error(request, "You must be verified")
         return redirect('product_catalog:mobil_saya')
-       
     
     seller_profile = SellerProfile.objects.get(user_profile=user_profile)
 

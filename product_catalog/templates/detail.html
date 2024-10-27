@@ -3,7 +3,7 @@
 <style>
     .car-details {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Single column by default */
         gap: 1.5rem;
     }
 
@@ -15,7 +15,7 @@
 
     @media (min-width: 768px) {
         .car-details {
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 1fr 1fr; /* Two columns on medium screens */
         }
     }
 
@@ -33,21 +33,16 @@
     }
 </style>
 
-{% block meta %}
-<title>View Details | BebasBerkelas</title>
-{% endblock meta %}
-
 {% block content %}
 {% include 'navbar.html' %}
 
 <div class="content">
-    <br>
-    <br>
-    <h1>{{ car.car_name }}</h1>
 
+    <br>
+    <br>
     <h2 class="text-2xl font-bold text-center my-6">Car Details</h2>
     <div class="car-details grid grid-cols-1 md:grid-cols-3 gap-4 bg-white shadow-md rounded-lg p-6 mb-4">
-        <div class="col-span-1">
+        <div>
             {% if car.image_url %}
                 <img src="{{ car.image_url }}" alt="{{ car.car_name }}" class="w-full h-auto rounded-md">
             {% else %}
@@ -56,28 +51,34 @@
                 </div>
             {% endif %}
         </div>
-        <div class="col-span-2">
-            <p class="text-lg font-semibold"><strong>Car Name:</strong> {{ car.car_name }}</p>
-            <p><strong>Brand:</strong> {{ car.brand }}</p>
-            <p><strong>Year:</strong> {{ car.year }}</p>
-            <p><strong>Mileage:</strong> {{ car.mileage }} km</p>
-            <p><strong>Location:</strong> {{ car.location }}</p>
-            <p class="text-blue-500"><strong>Price:</strong> Rp {{ car.price }}</p>
-            <p><strong>Instalment (Rp):</strong> {{ car.instalment }}</p>
-            <p><strong>Rear Camera:</strong> {{ car.rear_camera|yesno:"Yes,No" }}</p>
-            <p><strong>Sun Roof:</strong> {{ car.sun_roof|yesno:"Yes,No" }}</p>
-            <p><strong>Auto Retract Mirror:</strong> {{ car.auto_retract_mirror|yesno:"Yes,No" }}</p>
-            <p><strong>Electric Parking Brake:</strong> {{ car.electric_parking_brake|yesno:"Yes,No" }}</p>
-            <p><strong>Map Navigator:</strong> {{ car.map_navigator|yesno:"Yes,No" }}</p>
-            <p><strong>Vehicle Stability Control:</strong> {{ car.vehicle_stability_control|yesno:"Yes,No" }}</p>
-            <p><strong>Keyless Push Start:</strong> {{ car.keyless_push_start|yesno:"Yes,No" }}</p>
-            <p><strong>Sports Mode:</strong> {{ car.sports_mode|yesno:"Yes,No" }}</p>
-            <p><strong>Camera 360 View:</strong> {{ car.camera_360_view|yesno:"Yes,No" }}</p>
-            <p><strong>Power Sliding Door:</strong> {{ car.power_sliding_door|yesno:"Yes,No" }}</p>
-            <p><strong>Auto Cruise Control:</strong> {{ car.auto_cruise_control|yesno:"Yes,No" }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col">
+                <p><strong>Car Name:</strong> {{ car.car_name }}</p>
+                <p><strong>Brand:</strong> {{ car.brand }}</p>
+                <p><strong>Year:</strong> {{ car.year }}</p>
+                <p><strong>Mileage:</strong> {{ car.mileage }} km</p>
+                <p><strong>Location:</strong> {{ car.location }}</p>
+                <p class="text-blue-500"><strong>Price:</strong> Rp {{ car.price }}</p>
+                <p><strong>Instalment (Rp):</strong> {{ car.instalment }}</p>
+            </div>
+            <div class="flex flex-col">
+                <p><strong>Rear Camera:</strong> {{ car.rear_camera|yesno:"Yes,No" }}</p>
+                <p><strong>Sun Roof:</strong> {{ car.sun_roof|yesno:"Yes,No" }}</p>
+                <p><strong>Auto Retract Mirror:</strong> {{ car.auto_retract_mirror|yesno:"Yes,No" }}</p>
+                <p><strong>Electric Parking Brake:</strong> {{ car.electric_parking_brake|yesno:"Yes,No" }}</p>
+                <p><strong>Map Navigator:</strong> {{ car.map_navigator|yesno:"Yes,No" }}</p>
+                <p><strong>Vehicle Stability Control:</strong> {{ car.vehicle_stability_control|yesno:"Yes,No" }}</p>
+                <p><strong>Keyless Push Start:</strong> {{ car.keyless_push_start|yesno:"Yes,No" }}</p>
+                <p><strong>Sports Mode:</strong> {{ car.sports_mode|yesno:"Yes,No" }}</p>
+                <p><strong>Camera 360 View:</strong> {{ car.camera_360_view|yesno:"Yes,No" }}</p>
+                <p><strong>Power Sliding Door:</strong> {{ car.power_sliding_door|yesno:"Yes,No" }}</p>
+                <p><strong>Auto Cruise Control:</strong> {{ car.auto_cruise_control|yesno:"Yes,No" }}</p>
+            </div>
         </div>
     </div>
-
+    
+    
+    
     <h2 class="text-2xl font-bold text-center my-6">Seller Information</h2>
     <div class="seller-details bg-white shadow-md rounded-lg p-6">
         <p class="text-lg font-semibold"><strong>Seller Username:</strong> {{ car.seller.username }}</p>
