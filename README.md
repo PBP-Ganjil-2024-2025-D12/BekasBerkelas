@@ -36,9 +36,9 @@ Berikut adalah _role_ pengguna sesuai modul yang akan diimplementasikan.
 | -- | -- | -- | -- |
 | **Authentication** | Pembeli dapat melakukan tindakan registrasi, login, dan logout | Penjual dapat melakukan tindakan registrasi, login, dan logout | Admin dapat melakukan tindakan registrasi, login, dan logout |
 | **User Dashboard** | Pembeli dapat mengubah data dirinya | Penjual dapat mengubah data dirinya | Admin dapat mengubah data diri serta melakukan tindakan seperti verifikasi penjual baru |
-| **Product Catalog** | Pembeli dapat melihat katalog mobil bekas yang ada | Penjual dapat menambahkan mobil bekas yang ingin dijualnya atau menghapus mobil bekas yang sudah terjual. Selain itu, penjual juga dapat melihat penjualan mobil lain (selain miliknya) seperti pengguna | Admin dapat menghapus produk mobil bekas yang ada pada katalog |
+| **Product Catalog** | Pembeli dapat melihat katalog mobil bekas yang ada | Penjual dapat menambahkan mobil bekas yang ingin dijualnya atau menghapus mobil bekas yang sudah terjual. Selain itu, penjual juga dapat melihat mobil bekas lain (selain milik mereka) seperti pengguna | Admin dapat menghapus produk mobil bekas yang ada pada katalog |
 | **Forum** | Pembeli dapat memulai dan melakukan diskusi dalam forum | Penjual dapat memulai dan melakukan diskusi dalam forum | Admin dapat memulai dan melakukan diskusi dalam forum serta menghapus forum yang ada | 
-| **Wishlist** | Pembeli dapat menambahkan mobil bekas yang mereka inginkan ke dalam _wishlist_ | Penjual dapat menambahkan mobil bekas (selain miliknya) yang mereka inginkan ke dalam _wishlist_  | - |
+| **Wishlist** | Pembeli dapat menambahkan mobil bekas yang mereka inginkan ke dalam _wishlist_ | Penjual dapat menambahkan mobil bekas (selain milik mereka) yang mereka inginkan ke dalam _wishlist_  | - |
 | **Review & Rating** | Pembeli dapat menambahkan review dan rating pada penjual mobil yang telah mereka beli | - | Admin dapat menghapus review dan rating yang ada |
 
 ### Tautan deployment aplikasi
