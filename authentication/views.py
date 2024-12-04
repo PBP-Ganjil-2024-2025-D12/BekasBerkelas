@@ -4,8 +4,10 @@ from django.contrib import messages
 from django.conf import settings
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
+@csrf_exempt
 def register_user(request) :
     form = RegisterForm()
     
@@ -29,6 +31,7 @@ def register_user(request) :
     context = {'form':form}
     return render(request, 'register.html', context)
 
+@csrf_exempt
 def login_user(request) :
     if request.user.is_authenticated :
         return redirect('main:main')

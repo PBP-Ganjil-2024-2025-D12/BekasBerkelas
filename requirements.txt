@@ -7,3 +7,4 @@ urllib3
 pillow
 pytz
 cloudinary
+django-cors-headers
