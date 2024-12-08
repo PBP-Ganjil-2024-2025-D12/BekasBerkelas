@@ -5,6 +5,8 @@ from django.urls import reverse
 from .models import Wishlist
 from product_catalog.models import Car
 from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.core import serializers
 import json
 
 @require_http_methods(["POST"])
@@ -61,4 +63,20 @@ def remove_from_wishlist(request, wishlist_id):
     wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
     wishlist.delete()
     return HttpResponseRedirect(reverse('wishlist:show_wishlist'))
+
+def show_xml(request):
+    data = Wishlist.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json(request):
+    data = Wishlist.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+def show_xml_by_id(request, id):
+    data = Wishlist.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json_by_id(request, id):
+    data = Wishlist.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
