@@ -108,6 +108,7 @@ def rating_list(request):
         return redirect('/dashboard')
     
     daftar_review = {}
+    page_obj = None
     if not request.user.userprofile.sellerprofile.reviews_received.exists():
         has_review = False
     else :
