@@ -237,14 +237,12 @@ def create_car(request):
         messages.error(request, "Ask admin for verification")
         return redirect('product_catalog:mobil_saya')
     
-    seller_profile = SellerProfile.objects.get(user_profile=user_profile)
 
     if request.method == 'POST':
         form = CarForm(request.POST)
         if form.is_valid():
             car = form.save(commit=False)
             car.seller = request.user
-            car.seller_buat_dashboard  = seller_profile
 
             car.save()
             return redirect('product_catalog:mobil_saya')
