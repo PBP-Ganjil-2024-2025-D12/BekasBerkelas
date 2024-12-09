@@ -25,6 +25,7 @@ def show_forum(request) :
     
     return render(request, 'show_forum.html', context)
 
+@csrf_exempt
 def get_questions_json(request):
     sort_by = request.GET.get('sort', 'terbaru')
     category = request.GET.get('category', '')
@@ -97,6 +98,7 @@ def create_question(request):
     new_question.save()
     return HttpResponse(b'CREATED', status=201)
 
+@csrf_exempt
 @require_POST
 @login_required(login_url='/auth/login')
 def create_reply(request, pk):
@@ -132,26 +134,50 @@ def delete_reply(request, question_pk, reply_pk) :
         return HttpResponse(b'FORBIDDEN', status=403)
     reply.delete()
     return HttpResponseRedirect(reverse('forum:forum_detail', kwargs={'pk': question_pk}))
-    
 
+@csrf_exempt
 def forum_detail(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-    replies = question.reply_set.all().order_by('created_at')
-    
-    wib = timezone('Asia/Jakarta')
-    
-    question_wib_time = question.created_at.astimezone(wib)
-    question.formatted_time = question_wib_time.strftime("%d %b %Y, %H:%M")
-    
-    for reply in replies:
-        reply_wib_time = reply.created_at.astimezone(wib)
-        reply.formatted_time = reply_wib_time.strftime("%d %b %Y, %H:%M")
-    
-    if request.method == 'GET':
-        context = {
-            'question': question,
-            'replies': replies,
-        }
-        return render(request, 'forum_detail.html', context)
-    
-    return HttpResponse(b'BAD REQUEST', status=400)
+   question = get_object_or_404(Question, pk=pk)
+   replies = question.reply_set.all().order_by('created_at')
+   
+   wib = timezone('Asia/Jakarta')
+   
+   if request.GET.get('format') == 'json':
+       question_data = {
+           'user': question.user.id,
+           'car': question.car.id if question.car else None,
+           'title': question.title,
+           'content': question.content,
+           'category': question.category,
+           'created_at': question.created_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
+           'updated_at': question.updated_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
+           'username': question.user.username,
+           'reply_count': question.reply_set.count(),
+       }
+       
+       replies_data = [{
+           'id': str(reply.pk),
+           'user': reply.user.id,
+           'content': reply.content,
+           'created_at': reply.created_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
+           'updated_at': reply.updated_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
+           'username': reply.user.username,
+       } for reply in replies]
+       
+       return JsonResponse({
+           'question': question_data,
+           'replies': replies_data
+       })
+   
+   question_wib_time = question.created_at.astimezone(wib)
+   question.formatted_time = question_wib_time.strftime("%d %b %Y, %H:%M")
+   
+   for reply in replies:
+       reply_wib_time = reply.created_at.astimezone(wib)
+       reply.formatted_time = reply_wib_time.strftime("%d %b %Y, %H:%M")
+   
+   context = {
+       'question': question,
+       'replies': replies,
+   }
+   return render(request, 'forum_detail.html', context)
