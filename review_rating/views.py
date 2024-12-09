@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.views.decorators.csrf import csrf_exempt
@@ -139,3 +140,32 @@ def delete_review(request, review_id):
             return JsonResponse({"error": "Review not found"}, status=404)
     else:
         return JsonResponse({"error": "Not authenticated"}, status=401)
+    
+def show_user_json(request, username):
+    # Fetch the UserProfile based on the username
+    user_profile = get_object_or_404(UserProfile, user__username=username)
+
+    # Check the role and return the corresponding profile data
+    if user_profile.role == 'SEL':
+        # Seller Profile
+        seller_profile = SellerProfile.objects.get(user_profile=user_profile)
+        seller_profile_data = model_to_dict(seller_profile)
+        seller_profile_data['user_profile'] = model_to_dict(user_profile)
+        return JsonResponse(seller_profile_data, safe=False)
+
+    elif user_profile.role == 'BUY':
+        # Buyer Profile
+        buyer_profile = BuyerProfile.objects.get(user_profile=user_profile)
+        buyer_profile_data = model_to_dict(buyer_profile)
+        buyer_profile_data['user_profile'] = model_to_dict(user_profile)  # Add user profile data
+        return JsonResponse(buyer_profile_data, safe=False)
+
+    elif user_profile.role == 'ADM':
+        # Admin Profile
+        admin_profile = AdminProfile.objects.get(user_profile=user_profile)
+        admin_profile_data = model_to_dict(admin_profile)
+        admin_profile_data['user_profile'] = model_to_dict(user_profile)  # Add user profile data
+        return JsonResponse(admin_profile_data, safe=False)
+
+    # If the role is not recognized, return an error
+    return JsonResponse({"error": "Role not found"}, status=400)
