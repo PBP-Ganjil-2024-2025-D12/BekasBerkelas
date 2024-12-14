@@ -101,9 +101,11 @@ def add_review(request, username):
 
 def show_json(request, username):
     seller = get_object_or_404(SellerProfile, user_profile=UserProfile.objects.get(user=User.objects.get(username=username)))
+    
     reviews = ReviewRating.objects.filter(reviewee=seller)
     
     data = []
+    
     for review in reviews:
         data.append({
             'fields': {
@@ -114,9 +116,7 @@ def show_json(request, username):
                 'reviewer': {
                     'user_profile': {
                         'profile_picture': str(review.reviewer.user_profile.profile_picture),
-                        'user': {
-                            'username': review.reviewer.user_profile.user.username
-                        }
+                        'name': review.reviewer.user_profile.user.username
                     }
                 }
             }
