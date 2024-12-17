@@ -54,9 +54,11 @@ def login_user(request):
             if user is not None:
                 login(request, user)
                 return JsonResponse({
-                    "status": "success",
-                    "message": "Successfully logged in!",
-                    "username": user.username,
+                    'status': True,
+                    'username': user.username,
+                    'id': user.id,
+                    'role': user.userprofile.role,
+                    'message': 'Login successful!'
                 }, status=200)
             else:
                 return JsonResponse({
