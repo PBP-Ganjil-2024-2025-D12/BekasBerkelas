@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+import json
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from django.db.models import Avg
@@ -169,3 +170,36 @@ def show_user_json(request, username):
 
     # If the role is not recognized, return an error
     return JsonResponse({"error": "Role not found"}, status=400)
+
+@csrf_exempt
+@require_POST
+def add_review_flutter(request, username):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            review = data.get('review')
+            rating = data.get('rating')
+            reviewee_username = data.get('reviewee_username')
+            reviewer_username = data.get('reviewer_username')
+
+            reviewer = BuyerProfile.objects.get(user_profile__user__username=reviewer_username)
+            reviewee = SellerProfile.objects.get(user_profile__user__username=reviewee_username)
+
+            new_review_rating = ReviewRating(
+                review=review,
+                rating=rating,
+                reviewer=reviewer,
+                reviewee=reviewee
+            )
+            new_review_rating.save()
+
+            average_rating = ReviewRating.objects.filter(reviewee=reviewee).aggregate(Avg('rating'))['rating__avg']
+
+            reviewee.rating = average_rating
+            reviewee.save()
+
+            return JsonResponse({'message': 'Review created successfully'}, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
