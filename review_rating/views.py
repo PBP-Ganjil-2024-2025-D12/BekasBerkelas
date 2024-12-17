@@ -12,6 +12,7 @@ from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+import json
 
 @login_required(login_url='/auth/login')
 def show_reviews(request, username):
@@ -142,30 +143,57 @@ def delete_review(request, review_id):
         return JsonResponse({"error": "Not authenticated"}, status=401)
     
 def show_user_json(request, username):
-    # Fetch the UserProfile based on the username
     user_profile = get_object_or_404(UserProfile, user__username=username)
 
-    # Check the role and return the corresponding profile data
     if user_profile.role == 'SEL':
-        # Seller Profile
         seller_profile = SellerProfile.objects.get(user_profile=user_profile)
         seller_profile_data = model_to_dict(seller_profile)
         seller_profile_data['user_profile'] = model_to_dict(user_profile)
         return JsonResponse(seller_profile_data, safe=False)
 
     elif user_profile.role == 'BUY':
-        # Buyer Profile
         buyer_profile = BuyerProfile.objects.get(user_profile=user_profile)
         buyer_profile_data = model_to_dict(buyer_profile)
-        buyer_profile_data['user_profile'] = model_to_dict(user_profile)  # Add user profile data
+        buyer_profile_data['user_profile'] = model_to_dict(user_profile) 
         return JsonResponse(buyer_profile_data, safe=False)
 
     elif user_profile.role == 'ADM':
-        # Admin Profile
         admin_profile = AdminProfile.objects.get(user_profile=user_profile)
         admin_profile_data = model_to_dict(admin_profile)
-        admin_profile_data['user_profile'] = model_to_dict(user_profile)  # Add user profile data
+        admin_profile_data['user_profile'] = model_to_dict(user_profile)
         return JsonResponse(admin_profile_data, safe=False)
 
-    # If the role is not recognized, return an error
     return JsonResponse({"error": "Role not found"}, status=400)
+
+@csrf_exempt
+@require_POST
+def add_review_flutter(request, username):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            review = data.get('review')
+            rating = data.get('rating')
+            reviewee_username = data.get('reviewee_username')
+            reviewer_username = data.get('reviewer_username')
+
+            reviewer = BuyerProfile.objects.get(user_profile__user__username=reviewer_username)
+            reviewee = SellerProfile.objects.get(user_profile__user__username=reviewee_username)
+
+            new_review_rating = ReviewRating(
+                review=review,
+                rating=rating,
+                reviewer=reviewer,
+                reviewee=reviewee
+            )
+            new_review_rating.save()
+
+            average_rating = ReviewRating.objects.filter(reviewee=reviewee).aggregate(Avg('rating'))['rating__avg']
+
+            reviewee.rating = average_rating
+            reviewee.save()
+
+            return JsonResponse({'message': 'Review created successfully'}, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
