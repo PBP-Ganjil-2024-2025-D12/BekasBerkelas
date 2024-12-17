@@ -78,14 +78,14 @@ def create_question(request):
     category = request.POST.get('category')
     
     if not title.strip() or not content.strip():
-        return redirect('forum:show_forum')
+        return JsonResponse({'status': 'error', 'message': 'Title and content are required'})
     
     car = None
     if car_id and car_id.strip():
         try:
             car = get_object_or_404(Car, pk=car_id)
         except (ValueError, Http404):
-            return HttpResponse(b'INVALID CAR ID', status=400)
+            return JsonResponse({'status': 'error', 'message': 'Invalid car ID'}, status=400)
     
     new_question = Question(
         user=user,
@@ -96,7 +96,7 @@ def create_question(request):
     )
     
     new_question.save()
-    return HttpResponse(b'CREATED', status=201)
+    return JsonResponse({'status': 'success', 'message': 'Question created successfully'}, status=201)
 
 @csrf_exempt
 @require_POST
@@ -105,79 +105,81 @@ def create_reply(request, pk):
     question = get_object_or_404(Question, pk=pk)
     content = request.POST.get('content')
     if content:
-        Reply.objects.create(
+        reply = Reply.objects.create(
             question=question,
             user=request.user,
             content=content
         )
-    return redirect('forum:forum_detail', pk=pk)
+        wib = timezone('Asia/Jakarta')
+        return JsonResponse({
+            'status': 'success',
+            'reply': {
+                'id': str(reply.pk),
+                'user': reply.user.id,
+                'content': reply.content,
+                'created_at': reply.created_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
+                'updated_at': reply.updated_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
+                'username': reply.user.username,
+                'question': str(question.pk)
+            }
+        })
+    return JsonResponse({'status': 'error', 'message': 'Content is required'}, status=400)
 
 @csrf_exempt
-@require_POST
 @login_required(login_url='/auth/login')
-def delete_question(request, pk) :
+@require_POST
+def delete_question(request, pk):
     question = get_object_or_404(Question, pk=pk)
     
-    if not (request.user == question.user or request.user.userprofile.role == 'ADM') :
-        return HttpResponse(b'FORBIDDEN', status=403)
-    question.delete()
-    return HttpResponseRedirect(reverse('forum:show_forum'))
+    if request.user == question.user or request.user.userprofile.role == "ADM":
+        question.delete()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error', 'message': 'Permission denied'}, status=403)
 
 @csrf_exempt
-@require_POST
 @login_required(login_url='/auth/login')
-def delete_reply(request, question_pk, reply_pk) :
+@require_POST
+def delete_reply(request, question_pk, reply_pk):
     reply = get_object_or_404(Reply, pk=reply_pk)
     question = get_object_or_404(Question, pk=question_pk)
     
-    if not (request.user == reply.user or request.user == question.user or request.user.userprofile.role == 'ADM'):
-        return HttpResponse(b'FORBIDDEN', status=403)
-    reply.delete()
-    return HttpResponseRedirect(reverse('forum:forum_detail', kwargs={'pk': question_pk}))
+    if (request.user == reply.user or 
+        request.user == question.user or 
+        request.user.userprofile.role == "ADM"):
+        
+        reply.delete()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error', 'message': 'Permission denied'}, status=403)
 
 @csrf_exempt
 def forum_detail(request, pk):
-   question = get_object_or_404(Question, pk=pk)
-   replies = question.reply_set.all().order_by('created_at')
-   
-   wib = timezone('Asia/Jakarta')
-   
-   if request.GET.get('format') == 'json':
-       question_data = {
-           'user': question.user.id,
-           'car': question.car.id if question.car else None,
-           'title': question.title,
-           'content': question.content,
-           'category': question.category,
-           'created_at': question.created_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
-           'updated_at': question.updated_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
-           'username': question.user.username,
-           'reply_count': question.reply_set.count(),
-       }
-       
-       replies_data = [{
-           'id': str(reply.pk),
-           'user': reply.user.id,
-           'content': reply.content,
-           'created_at': reply.created_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
-           'updated_at': reply.updated_at.astimezone(wib).strftime("%d %b %Y, %H:%M WIB"),
-           'username': reply.user.username,
-       } for reply in replies]
-       
-       return JsonResponse({
-           'question': question_data,
-           'replies': replies_data
-       })
-   
-   question_wib_time = question.created_at.astimezone(wib)
-   question.formatted_time = question_wib_time.strftime("%d %b %Y, %H:%M")
-   
-   for reply in replies:
-       reply_wib_time = reply.created_at.astimezone(wib)
-       reply.formatted_time = reply_wib_time.strftime("%d %b %Y, %H:%M")
-   
-   context = {
-       'question': question,
-       'replies': replies,
-   }
-   return render(request, 'forum_detail.html', context)
+    question = get_object_or_404(Question, pk=pk)
+    replies = Reply.objects.filter(question=question)
+    
+    user_id = request.user.id if request.user.is_authenticated else None
+    is_admin = request.user.userprofile.role == "ADM" if request.user.is_authenticated else False
+
+    return JsonResponse({
+        'question': {
+            'user': question.user.id,
+            'title': question.title,
+            'content': question.content,
+            'created_at': question.created_at,
+            'username': question.user.username,
+            'category': question.category,
+            'updated_at': question.updated_at,
+            'reply_count': question.reply_set.count(),
+        },
+        'replies': [{
+            'id': str(reply.pk), 
+            'user': reply.user.id,
+            'content': reply.content,
+            'created_at': reply.created_at,
+            'username': reply.user.username,
+            'question': str(reply.question.pk),
+        } for reply in replies],
+        'permissions': {
+            'user_id': user_id,
+            'is_admin': is_admin
+        }
+    })
