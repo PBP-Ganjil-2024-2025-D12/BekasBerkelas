@@ -219,3 +219,36 @@ def get_user(request):
         })
     except:
         return JsonResponse({"error": "User not found"}, status=404)
+    
+@csrf_exempt
+def get_user_flutter(request):
+    try:
+        if not request.user.is_authenticated:
+            return JsonResponse({"status": "error", "message": "User is not authenticated"}, status=401)
+
+        user = request.user
+        user = UserProfile.objects.get(user = user)
+        
+
+        if not user.profile_picture:
+            profile_pic = "assets/default_profile_picture.png"
+        else:
+            profile_pic = user.profile_picture
+
+        if not user.is_verified:
+            status_akun = 'Menunggu Verifikasi'
+        else:
+            status_akun = 'Sudah Verifikasi'
+
+        return JsonResponse({
+            'status' : 'success',
+            'id' : user.id,
+            'nama' : user.name,
+            'email' : user.email,
+            'no_telp' : user.no_telp,
+            'role' : user.role,
+            'profile_picture' : profile_pic,
+            'status_akun' : status_akun,
+        })
+    except:
+        return JsonResponse({"status": "error"}, status=404)

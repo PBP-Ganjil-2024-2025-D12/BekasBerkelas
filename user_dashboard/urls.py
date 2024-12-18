@@ -1,5 +1,5 @@
 from django.urls import path
-from user_dashboard.views import user_dashboard, user_biodata, upload_profile_picture, change_password, update_profile, rating_list, verifikasi_penjual, get_user
+from user_dashboard.views import get_user_flutter, user_dashboard, user_biodata, upload_profile_picture, change_password, update_profile, rating_list, verifikasi_penjual, get_user
 
 app_name = 'dashboard'
 
@@ -12,5 +12,5 @@ urlpatterns = [
     path('rating_list/', rating_list, name="rating_list" ),
     path('verifikasi_penjual/', verifikasi_penjual, name="verifikasi_penjual" ),
     path('get_user/', get_user, name="get_user"),
-
+    path('get_user_flutter/', get_user_flutter, name="get_user_flutter"),
 ]
