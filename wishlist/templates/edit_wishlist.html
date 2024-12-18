@@ -19,10 +19,7 @@
                 <div class="text-center">
                     <p class="text-lg text-[#157A70] font-normal">Prioritas Saat Ini: 
                         <span class="font-semibold">
-                            {% if wishlist.priority == 'Rendah' %} Rendah
-                            {% elif wishlist.priority == 'Sedang' %} Sedang
-                            {% else %} Tinggi
-                            {% endif %}
+                            {{ wishlist.get_priority_display }}
                         </span>
                     </p>
                 </div>
