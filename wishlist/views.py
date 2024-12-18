@@ -42,7 +42,6 @@ def show_wishlist(request):
     context = {'wishlists': wishlists, 'selected_priority': priority_filter, 'priority_choices': Wishlist.PRIORITY_CHOICES}
     return render(request, 'wishlist.html', context)
 
-
 @login_required(login_url='/auth/login')
 def edit_wishlist(request, wishlist_id):
     wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
@@ -56,7 +55,6 @@ def edit_wishlist(request, wishlist_id):
     
     return render(request, 'edit_wishlist.html', {'wishlist': wishlist})
 
-
 @require_http_methods(["POST"])
 @login_required(login_url='/auth/login')
 def remove_from_wishlist(request, wishlist_id):
@@ -64,19 +62,22 @@ def remove_from_wishlist(request, wishlist_id):
     wishlist.delete()
     return HttpResponseRedirect(reverse('wishlist:show_wishlist'))
 
-def show_xml(request):
-    data = Wishlist.objects.filter(user=request.user)
-    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
-
+@login_required(login_url='/auth/login')
 def show_json(request):
-    data = Wishlist.objects.filter(user=request.user)
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+    wishlists = Wishlist.objects.filter(user=request.user)
+    data = []
+    for wishlist in wishlists:
+        car = wishlist.car
+        data.append({
+            'id': str(wishlist.pk),
+            'image_url': car.image_url,
+            'car_name': car.car_name,
+            'price': car.price,
+            'brand': car.brand,
+            'year': car.year,
+            'mileage': car.mileage,
+            'priority': wishlist.priority,
+        })
+    return JsonResponse(data, safe=False)
 
-def show_xml_by_id(request, id):
-    data = Wishlist.objects.filter(pk=id)
-    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
-
-def show_json_by_id(request, id):
-    data = Wishlist.objects.filter(pk=id)
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
