@@ -14,5 +14,6 @@ urlpatterns = [
     path('verifikasi_penjual/', views.verifikasi_penjual, name="verifikasi_penjual" ),
     path('get_user/', views.get_user, name="get_user"),
     path('get_user_flutter/', views.get_user_flutter, name="get_user_flutter"),
-    path('update_profile_flutter/', views.update_profile_flutter, name="update_profile_flutter")
+    path('update_profile_flutter/', views.update_profile_flutter, name="update_profile_flutter"),
+    path('change_password_flutter/', views.change_password_flutter, name="change_password_flutter"),
 ]

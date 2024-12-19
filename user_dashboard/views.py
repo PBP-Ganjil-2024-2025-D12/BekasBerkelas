@@ -16,6 +16,8 @@ import cloudinary.uploader
 import json
 from django.core.paginator import Paginator
 
+from user_dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm
+
 # Create your views here.
 def user_dashboard(request) :
     return redirect("dashboard:biodata")
@@ -233,7 +235,7 @@ def get_user_flutter(request):
             
 
             if not user.profile_picture:
-                profile_pic = "assets/default_profile_picture.png"
+                profile_pic = ""
             else:
                 profile_pic = user.profile_picture
 
@@ -256,7 +258,7 @@ def get_user_flutter(request):
             return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
     except:
         return JsonResponse({"status": "error"}, status=404)
-    
+
 @csrf_exempt
 @require_POST
 def update_profile_flutter(request):
@@ -269,29 +271,57 @@ def update_profile_flutter(request):
             data = json.loads(request.body)
 
             if 'name' in data:
-                user_profile.name = strip_tags(data['name'])
-                response = user_profile.name
+                forms = UpdateNameForm(data=data, instance=user_profile)
+                if forms.is_valid():
+                    forms.save()
+                    response = user_profile.name
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Nama tidak valid'}, status=400)
             
             
             if 'email' in data:
-                validator = EmailValidator()
-                email = strip_tags(data['email'])
-                try:
-                    validator(email)
-                    user_profile.email = email
+                forms = UpdateEmailForm(data=data, instance=user_profile)
+                if forms.is_valid():
+                    forms.save()
                     response = user_profile.email
-                except ValidationError:
-                    return JsonResponse({'status': 'error', 'message': 'Invalid Email'}, status=400)
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Email tidak valid'}, status=400)
 
             if 'no_telp' in data:
-                user_profile.no_telp = strip_tags(data['no_telp'])
-                response = user_profile.no_telp
-
-            # Simpan perubahan yang dilakukan
-            user_profile.save()
+                forms = UpdatePhoneForm(data=data, instance=user_profile)
+                if forms.is_valid():
+                    forms.save()
+                    response = user_profile.no_telp
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Nomor Telepon tidak valid'}, status=400)
 
             return JsonResponse({'status': 'success', 'message': 'Profile updated successfully', 'data': response}, status=200)
 
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
     except Exception as e:
         return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
+
+@csrf_exempt
+@require_POST
+def change_password_flutter(request):
+    try:
+        if request.method == 'POST':
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User is not authenticated. Please re-log."}, status=401)
+
+            user = request.user
+            data = json.loads(request.body)
+            form = PasswordChangeForm(user=user, data=data)
+
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)
+                return JsonResponse({"status": "success", "message": "Password updated successfully"}, status=200)
+            else:
+                return JsonResponse({"status": "error", "message": "Password not valid"}, status=400)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+        
+    except Exception as e:
+        return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
+
