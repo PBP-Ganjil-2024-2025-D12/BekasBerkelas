@@ -275,7 +275,7 @@ def update_profile_flutter(request):
             
             if 'email' in data:
                 validator = EmailValidator()
-                email = strip_tags(request.POST.get('email'))
+                email = strip_tags(data['email'])
                 try:
                     validator(email)
                     user_profile.email = email
@@ -284,7 +284,7 @@ def update_profile_flutter(request):
                     return JsonResponse({'status': 'error', 'message': 'Invalid Email'}, status=400)
 
             if 'no_telp' in data:
-                user_profile.no_telp = strip_tags(request.POST.get('no_telp'))
+                user_profile.no_telp = strip_tags(data['no_telp'])
                 response = user_profile.no_telp
 
             # Simpan perubahan yang dilakukan
