@@ -6,10 +6,74 @@ from authentication.models import UserProfile
 from django.shortcuts import get_object_or_404
 from wishlist.models import Wishlist
 from django.http import JsonResponse
-from user_dashboard.models import SellerProfile 
+from django.core import serializers
 import uuid
+from django.http import HttpResponse
 from django.contrib import messages
+from django.http import JsonResponse
+from django.contrib.auth.models import User
+import json
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
+def filter_cars(request):
+    # Debugging the request method
+    print(f"Received {request.method} request")
+
+    if request.method == 'POST':
+        try:
+            # Debugging raw request body
+            print(f"Raw data received: {request.body}")
+
+            data = json.loads(request.body)
+            username = data.get('username')
+
+            # Debugging extracted username
+            print(f"Username extracted: {username}")
+
+            cars = Car.objects.filter(seller__username=username)
+            car_data = list(cars.values('car_name', 'price'))
+
+            # Debugging the filtered car data
+            print(f"Filtered car data: {car_data}")
+
+            return JsonResponse({"cars": car_data}, safe=False)
+        except Exception as e:
+            # Debugging exception details
+            print(f"Error during processing: {str(e)}")
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "This method only supports POST requests"}, status=40)
+
+def user_profile_to_dict(user_profile):
+    return {
+        'user_id': user_profile.user.id,
+        'username': user_profile.user.username,
+        'name': user_profile.name,
+        'email': user_profile.email,
+        'no_telp': user_profile.no_telp,
+        'role': user_profile.role,
+        'role_display': user_profile.get_role_display(),  # This gets the human-readable version of the role
+        'profile_picture': user_profile.profile_picture if user_profile.profile_picture else "default_picture_url",
+        'profile_picture_id': user_profile.profile_picture_id,
+        'is_verified': user_profile.is_verified
+    }
+
+@login_required
+def show_user_profile_json(request):
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile_data = user_profile_to_dict(user_profile)
+        return JsonResponse(user_profile_data)  # Returns the user profile data as JSON
+    except UserProfile.DoesNotExist:
+        return JsonResponse({
+            "status": False,
+            "message": "User profile not found."
+        }, status=404)
+    
+def show_all_cars(request):
+    data = Car.objects.all()  # This retrieves all car objects from the database
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 @login_required
 def mobil_saya(request):
@@ -225,6 +289,48 @@ def delete_car(request, car_id):
     else:
         return redirect('authentication:login')
 
+def create_car_flutter(request):
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Only POST method is allowed'}, status=405)
+    
+    # Fetch the first user in the User table
+    seller = User.objects.first()
+    if seller is None:
+        return JsonResponse({'status': 'error', 'message': 'No users available'}, status=404)
+
+    try:
+        data = json.loads(request.body)
+        car = Car(
+            seller=seller,
+            car_name=data['car_name'],
+            brand=data['brand'],
+            year=data['year'],
+            mileage=data['mileage'],
+            location=data['location'],
+            transmission=data['transmission'],
+            plate_type=data['plate_type'],
+            rear_camera=data.get('rear_camera', False),
+            sun_roof=data.get('sun_roof', False),
+            auto_retract_mirror=data.get('auto_retract_mirror', False),
+            electric_parking_brake=data.get('electric_parking_brake', False),
+            map_navigator=data.get('map_navigator', False),
+            vehicle_stability_control=data.get('vehicle_stability_control', False),
+            keyless_push_start=data.get('keyless_push_start', False),
+            sports_mode=data.get('sports_mode', False),
+            camera_360_view=data.get('camera_360_view', False),
+            power_sliding_door=data.get('power_sliding_door', False),
+            auto_cruise_control=data.get('auto_cruise_control', False),
+            price=data['price'],
+            instalment=data['instalment'],
+            image_url=data['image_url']
+        )
+        car.save()
+        return JsonResponse({'status': 'success', 'message': 'Car created successfully'}, status=201)
+    except KeyError as e:
+        return JsonResponse({'status': 'error', 'message': f'Missing field in data: {str(e)}'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': f'An error occurred: {str(e)}'}, status=500)
+    
 @login_required
 def create_car(request):
     user_profile = UserProfile.objects.get(user=request.user)
@@ -236,14 +342,12 @@ def create_car(request):
     if not user_profile.is_verified:
         messages.error(request, "Ask admin for verification")
         return redirect('product_catalog:mobil_saya')
-    
 
     if request.method == 'POST':
         form = CarForm(request.POST)
         if form.is_valid():
             car = form.save(commit=False)
             car.seller = request.user
-
             car.save()
             return redirect('product_catalog:mobil_saya')
         else:
