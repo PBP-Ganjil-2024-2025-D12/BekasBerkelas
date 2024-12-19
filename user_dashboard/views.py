@@ -221,34 +221,77 @@ def get_user(request):
         return JsonResponse({"error": "User not found"}, status=404)
     
 @csrf_exempt
+@require_POST
 def get_user_flutter(request):
     try:
-        if not request.user.is_authenticated:
-            return JsonResponse({"status": "error", "message": "User is not authenticated"}, status=401)
+        if request.method == 'POST':
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User is not authenticated"}, status=401)
 
-        user = request.user
-        user = UserProfile.objects.get(user = user)
-        
+            user = UserProfile.objects.get(user = request.user)
+            role = ["Pembeli", "Penjual", "Admin"]
+            
 
-        if not user.profile_picture:
-            profile_pic = "assets/default_profile_picture.png"
+            if not user.profile_picture:
+                profile_pic = "assets/default_profile_picture.png"
+            else:
+                profile_pic = user.profile_picture
+
+            if not user.is_verified:
+                status_akun = 'Menunggu Verifikasi'
+            else:
+                status_akun = 'Sudah Verifikasi'
+
+            return JsonResponse({
+                'status' : 'success',
+                'id' : user.id,
+                'nama' : user.name,
+                'email' : user.email,
+                'no_telp' : user.no_telp,
+                'role' : user.role,
+                'profile_picture' : profile_pic,
+                'status_akun' : status_akun,
+            })
         else:
-            profile_pic = user.profile_picture
-
-        if not user.is_verified:
-            status_akun = 'Menunggu Verifikasi'
-        else:
-            status_akun = 'Sudah Verifikasi'
-
-        return JsonResponse({
-            'status' : 'success',
-            'id' : user.id,
-            'nama' : user.name,
-            'email' : user.email,
-            'no_telp' : user.no_telp,
-            'role' : user.role,
-            'profile_picture' : profile_pic,
-            'status_akun' : status_akun,
-        })
+            return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
     except:
         return JsonResponse({"status": "error"}, status=404)
+    
+@csrf_exempt
+@require_POST
+def update_profile_flutter(request):
+    try:
+        if request.method == 'POST':
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User is not authenticated. Please re-log."}, status=401)
+            
+            user_profile = UserProfile.objects.get(user = request.user)
+            data = json.loads(request.body)
+
+            if 'name' in data:
+                user_profile.name = strip_tags(data['name'])
+                response = user_profile.name
+            
+            
+            if 'email' in data:
+                validator = EmailValidator()
+                email = strip_tags(request.POST.get('email'))
+                try:
+                    validator(email)
+                    user_profile.email = email
+                    response = user_profile.email
+                except ValidationError:
+                    return JsonResponse({'status': 'error', 'message': 'Invalid Email'}, status=400)
+
+            if 'no_telp' in data:
+                user_profile.no_telp = strip_tags(request.POST.get('no_telp'))
+                response = user_profile.no_telp
+
+            # Simpan perubahan yang dilakukan
+            user_profile.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Profile updated successfully', 'data': response}, status=200)
+
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+    except Exception as e:
+        return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
