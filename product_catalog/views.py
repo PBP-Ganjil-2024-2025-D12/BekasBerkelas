@@ -13,6 +13,37 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 import json
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def filter_cars(request):
+    # Debugging the request method
+    print(f"Received {request.method} request")
+
+    if request.method == 'POST':
+        try:
+            # Debugging raw request body
+            print(f"Raw data received: {request.body}")
+
+            data = json.loads(request.body)
+            username = data.get('username')
+
+            # Debugging extracted username
+            print(f"Username extracted: {username}")
+
+            cars = Car.objects.filter(seller__username=username)
+            car_data = list(cars.values('car_name', 'price'))
+
+            # Debugging the filtered car data
+            print(f"Filtered car data: {car_data}")
+
+            return JsonResponse({"cars": car_data}, safe=False)
+        except Exception as e:
+            # Debugging exception details
+            print(f"Error during processing: {str(e)}")
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "This method only supports POST requests"}, status=40)
 
 def user_profile_to_dict(user_profile):
     return {
