@@ -169,6 +169,7 @@ def forum_detail(request, pk):
             'category': question.category,
             'updated_at': question.updated_at,
             'reply_count': question.reply_set.count(),
+            'car': str(question.car.pk) if question.car else None, 
         },
         'replies': [{
             'id': str(reply.pk), 
