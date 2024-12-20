@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+import json
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from django.db.models import Avg
@@ -12,6 +13,7 @@ from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+import json
 import json
 
 @login_required(login_url='/auth/login')
@@ -108,12 +110,18 @@ def show_json(request, username):
     data = []
     
     for review in reviews:
+        can_delete = False
+        if not request.user.is_anonymous:
+            can_delete = (
+                request.user == review.reviewer.user_profile.user or 
+                request.user.userprofile.role == 'ADM'
+            )
         data.append({
             'fields': {
                 'rating': review.rating,
                 'review': review.review,
                 'id': str(review.id),
-                'can_delete': (request.user == review.reviewer.user_profile.user or request.user.userprofile.role == 'ADM'),
+                'can_delete': can_delete,
                 'reviewer': {
                     'user_profile': {
                         'profile_picture': str(review.reviewer.user_profile.profile_picture),
@@ -170,11 +178,10 @@ def show_user_json(request, username):
 def add_review_flutter(request, username):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)
-            review = data.get('review')
-            rating = data.get('rating')
-            reviewee_username = data.get('reviewee_username')
-            reviewer_username = data.get('reviewer_username')
+            review = request.POST.get('review')
+            rating = request.POST.get('rating')
+            reviewer_username = request.POST.get('reviewer_username')
+            reviewee_username = username
 
             reviewer = BuyerProfile.objects.get(user_profile__user__username=reviewer_username)
             reviewee = SellerProfile.objects.get(user_profile__user__username=reviewee_username)
@@ -197,3 +204,17 @@ def add_review_flutter(request, username):
             return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+@csrf_exempt
+@require_POST
+def delete_review_flutter(request, review_id):
+    try:
+        review = ReviewRating.objects.get(id=review_id)
+        reviewee = review.reviewee
+        review.delete()
+        average_rating = ReviewRating.objects.filter(reviewee=reviewee).aggregate(Avg('rating'))['rating__avg'] or 0
+        reviewee.rating = average_rating
+        reviewee.save()
+        return JsonResponse({"status": "success"}, status=200)
+    except ReviewRating.DoesNotExist:
+        return JsonResponse({"error": "Review not found"}, status=404)
