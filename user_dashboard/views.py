@@ -15,7 +15,6 @@ from django.templatetags.static import static
 import cloudinary.uploader
 import json
 from django.core.paginator import Paginator
-
 from user_dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm
 
 # Create your views here.
@@ -128,8 +127,6 @@ def rating_list(request):
             else:
                 reviewer_profile = review.reviewer.user_profile.profile_picture
 
-            print(reviewer_profile)
-
             daftar_review[str(review.id)] = {
                 'review' : review.review,
                 'rating' : review.rating,
@@ -231,8 +228,6 @@ def get_user_flutter(request):
                 return JsonResponse({"status": "error", "message": "User is not authenticated"}, status=401)
 
             user = UserProfile.objects.get(user = request.user)
-            role = ["Pembeli", "Penjual", "Admin"]
-            
 
             if not user.profile_picture:
                 profile_pic = ""
@@ -322,6 +317,33 @@ def change_password_flutter(request):
         else:
             return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
         
+    except Exception as e:
+        return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
+    
+@csrf_exempt
+@require_POST
+def upload_profile_picture_flutter(request):
+    try:
+        if request.method == 'POST':
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User is not authenticated. Please re-log."}, status=401)
+            
+            data = json.loads(request.body)
+            profile = UserProfile.objects.get(user = request.user)
+
+            profile_picture_url = data["profile_picture_url"]
+            profile_picture_id = data["profile_picture_id"]
+            
+
+            if profile.profile_picture_id:
+                cloudinary.uploader.destroy(profile.profile_picture_id)
+
+
+            profile.profile_picture = profile_picture_url
+            profile.profile_picture_id = profile_picture_id
+
+            profile.save()
+            return JsonResponse({"status": "success", "message": "Profile picture uploaded successfully!"}, status=200)
     except Exception as e:
         return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
 

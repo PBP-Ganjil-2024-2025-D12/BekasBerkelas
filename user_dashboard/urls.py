@@ -16,4 +16,5 @@ urlpatterns = [
     path('get_user_flutter/', views.get_user_flutter, name="get_user_flutter"),
     path('update_profile_flutter/', views.update_profile_flutter, name="update_profile_flutter"),
     path('change_password_flutter/', views.change_password_flutter, name="change_password_flutter"),
+    path('upload_profile_picture_flutter/', views.upload_profile_picture_flutter, name="upload_profile_picture_flutter"),
 ]
