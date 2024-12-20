@@ -15,6 +15,7 @@ from django.templatetags.static import static
 import cloudinary.uploader
 import json
 from django.core.paginator import Paginator
+from user_dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm
 
 # Create your views here.
 def user_dashboard(request) :
@@ -126,8 +127,6 @@ def rating_list(request):
             else:
                 reviewer_profile = review.reviewer.user_profile.profile_picture
 
-            print(reviewer_profile)
-
             daftar_review[str(review.id)] = {
                 'review' : review.review,
                 'rating' : review.rating,
@@ -219,3 +218,132 @@ def get_user(request):
         })
     except:
         return JsonResponse({"error": "User not found"}, status=404)
+    
+@csrf_exempt
+@require_POST
+def get_user_flutter(request):
+    try:
+        if request.method == 'POST':
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User is not authenticated"}, status=401)
+
+            user = UserProfile.objects.get(user = request.user)
+
+            if not user.profile_picture:
+                profile_pic = ""
+            else:
+                profile_pic = user.profile_picture
+
+            if not user.is_verified:
+                status_akun = 'Menunggu Verifikasi'
+            else:
+                status_akun = 'Sudah Verifikasi'
+
+            return JsonResponse({
+                'status' : 'success',
+                'id' : user.id,
+                'nama' : user.name,
+                'email' : user.email,
+                'no_telp' : user.no_telp,
+                'role' : user.role,
+                'profile_picture' : profile_pic,
+                'status_akun' : status_akun,
+            })
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    except:
+        return JsonResponse({"status": "error"}, status=404)
+
+@csrf_exempt
+@require_POST
+def update_profile_flutter(request):
+    try:
+        if request.method == 'POST':
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User is not authenticated. Please re-log."}, status=401)
+            
+            user_profile = UserProfile.objects.get(user = request.user)
+            data = json.loads(request.body)
+
+            if 'name' in data:
+                forms = UpdateNameForm(data=data, instance=user_profile)
+                if forms.is_valid():
+                    forms.save()
+                    response = user_profile.name
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Nama tidak valid'}, status=400)
+            
+            
+            if 'email' in data:
+                forms = UpdateEmailForm(data=data, instance=user_profile)
+                if forms.is_valid():
+                    forms.save()
+                    response = user_profile.email
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Email tidak valid'}, status=400)
+
+            if 'no_telp' in data:
+                forms = UpdatePhoneForm(data=data, instance=user_profile)
+                if forms.is_valid():
+                    forms.save()
+                    response = user_profile.no_telp
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Nomor Telepon tidak valid'}, status=400)
+
+            return JsonResponse({'status': 'success', 'message': 'Profile updated successfully', 'data': response}, status=200)
+
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+    except Exception as e:
+        return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
+
+@csrf_exempt
+@require_POST
+def change_password_flutter(request):
+    try:
+        if request.method == 'POST':
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User is not authenticated. Please re-log."}, status=401)
+
+            user = request.user
+            data = json.loads(request.body)
+            form = PasswordChangeForm(user=user, data=data)
+
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)
+                return JsonResponse({"status": "success", "message": "Password updated successfully"}, status=200)
+            else:
+                return JsonResponse({"status": "error", "message": "Password not valid"}, status=400)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+        
+    except Exception as e:
+        return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
+    
+@csrf_exempt
+@require_POST
+def upload_profile_picture_flutter(request):
+    try:
+        if request.method == 'POST':
+            if not request.user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User is not authenticated. Please re-log."}, status=401)
+            
+            data = json.loads(request.body)
+            profile = UserProfile.objects.get(user = request.user)
+
+            profile_picture_url = data["profile_picture_url"]
+            profile_picture_id = data["profile_picture_id"]
+            
+
+            if profile.profile_picture_id:
+                cloudinary.uploader.destroy(profile.profile_picture_id)
+
+
+            profile.profile_picture = profile_picture_url
+            profile.profile_picture_id = profile_picture_id
+
+            profile.save()
+            return JsonResponse({"status": "success", "message": "Profile picture uploaded successfully!"}, status=200)
+    except Exception as e:
+        return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
+
