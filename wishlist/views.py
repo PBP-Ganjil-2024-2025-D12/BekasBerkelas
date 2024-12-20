@@ -100,6 +100,16 @@ def get_wishlist_item(request, wishlist_id):
     return JsonResponse(data, safe=False)
 
 @csrf_exempt
+@login_required(login_url='/auth/login')
+def get_wishlist_car_ids(request):
+    try:
+        wishlist_items = Wishlist.objects.filter(user=request.user)
+        car_ids = [str(item.car.id) for item in wishlist_items]
+        return JsonResponse({'car_ids': car_ids})
+    except Wishlist.DoesNotExist:
+        return JsonResponse({'car_ids': []})
+
+@csrf_exempt
 @require_POST
 @login_required(login_url='/auth/login/')
 def add_wishlist_flutter(request, car_id):
@@ -143,13 +153,3 @@ def remove_wishlist_flutter(request, wishlist_id):
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
     except Wishlist.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Wishlist entry not found.'}, status=404)
-    
-@csrf_exempt
-@login_required(login_url='/auth/login')
-def get_wishlist_car_ids(request):
-    try:
-        wishlist_items = Wishlist.objects.filter(user=request.user)
-        car_ids = [str(item.car.id) for item in wishlist_items]
-        return JsonResponse({'car_ids': car_ids})
-    except Wishlist.DoesNotExist:
-        return JsonResponse({'car_ids': []})
