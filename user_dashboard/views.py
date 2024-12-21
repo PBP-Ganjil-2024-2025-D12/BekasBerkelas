@@ -450,6 +450,7 @@ def rating_list_flutter(request):
                     'review' : review.review,
                     'rating' : review.rating,
                     'reviewer' : review.reviewer.user_profile.name,
+                    'created_at': review.created_at.strftime('%Y-%m-%d'),
                     'reviewer_profile_pic' : reviewer_profile 
                 }
 
