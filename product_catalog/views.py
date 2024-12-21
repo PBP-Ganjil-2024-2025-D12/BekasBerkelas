@@ -15,6 +15,34 @@ from django.contrib.auth.models import User
 import json
 from django.views.decorators.csrf import csrf_exempt
 
+
+def get_seller_contact(request, car_id):
+    try:
+        car = Car.objects.get(id=car_id)
+        seller_email = car.seller.email
+        # Assuming `no_telp` is a field in a related `SellerProfile` model
+        seller_phone_number = car.seller.userprofile.no_telp  # Adjust if no_telp is elsewhere
+        return JsonResponse({
+            'email': seller_email,
+            'no_telp': seller_phone_number,
+        }, safe=False)
+    except Car.DoesNotExist:
+        return JsonResponse({'error': 'Car not found'}, status=404)
+    except AttributeError:
+        return JsonResponse({'error': 'Seller profile or contact details are incomplete'}, status=500)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def get_seller_username(request, car_id):
+    try:
+        car = Car.objects.get(id=car_id)
+        seller_username = car.seller.username
+        return JsonResponse({'seller_username': seller_username}, safe=False)
+    except Car.DoesNotExist:
+        return JsonResponse({'error': 'Car not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
 @csrf_exempt
 def delete_flutter(request):
     print(f"Received {request.method} request")
@@ -48,7 +76,6 @@ def search_filter_cars(request):
     # Apply search and filter parameters
     car_name = request.GET.get('car_name')
     brand = request.GET.get('brand')
-    price_min = request.GET.get('price_min')
     price_max = request.GET.get('price_max')
     year = request.GET.get('year')  # Retrieve 'year' from request
     plate_type = request.GET.get('plate_type')  # Retrieve 'plate_type' from request
