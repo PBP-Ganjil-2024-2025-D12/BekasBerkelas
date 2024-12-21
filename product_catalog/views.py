@@ -15,13 +15,94 @@ from django.contrib.auth.models import User
 import json
 from django.views.decorators.csrf import csrf_exempt
 
+
+def get_seller_contact(request, car_id):
+    try:
+        car = Car.objects.get(id=car_id)
+        seller_email = car.seller.email
+        # Assuming `no_telp` is a field in a related `SellerProfile` model
+        seller_phone_number = car.seller.userprofile.no_telp  # Adjust if no_telp is elsewhere
+        return JsonResponse({
+            'email': seller_email,
+            'no_telp': seller_phone_number,
+        }, safe=False)
+    except Car.DoesNotExist:
+        return JsonResponse({'error': 'Car not found'}, status=404)
+    except AttributeError:
+        return JsonResponse({'error': 'Seller profile or contact details are incomplete'}, status=500)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def get_seller_username(request, car_id):
+    try:
+        car = Car.objects.get(id=car_id)
+        seller_username = car.seller.username
+        return JsonResponse({'seller_username': seller_username}, safe=False)
+    except Car.DoesNotExist:
+        return JsonResponse({'error': 'Car not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+@csrf_exempt
+def delete_flutter(request):
+    print(f"Received {request.method} request")
+    if request.method == 'POST':
+        print(f"Raw data received: {request.body}")
+
+        data = json.loads(request.body)
+        car_id = data.get('car_id')
+        username = data.get('username')
+
+        print(f"Car ID extracted: {car_id}")
+        print(f"Username extracted: {username}")
+
+        car = get_object_or_404(Car, id=car_id)
+        if car.seller.username == username:
+            car.delete()
+            response_data = {"status": "success", "message": "Car deleted successfully"}
+            return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
+        else:
+            response_data = {"status": "error", "message": "Unauthorized to delete this car"}
+            return HttpResponse(json.dumps(response_data), content_type="application/json", status=403)
+    
+def show_all_cars(request):
+    data = Car.objects.all() 
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+def search_filter_cars(request):
+    # Get all cars or filter based on parameters
+    cars = Car.objects.all()
+
+    # Apply search and filter parameters
+    car_name = request.GET.get('car_name')
+    brand = request.GET.get('brand')
+    price_max = request.GET.get('price_max')
+    year = request.GET.get('year')  # Retrieve 'year' from request
+    plate_type = request.GET.get('plate_type')  # Retrieve 'plate_type' from request
+
+    if year:
+        cars = cars.filter(year=year)
+    if plate_type:
+        cars = cars.filter(plate_type=plate_type)
+    if car_name:
+        cars = cars.filter(car_name__icontains=car_name)
+    if brand:
+        cars = cars.filter(brand__icontains=brand)
+    if price_max:
+        cars = cars.filter(price__lte=float(price_max))
+
+    # Serialize data including all fields of the Car model
+    car_data = serializers.serialize("json", cars)
+
+    return HttpResponse(car_data, content_type="application/json")
+
 @csrf_exempt
 def filter_cars(request):
     # Debugging the request method
     print(f"Received {request.method} request")
+    cars = Car.objects.all()
 
     if request.method == 'POST':
-        try:
             # Debugging raw request body
             print(f"Raw data received: {request.body}")
 
@@ -31,19 +112,11 @@ def filter_cars(request):
             # Debugging extracted username
             print(f"Username extracted: {username}")
 
-            cars = Car.objects.filter(seller__username=username)
-            car_data = list(cars.values('car_name', 'price'))
+            cars2 = cars.filter(seller__username=username)
+            car_data = serializers.serialize("json", cars2)
 
             # Debugging the filtered car data
-            print(f"Filtered car data: {car_data}")
-
-            return JsonResponse({"cars": car_data}, safe=False)
-        except Exception as e:
-            # Debugging exception details
-            print(f"Error during processing: {str(e)}")
-            return JsonResponse({"error": str(e)}, status=400)
-
-    return JsonResponse({"error": "This method only supports POST requests"}, status=40)
+            return HttpResponse(car_data, content_type="application/json")
 
 def user_profile_to_dict(user_profile):
     return {
@@ -70,10 +143,6 @@ def show_user_profile_json(request):
             "status": False,
             "message": "User profile not found."
         }, status=404)
-    
-def show_all_cars(request):
-    data = Car.objects.all()  # This retrieves all car objects from the database
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 @login_required
 def mobil_saya(request):
@@ -275,38 +344,6 @@ def view_details(request, car_id):
     }
     return render(request, 'detail.html', context)
 
-@csrf_exempt
-def view_details_json(request, car_id):
-    try:
-        car = get_object_or_404(Car, pk=car_id)
-        car_data = {
-            "seller": car.seller.id,
-            "car_name": car.car_name,
-            "brand": car.brand,
-            "year": car.year,
-            "mileage": car.mileage,
-            "location": car.location,
-            "transmission": car.transmission,
-            "plate_type": car.plate_type,
-            "rear_camera": car.rear_camera,
-            "sun_roof": car.sun_roof,
-            "auto_retract_mirror": car.auto_retract_mirror,
-            "electric_parking_brake": car.electric_parking_brake,
-            "map_navigator": car.map_navigator,
-            "vehicle_stability_control": car.vehicle_stability_control,
-            "keyless_push_start": car.keyless_push_start,
-            "sports_mode": car.sports_mode,
-            "camera_360_view": car.camera_360_view,
-            "power_sliding_door": car.power_sliding_door,
-            "auto_cruise_control": car.auto_cruise_control,
-            "price": car.price,
-            "instalment": car.instalment,
-            "image_url": car.image_url,
-        }
-        return JsonResponse(car_data)
-    except Car.DoesNotExist:
-        return JsonResponse({"error": "Car not found"}, status=404)
-
 @login_required
 def delete_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
@@ -321,17 +358,16 @@ def delete_car(request, car_id):
     else:
         return redirect('authentication:login')
 
+@csrf_exempt
 def create_car_flutter(request):
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Only POST method is allowed'}, status=405)
     
-    # Fetch the first user in the User table
-    seller = User.objects.first()
-    if seller is None:
-        return JsonResponse({'status': 'error', 'message': 'No users available'}, status=404)
-
     try:
         data = json.loads(request.body)
+        username = data['username']  # Expect username to be sent in the request body
+        seller = User.objects.get(username=username)  # Get the user object using the username
+        
         car = Car(
             seller=seller,
             car_name=data['car_name'],
@@ -358,6 +394,8 @@ def create_car_flutter(request):
         )
         car.save()
         return JsonResponse({'status': 'success', 'message': 'Car created successfully'}, status=201)
+    except User.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'User not found'}, status=404)
     except KeyError as e:
         return JsonResponse({'status': 'error', 'message': f'Missing field in data: {str(e)}'}, status=400)
     except Exception as e:
