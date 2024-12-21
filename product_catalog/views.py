@@ -238,6 +238,38 @@ def contact_seller(request, car_id):
         return JsonResponse(data)
     except Car.DoesNotExist:
         return JsonResponse({'error': 'Car not found'}, status=404)
+
+@csrf_exempt
+def view_details_json(request, car_id):
+    try:
+        car = get_object_or_404(Car, pk=car_id)
+        car_data = {
+            "seller": car.seller.id,
+            "car_name": car.car_name,
+            "brand": car.brand,
+            "year": car.year,
+            "mileage": car.mileage,
+            "location": car.location,
+            "transmission": car.transmission,
+            "plate_type": car.plate_type,
+            "rear_camera": car.rear_camera,
+            "sun_roof": car.sun_roof,
+            "auto_retract_mirror": car.auto_retract_mirror,
+            "electric_parking_brake": car.electric_parking_brake,
+            "map_navigator": car.map_navigator,
+            "vehicle_stability_control": car.vehicle_stability_control,
+            "keyless_push_start": car.keyless_push_start,
+            "sports_mode": car.sports_mode,
+            "camera_360_view": car.camera_360_view,
+            "power_sliding_door": car.power_sliding_door,
+            "auto_cruise_control": car.auto_cruise_control,
+            "price": car.price,
+            "instalment": car.instalment,
+            "image_url": car.image_url,
+        }
+        return JsonResponse(car_data)
+    except Car.DoesNotExist:
+        return JsonResponse({"error": "Car not found"}, status=404)
     
 @login_required
 def car_list(request):
