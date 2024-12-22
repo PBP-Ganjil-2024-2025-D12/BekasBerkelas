@@ -71,32 +71,50 @@ def get_questions_json(request):
 @require_POST
 @login_required(login_url='/auth/login')
 def create_question(request):
-    user = request.user
-    car_id = request.POST.get('car_id')
-    title = strip_tags(request.POST.get('title'))
-    content = strip_tags(request.POST.get('content'))
-    category = request.POST.get('category')
-    
-    if not title.strip() or not content.strip():
-        return JsonResponse({'status': 'error', 'message': 'Title and content are required'})
-    
-    car = None
-    if car_id and car_id.strip():
-        try:
-            car = get_object_or_404(Car, pk=car_id)
-        except (ValueError, Http404):
-            return JsonResponse({'status': 'error', 'message': 'Invalid car ID'}, status=400)
-    
-    new_question = Question(
-        user=user,
-        car=car,
-        title=title,
-        category=category,
-        content=content
-    )
-    
-    new_question.save()
-    return JsonResponse({'status': 'success', 'message': 'Question created successfully'}, status=201)
+    try:
+        user = request.user
+        car_id = request.POST.get('car_id')
+        title = strip_tags(request.POST.get('title'))
+        content = strip_tags(request.POST.get('content'))
+        category = request.POST.get('category')
+        
+        print(f"Received data: title={title}, content={content}, category={category}, car_id={car_id}")  # Debug print
+        
+        if not title.strip() or not content.strip():
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Title and content are required'
+            }, status=400)
+        
+        car = None
+        if car_id and car_id.strip():
+            try:
+                car = get_object_or_404(Car, pk=car_id)
+            except (ValueError, Http404):
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Invalid car ID'
+                }, status=400)
+        
+        new_question = Question(
+            user=user,
+            car=car,
+            title=title,
+            category=category,
+            content=content
+        )
+        
+        new_question.save()
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Question created successfully'
+        }, status=201)
+    except Exception as e:
+        print(f"Error creating question: {str(e)}")  # Debug print
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Server error: {str(e)}'
+        }, status=500)
 
 @csrf_exempt
 @require_POST
