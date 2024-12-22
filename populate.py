@@ -14,6 +14,24 @@ names = [
     "Nadia", "Rahmadina", "Aristawati", "Okin", "Niko"
 ]
 password = 'BekasBerkelas'
+admin_username = 'admin'
+admin_email = 'admin@example.com'
+admin_password = 'ab53a3cad15f9fe403ca9afc2b8fcfcf50adb1513d9ba921fe280eb581279e363e0dcc32'
+
+admin_user = User.objects.create_superuser(username=admin_username, email=admin_email, password=admin_password)
+
+UserProfile.objects.create(
+    user=admin_user,
+    name='Administrator',
+    email=admin_email,
+    no_telp='1234567890',
+    role=UserRole.ADMIN,
+    profile_picture=None,
+    profile_picture_id=None,
+    is_verified=True
+)
+
+print("Administrator profile created.")
 
 for name in names:
     username = name.lower()  
