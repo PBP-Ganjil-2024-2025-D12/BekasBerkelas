@@ -16,6 +16,42 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 
 
+@csrf_exempt
+def delete_flutter(request):
+    print(f"Received {request.method} request")
+    if request.method == 'POST':
+        print(f"Raw data received: {request.body}")
+
+        data = json.loads(request.body)
+        car_id = data.get('car_id')
+        username = data.get('username')
+
+        print(f"Car ID extracted: {car_id}")
+        print(f"Username extracted: {username}")
+
+        car = get_object_or_404(Car, id=car_id)
+        if car.seller.username == username:
+            car.delete()
+            response_data = {"status": "success", "message": "Car deleted successfully"}
+            return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
+        else:
+            response_data = {"status": "error", "message": "Unauthorized to delete this car"}
+            return HttpResponse(json.dumps(response_data), content_type="application/json", status=403)
+
+def get_seller_verif(request, username):
+    try:
+        # Retrieve the user by username
+        user = User.objects.get(username=username)
+        
+        # Check if the user has a profile and is verified
+        seller_verif = user.userprofile.is_verified
+        return JsonResponse({'seller_verif': seller_verif}, safe=False)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 def get_seller_contact(request, car_id):
     try:
         car = Car.objects.get(id=car_id)
@@ -44,26 +80,20 @@ def get_seller_username(request, car_id):
         return JsonResponse({'error': str(e)}, status=500)
     
 @csrf_exempt
-def delete_flutter(request):
+def delete_flutter_admin(request):
     print(f"Received {request.method} request")
     if request.method == 'POST':
         print(f"Raw data received: {request.body}")
 
         data = json.loads(request.body)
         car_id = data.get('car_id')
-        username = data.get('username')
 
         print(f"Car ID extracted: {car_id}")
-        print(f"Username extracted: {username}")
 
         car = get_object_or_404(Car, id=car_id)
-        if car.seller.username == username:
-            car.delete()
-            response_data = {"status": "success", "message": "Car deleted successfully"}
-            return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
-        else:
-            response_data = {"status": "error", "message": "Unauthorized to delete this car"}
-            return HttpResponse(json.dumps(response_data), content_type="application/json", status=403)
+        car.delete()
+        response_data = {"status": "success", "message": "Car deleted successfully"}
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
     
 def show_all_cars(request):
     data = Car.objects.all() 
@@ -79,6 +109,7 @@ def search_filter_cars(request):
     price_max = request.GET.get('price_max')
     year = request.GET.get('year')  # Retrieve 'year' from request
     plate_type = request.GET.get('plate_type')  # Retrieve 'plate_type' from request
+    transmission = request.GET.get('transmission')
 
     if year:
         cars = cars.filter(year=year)
@@ -90,6 +121,8 @@ def search_filter_cars(request):
         cars = cars.filter(brand__icontains=brand)
     if price_max:
         cars = cars.filter(price__lte=float(price_max))
+    if transmission:
+        cars = cars.filter(transmission=transmission)
 
     # Serialize data including all fields of the Car model
     car_data = serializers.serialize("json", cars)
