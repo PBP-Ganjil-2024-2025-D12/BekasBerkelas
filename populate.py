@@ -6,6 +6,7 @@ django.setup()
 
 from django.contrib.auth.models import User
 from authentication.models import UserProfile, UserRole 
+from user_dashboard.models import SellerProfile
 
 names = [
     "Ramy", "Ultramy", "UltraRamy", "Naufal", "Muhammad",
@@ -39,7 +40,7 @@ for name in names:
 
     user = User.objects.create_user(username=username, email=email, password=password)
 
-    UserProfile.objects.create(
+    userprofile = UserProfile.objects.create(
         user=user,
         name=name,
         email=email,
@@ -49,5 +50,7 @@ for name in names:
         profile_picture_id=None,
         is_verified=True 
     )
+
+    SellerProfile.objects.create(user_profile = userprofile, total_sales=0, rating=0)
 
 print("Created user profiles with all verified and role as Seller.")
