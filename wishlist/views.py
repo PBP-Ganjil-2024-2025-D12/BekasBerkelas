@@ -66,7 +66,6 @@ def remove_from_wishlist(request, wishlist_id):
     wishlist.delete()
     return HttpResponseRedirect(reverse('wishlist:show_wishlist'))
 
-@login_required(login_url='/auth/login')
 def show_json(request):
     wishlists = Wishlist.objects.filter(user=request.user)
     data = []
@@ -84,7 +83,6 @@ def show_json(request):
         })
     return JsonResponse(data, safe=False)
 
-@login_required(login_url='/auth/login')
 def get_wishlist_item(request, wishlist_id):
     wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
     data = {
@@ -100,7 +98,6 @@ def get_wishlist_item(request, wishlist_id):
     return JsonResponse(data, safe=False)
 
 @csrf_exempt
-@login_required(login_url='/auth/login')
 def get_wishlist_car_ids(request):
     try:
         wishlist_items = Wishlist.objects.filter(user=request.user)
