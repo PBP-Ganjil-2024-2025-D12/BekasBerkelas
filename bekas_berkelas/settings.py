@@ -32,7 +32,7 @@ ADMIN_ACCOUNT_SECRET_TOKEN = 'ab53a3cad15f9fe403ca9afc2b8fcfcf50adb1513d9ba921fe
 PRODUCTION = os.getenv("PRODUCTION", False)
 DEBUG = not PRODUCTION
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id", "10.0.2.2", "*"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id", "10.0.2.2"]
 
 
 # Application definition
@@ -155,7 +155,7 @@ cloudinary.config(
     api_secret = '0IRoEZF3n6-Y3SL-ZGLRxR12iag',
 )
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:53264","http://localhost", "http://localhost:*", "http://127.0.0.1", "http://127.0.0.1:*", "http://steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id", "https://steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id", "http://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id", "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://localhost:*", "http://127.0.0.1", "http://127.0.0.1:*", "http://steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id", "https://steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id", "http://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id", "https://steven-setiawan-bekasberkelasmobile.pbp.cs.ui.ac.id"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
