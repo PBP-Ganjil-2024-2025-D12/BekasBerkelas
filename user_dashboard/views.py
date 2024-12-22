@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from django.templatetags.static import static
 import cloudinary.uploader
 import json
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 from user_dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm
 
 # Create your views here.
@@ -167,7 +167,6 @@ def verifikasi_penjual(request):
         unverified_seller = None
     else:
         page_number = request.GET.get('page')
-
         default_profile_pic = static('user_dashboard/image/default-profile.png')
         unverified_seller = {}
 
@@ -237,7 +236,7 @@ def get_user_flutter(request):
             if not user.is_verified:
                 status_akun = 'Menunggu Verifikasi'
             else:
-                status_akun = 'Sudah Verifikasi'
+                status_akun = 'Terverifikasi'
 
             return JsonResponse({
                 'status' : 'success',
@@ -347,3 +346,120 @@ def upload_profile_picture_flutter(request):
     except Exception as e:
         return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
 
+@csrf_exempt
+def verifikasi_penjual_flutter(request):
+    try:
+        if not request.user.is_authenticated:
+            return JsonResponse({"status": "error", "message": "User is not authenticated. Please re-log."}, status=401)
+        
+        if request.user.userprofile.role != 'ADM':
+            return JsonResponse({"status": "error", "message": "User is not authorized to access this page"}, status=403)
+        
+        if request.method == 'POST':
+            try:
+                data = json.loads(request.body)
+                verified_seller = UserProfile.objects.get(id=data["idUser"])
+                verified_seller.is_verified = True
+                verified_seller.save()
+                print("Berhasil Verifikasi Penjual id : ", data["idUser"])
+                return JsonResponse({"status": "success", "message": "Berhasil Verifikasi Penjual"}, status=200)
+            except Exception as e:
+                print(e)
+                return JsonResponse({"status": "error", "message": "Terjadi kesalahan pada saat proses verifikasi"}, status=400)
+
+        unverified_seller_query = UserProfile.objects.filter(role='SEL', is_verified=False)
+        page_number = request.GET.get("page")
+        paginator = Paginator(unverified_seller_query.order_by('id') , 15)
+        try:
+            page_obj = paginator.page(page_number)
+        except EmptyPage:
+            return JsonResponse({'status' : 'success', 'data' : None}, status=200)
+        
+        if not unverified_seller_query.exists():
+            unverified_seller = None
+        else:
+            default_profile_pic = ""
+            unverified_seller = {}
+
+            for seller in page_obj.object_list:
+                if not seller.profile_picture:
+                    seller_profile_picture = default_profile_pic
+                    seller_profile_picture_id = ""
+                else:
+                    seller_profile_picture =  seller.profile_picture
+                    seller_profile_picture_id = seller.profile_picture_id
+
+                unverified_seller[str(seller.id)] = {
+                    'total_sales' : seller.sellerprofile.total_sales,
+                    'rating' : seller.sellerprofile.rating,
+                    'user_profile' : {
+                        'name' : seller.name,
+                        'email' : seller.email,
+                        'no_telp' : seller.no_telp,
+                        'role' : seller.role,
+                        'profile_picture' : seller_profile_picture,
+                        'profile_picture_id' : seller_profile_picture_id,
+                        'is_verified' : seller.is_verified
+                    }
+                }   
+
+
+        return JsonResponse({"status": "success", "data": unverified_seller}, status=200)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"status": "error", 'message' : str(e)}, status=404)
+    
+
+def rating_list_flutter(request):
+    try:
+        if not request.user.is_authenticated:
+            return JsonResponse({"status": "error", "message": "User is not authenticated. Please re-log."}, status=401)
+        
+        if request.user.userprofile.role != 'SEL':
+            return JsonResponse({"status": "error", "message": "User is not authorized to access this page"}, status=403)
+
+        
+        daftar_review = {}
+        page_obj = None
+
+        if not request.user.userprofile.sellerprofile.reviews_received.exists():
+            has_review = 0
+        else :
+            has_review = 1
+            daftar_review_seller = request.user.userprofile.sellerprofile.reviews_received.all()
+            page_number = request.GET.get("page")
+            paginator = Paginator(daftar_review_seller.order_by('created_at'), 15)
+            page_obj = paginator.get_page(page_number)
+            try:
+                page_obj = paginator.page(page_number)
+            except EmptyPage:
+                data = {
+                        'has_review' : 0,
+                        'daftar_review' : daftar_review,
+                    }
+                return JsonResponse({'status' : 'success', 'data' : data}, status=200)
+
+
+            for review in page_obj.object_list:
+                if not review.reviewer.user_profile.profile_picture:
+                    reviewer_profile = ""
+                else:
+                    reviewer_profile = review.reviewer.user_profile.profile_picture
+
+                daftar_review[str(review.id)] = {
+                    'review' : review.review,
+                    'rating' : review.rating,
+                    'reviewer' : review.reviewer.user_profile.name,
+                    'created_at': review.created_at.strftime('%Y-%m-%d'),
+                    'reviewer_profile_pic' : reviewer_profile 
+                }
+
+
+        data = {
+            'has_review' : has_review,
+            'daftar_review' : daftar_review,
+        }
+
+        return JsonResponse({'status' : 'success', 'data' : data}, status=200)
+    except Exception as e:
+        return JsonResponse({"status": "error", 'message' : str(e)}, status=404)

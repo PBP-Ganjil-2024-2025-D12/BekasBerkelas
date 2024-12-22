@@ -32,7 +32,7 @@ ADMIN_ACCOUNT_SECRET_TOKEN = 'ab53a3cad15f9fe403ca9afc2b8fcfcf50adb1513d9ba921fe
 PRODUCTION = os.getenv("PRODUCTION", False)
 DEBUG = not PRODUCTION
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "steven-setiawan-bekasberkelas.pbp.cs.ui.ac.id", "10.0.2.2"]
 
 
 # Application definition
